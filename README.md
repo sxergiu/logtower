@@ -1,2 +1,2 @@
 # logtower
-Rust + Tauri logging desktop app.
+Rust with Tauri and Angular logging desktop app.
