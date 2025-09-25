@@ -9,10 +9,13 @@
     "watch": "ng build --watch --configuration development",
 
     "tauri": "tauri",
-    "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build",
+    "tauri:dev": "npx tauri dev",
 
-    "run logtower": "npm run tauri dev"
+    "tauri:build": "npx tauri build",
+    "ng:build": "ng build --configuration production",
+
+    "run logtower": "npm run tauri dev",
+    "deploy logtower": "npm run tauri:build"
   },
   "private": true,
   "dependencies": {

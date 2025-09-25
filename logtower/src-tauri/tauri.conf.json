@@ -4,13 +4,16 @@
   "version": "0.1.0",
   "identifier": "com.charlie.logtower",
   "build": {
+    "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run start",
-    "devUrl": "http://localhost:4200"
+    "devUrl": "http://localhost:4200",
+    "frontendDist": "../dist/logtower/browser"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
-        "title": "logtower",
+        "title": "Logtower",
         "width": 800,
         "height": 600
       }
