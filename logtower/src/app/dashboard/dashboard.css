@@ -57,6 +57,15 @@
     align-items: center;
 }
 
+.menu-btn {
+    padding: 1rem;
+    margin: 5rem;
+    color: #000000;
+    background-color: #fc9e3f;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
 .column {
     display: flex;
     flex-direction: column;
