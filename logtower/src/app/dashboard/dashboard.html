@@ -1,0 +1,28 @@
+
+<main class="container">
+
+    <div class="row">
+
+        <a href="https://angular.io" target="_blank">
+            <img src="/assets/angular.svg" class="logo angular" alt="Angular logo" />
+        </a>
+
+        <div class="column">
+            <h1>Welcome to Logtower!</h1>
+            <p>What are you waiting for? Log your logs!</p>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <button (click)="goToSettings()"> What are you logging for? </button>
+        <button (click)="goToLogs()"> Browse logs </button>
+    </div>
+
+    <form (submit)="greet($event, greetInput.value)" style="margin-top: 500px">
+        <input #greetInput id="greet-input" placeholder="Enter a name..." />
+        <button type="submit">Greet</button>
+    </form>
+    <p>{{ greetingMessage }}</p>
+
+</main>
