@@ -1,6 +1,8 @@
+
 .logo.angular:hover {
-    filter: drop-shadow(0 0 2em #e32727);
+    filter: drop-shadow(0 0 2em #ffffff);
 }
+
 :root {
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
     font-size: 16px;
@@ -25,6 +27,8 @@
     justify-content: center;
     text-align: center;
     align-items: center;
+
+    background-color: #f8faf8;;
 
     h1 {
         margin-block-start: 0;
@@ -51,6 +55,15 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+}
+
+.menu-btn {
+    padding: 1rem;
+    margin: 5rem;
+    color: #000000;
+    background-color: #fc9e3f;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
 }
 
 .column {

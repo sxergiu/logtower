@@ -1,18 +1,22 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
 use tauri::Manager;
 
-fn main() {
-    tauri::Builder::default()
-        // Register a command that frontend can call
-        .invoke_handler(tauri::generate_handler![greet])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-}
+mod data;
+mod domain;
+mod service;
+mod tauri_commands;
 
-// Example Rust command callable from JS
+use tauri_commands::logs::{add_log, get_logs, delete_all_logs};
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! Log your logs.", name)
+}
+
+fn main() {
+
+    tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![greet, add_log, get_logs, delete_all_logs])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
