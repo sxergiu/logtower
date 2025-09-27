@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, inject} from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
-import { listen, UnlistenFn } from '@tauri-apps/api/event';
-import {RouterOutlet} from "@angular/router";
+import { UnlistenFn } from '@tauri-apps/api/event';
+import {ActivatedRoute, Router, RouterOutlet} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -10,21 +10,19 @@ import {RouterOutlet} from "@angular/router";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy {
+
   private unlistenHotkey?: UnlistenFn;
+  router = inject(Router);
+  route = inject(ActivatedRoute);
 
   async ngOnInit() {
-    console.log('Setting up hotkey listener...');
 
-    // Listen for hotkey events
-    this.unlistenHotkey = await listen('hotkey_triggered', () => {
-      console.log('🎉 Hotkey event received in Angular!');
-      alert('Hotkey pressed!');
+    this.route.queryParams.subscribe(params => {
+      if (params['route']) {
+        this.router.navigate([`/${params['route']}`]);
+      }
     });
 
-    // Auto-test the manual trigger after 2 seconds
-    setTimeout(() => {
-      this.testHotkey();
-    }, 2000);
   }
 
   ngOnDestroy() {
@@ -33,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.unlistenHotkey();
     }
   }
-
+  
   async testHotkey() {
     try {
       console.log('Testing manual hotkey trigger...');
