@@ -9,6 +9,8 @@ mod tauri_commands;
 
 use tauri_commands::logs::{add_log, get_logs, delete_all_logs};
 
+mod hotkey;
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! Log your logs.", name)
@@ -35,8 +37,8 @@ fn main() {
 
                     if let Some(window) = app.get_webview_window("main") {
                         match window.emit("hotkey_triggered", ()) {
-                            Ok(_) => println!("✓ Successfully emitted hotkey event to frontend"),
-                            Err(e) => println!("✗ Failed to emit hotkey event: {:?}", e)
+                            Ok(_) => println!("✓ Emitted hotkey event to frontend"),
+                            Err(e) => println!("✗ Failed to emit hotkey event: {:?}", e),
                         }
                     } else {
                         println!("✗ Could not find main window");
@@ -46,24 +48,7 @@ fn main() {
         )
         .setup(|app| {
             println!("App setup started...");
-
-            // Try multiple shortcuts to see which one works
-            let shortcuts = vec![
-                ("Ctrl+Space", Shortcut::new(Some(Modifiers::CONTROL), Code::Space)),
-                ("Ctrl+Shift+Space", Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::Space)),
-                ("Ctrl+Alt+H", Shortcut::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyH)),
-            ];
-
-            for (name, shortcut) in shortcuts {
-                match app.global_shortcut().register(shortcut) {
-                    Ok(_) => println!("✓ Successfully registered {} shortcut", name),
-                    Err(e) => {
-                        eprintln!("✗ Failed to register {} shortcut: {:?}", name, e);
-                        // Don't return error, try the next one
-                    }
-                }
-            }
-
+            hotkey::register_shortcuts(app);
             println!("Setup completed. Try pressing registered shortcuts...");
             Ok(())
         })

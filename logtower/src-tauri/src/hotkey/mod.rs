@@ -1,3 +1,4 @@
 
-pub mod shortcuts;
-pub mod tray;
+pub mod hotkeys;
+
+pub(crate) use hotkeys::register_shortcuts;
