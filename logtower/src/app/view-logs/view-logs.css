@@ -1,4 +1,35 @@
 
+.view-logs-header {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.logs-btn {
+    margin: 0 1rem;
+    color: #000000;
+    background-color: #fc9e3f;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
+
+.logs-btn:hover {
+    outline: none;
+    border: 1px solid white;
+    box-shadow: none;
+}
+
 .delete-logs-btn {
-    background-color: red;
+    background-color: #fb2222;
+    margin: 0 1rem;
+    color: #000000;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
+
+.delete-logs-btn:hover {
+    outline: none;
+    border: 1px solid white;
+    box-shadow: none;
 }

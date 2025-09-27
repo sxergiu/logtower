@@ -64,15 +64,15 @@ fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error
         }
     }
 
-    let window_label = format!("hotkey-window-{}", chrono::Utc::now().timestamp_millis());
+    let window_label = "quick-log";
 
     let window = WebviewWindowBuilder::new(
         app,
-        &window_label,
+        window_label,
         WebviewUrl::App("index.html?route=quick-log".into()) // This will load your Angular app
     )
-        .title("Quick Log ")
-        .inner_size(400.0, 300.0)
+        .title("Quick Log")
+        .inner_size(420.0, 120.0)
         .center()
         .resizable(true)
         .minimizable(true)
@@ -97,9 +97,14 @@ fn main() {
                 .with_handler(|app, _shortcut, event| {
                     println!("🔥 GLOBAL SHORTCUT TRIGGERED! Event: {:?}", event);
 
-                    match create_hotkey_window(app) {
-                        Ok(_) => println!("✓ Hotkey window created successfully"),
-                        Err(e) => println!("✗ Failed to create hotkey window: {:?}", e),
+                    // Convert event to string and check if it contains "Pressed"
+                    let event_str = format!("{:?}", event);
+                    if event_str.contains("Pressed") {
+                        println!("🔥 Processing PRESSED event");
+                        match create_hotkey_window(app) {
+                            Ok(_) => println!("✓ Hotkey window created successfully"),
+                            Err(e) => println!("✗ Failed to create hotkey window: {:?}", e),
+                        }
                     }
                 })
                 .build()
