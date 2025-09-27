@@ -1,1 +1,119 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+html {
+    background-color: #f8faf8 !important;
+}
+
+:root {
+    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+
+    color: #0f0f0f;
+    background-color: #f6f6f6;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+}
+
+.container {
+    margin: 0;
+    padding-top: 10vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+
+    h1 {
+        color: black;
+        margin-block-start: 0;
+        margin-block-end: 0;
+    }
+
+    p {
+        color: black;
+        margin-block-start: 0;
+        margin-block-end: 0;
+    }
+}
+
+.logo {
+    height: 6em;
+    will-change: filter;
+    transition: 0.75s;
+}
+
+.logo:hover {
+    filter: drop-shadow(0 0 2em #ffffff);
+}
+
+
+.row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.menu-btn {
+    padding: 1rem;
+    margin: 5rem;
+    color: #000000;
+    background-color: #fc9e3f;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
+
+.menu-btn:hover {
+    outline: none;
+    border: 1px solid white;
+    box-shadow: none;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+input,
+button {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    color: #0f0f0f;
+    background-color: #ffffff;
+    transition: border-color 0.25s;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+button {
+    cursor: pointer;
+}
+
+input,
+button {
+    outline: none;
+}
+
+#greet-input {
+    margin-right: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+
+}

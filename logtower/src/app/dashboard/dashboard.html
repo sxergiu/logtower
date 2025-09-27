@@ -4,25 +4,20 @@
     <div class="row">
 
         <a href="https://angular.io" target="_blank">
-            <img src="/assets/logtower.svg" class="logo angular" alt="Angular logo" />
+            <img src="/assets/logtower.svg" class="logo" alt="App logo" />
         </a>
 
         <div class="column">
-            <h1>Welcome to Logtower!</h1>
-            <p>What are you waiting for? Log your logs!</p>
+            <h1 style="margin-bottom: 0.4rem">Welcome to Logtower!</h1>
+<!--            <p>What are you waiting for? Log your logs!</p>-->
+            <p>Press <i><b>Ctrl+Space</b></i> and log your logs!</p>
         </div>
 
     </div>
 
     <div class="row">
-        <button class="menu-btn" (click)="goToSettings()"> Manage logs </button>
+<!--        <button class="menu-btn" (click)="goToSettings()"> Manage logs </button>-->
         <button class="menu-btn" (click)="goToLogs()"> Browse logs </button>
     </div>
-
-    <form (submit)="greet($event, greetInput.value)" style="margin-top: 500px">
-        <input #greetInput id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-    </form>
-    <p>{{ greetingMessage }}</p>
 
 </main>

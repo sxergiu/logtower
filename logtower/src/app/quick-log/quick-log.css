@@ -1,0 +1,30 @@
+
+
+.add-log-input {
+    margin: 0 1rem;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
+.add-log-btn {
+    margin: 0 1rem;
+    color: #000000;
+    background-color: #fc9e3f;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
+.add-log-btn:hover {
+    outline: none;
+    border: 1px solid white;
+    box-shadow: none;
+}
+
+.add-log-btn:disabled {
+    background-color: rgba(76, 75, 75, 0.24);
+    color: #f6f6f6;
+    outline: none;
+    border: 1px solid white;
+    box-shadow: none;
+    cursor: auto;
+}

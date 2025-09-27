@@ -1,10 +1,15 @@
 
-<p> view-logs works! </p>
+<div class="row">
+    <button (click)="goToDashboard()" class="logs-btn"> 🡸 </button>
 
-    <div class="p-4 space-y-4">
-      <h2 class="text-xl font-bold">Log Viewer</h2>
+    <h2 class="text-xl font-bold">Your Logs</h2>
+
+</div>
 
       <ul class="space-y-2">
+          @if( logs.length === 0 ) {
+              <strong> No available logs. </strong>
+          }
           @for ( log of logs; track log.id ) {
                 <li class="border p-2 rounded shadow-sm">
                   <strong>Time:</strong> {{ log.timestamp }}
@@ -15,23 +20,25 @@
       </ul>
 
 
+<div class="row">
+
+    @if( logs.length !== 0 ) {
         <div>
             <button
                     (click)="deleteLogs()"
                     class="delete-logs-btn"
             >
-                Delete
+               Delete
             </button>
         </div>
-
+    }
         <div>
             <button
                     (click)="loadLogs()"
+                    class="logs-btn"
             >
                 Refresh
             </button>
         </div>
-    </div>
+</div>
 
-
-<button (click)="goToDashboard()"> Go Back </button>
