@@ -1,0 +1,13 @@
+<div class="flex space-x-2">
+    <input
+            [(ngModel)]="newMessage"
+            placeholder="Enter log message"
+            class="border rounded px-2 py-1 flex-1"
+    />
+    <button
+            (click)="addLog()"
+            class="bg-blue-600 text-white px-4 py-1 rounded"
+    >
+        Add Log
+    </button>
+</div>

@@ -4,38 +4,33 @@
     <div class="p-4 space-y-4">
       <h2 class="text-xl font-bold">Log Viewer</h2>
 
-      <div class="flex space-x-2">
-        <input
-          [(ngModel)]="newMessage"
-          placeholder="Enter log message"
-          class="border rounded px-2 py-1 flex-1"
-        />
-        <button
-          (click)="addLog()"
-          class="bg-blue-600 text-white px-4 py-1 rounded"
-        >
-          Add Log
-        </button>
-      </div>
-
-      <div>
-        <button
-          (click)="deleteLogs()"
-          class="delete-logs-btn"
-        >
-          Delete
-        </button>
-      </div>
-
       <ul class="space-y-2">
           @for ( log of logs; track log.id ) {
                 <li class="border p-2 rounded shadow-sm">
-                  <strong>ID:</strong> {{ log.id }}<br />
-                  <strong>Time:</strong> {{ log.timestamp }}<br />
+                  <strong>Time:</strong> {{ log.timestamp }}
+                    -
                   <strong>Message:</strong> {{ log.message }}
                 </li>
           }
       </ul>
+
+
+        <div>
+            <button
+                    (click)="deleteLogs()"
+                    class="delete-logs-btn"
+            >
+                Delete
+            </button>
+        </div>
+
+        <div>
+            <button
+                    (click)="loadLogs()"
+            >
+                Refresh
+            </button>
+        </div>
     </div>
 
 

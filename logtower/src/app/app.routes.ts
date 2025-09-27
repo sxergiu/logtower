@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import {Dashboard} from "./dashboard/dashboard";
 import {ViewLogs} from "./view-logs/view-logs";
 import {Settings} from "./settings/settings";
+import {QuickLog} from "./quick-log/quick-log";
 
 export const routes: Routes = [
 
@@ -9,9 +10,11 @@ export const routes: Routes = [
 
     { path: 'dashboard', component: Dashboard },
 
-    { path: 'logs', component: ViewLogs},
+    { path: 'logs', component: ViewLogs },
 
-    { path: 'settings', component: Settings},
+    { path: 'settings', component: Settings },
+
+    { path: 'quick-log', component: QuickLog },
 
     { path: '**', redirectTo: 'dashboard' }
 ];
