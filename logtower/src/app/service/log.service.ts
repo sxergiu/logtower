@@ -1,4 +1,4 @@
-// src/app/services/log.service.ts
+
 import { Injectable } from '@angular/core';
 import { invoke} from "@tauri-apps/api/core";
 import { LogEntry } from '../models/log-entry.model';

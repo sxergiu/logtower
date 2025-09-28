@@ -1,6 +1,5 @@
-
 use rusqlite::params;
-use crate::data::connection::{get_connection};
+use crate::data::connection::get_connection;
 use crate::domain::logs::models::LogEntry;
 
 pub fn insert_log(message: String) -> Result<(), String> {
