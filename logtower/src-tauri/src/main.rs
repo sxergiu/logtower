@@ -40,7 +40,7 @@ fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error
 
     let hotkey_window_labels: Vec<String> = app.webview_windows()
         .keys()
-        .filter(|label| label.starts_with("hotkey-window"))
+        .filter(|label| label.starts_with("quick-log"))
         .cloned()
         .collect();
 

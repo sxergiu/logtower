@@ -24,18 +24,42 @@ pub fn get_db_path() -> PathBuf {
     base_dir.join(filename)
 }
 
-pub fn get_connection() -> Result<Connection> {
+pub fn create_tables() -> Result<Connection> {
     let db_path = get_db_path();
     println!("DB path: {:?}", db_path);
 
     let conn = Connection::open(db_path)?;
 
     conn.execute(
-        "CREATE TABLE IF NOT EXISTS logs (
+        "
+            CREATE TABLE IF NOT EXISTS projects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+            );
+            ",
+        [],
+    )?;
+
+    conn.execute(
+        "
+            CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            project_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
+            );
+            ",
+        [],
+    )?;
+
+    conn.execute(
+        "
+            CREATE TABLE IF NOT EXISTS logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
             message TEXT NOT NULL
-        )",
+            )
+            ",
         [],
     )?;
 
@@ -44,7 +68,7 @@ pub fn get_connection() -> Result<Connection> {
 
 #[cfg(debug_assertions)]
 pub fn test_connection() {
-    match get_connection() {
+    match create_tables() {
         Ok(conn) => {
             println!("✅ Database connection successful!");
             let count: i32 = conn
