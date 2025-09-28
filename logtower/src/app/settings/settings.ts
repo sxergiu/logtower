@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { UserSettings } from '../models/user-settings.model';
   templateUrl: './settings.html',
   styleUrl: './settings.css',
 })
-export class Settings {
+export class Settings implements OnInit{
   router = inject(Router);
   private settingsService = inject(SettingsService);
 
@@ -23,9 +23,6 @@ export class Settings {
   settings = signal<UserSettings | null>(null);
   projects = signal<Project[]>([]);
   tasksByProject = signal<{ [projectId: number]: Task[] }>({});
-
-  loading = signal(true);
-  error = signal<string | null>(null);
 
   // form inputs
   newProjectName = signal('');
@@ -36,15 +33,8 @@ export class Settings {
   }
 
   async loadData() {
-    this.loading.set(true);
-    this.error.set(null);
 
-    try {
-      const settings = await this.settingsService.getCurrentSettings().catch(() => ({
-        id: 0,
-        activeProjectId: null,
-        activeTaskId: null,
-      }));
+      const settings = await this.settingsService.getCurrentSettings();
       this.settings.set(settings);
 
       const projects = await this.settingsService.getAllProjects();
@@ -56,12 +46,8 @@ export class Settings {
         tasksMap[project.id] = tasks;
       }
       this.tasksByProject.set(tasksMap);
-    } catch (err: any) {
-      this.error.set(err.message ?? 'Failed to load data');
-    } finally {
-      this.loading.set(false);
-    }
   }
+
 
   get activeProject(): Project | null {
     const settings = this.settings();
@@ -77,14 +63,24 @@ export class Settings {
   }
 
   async setActiveProject(projectId: number | null) {
-    await this.settingsService.setActiveProject(projectId ?? undefined);
-    await this.loadData();
+    // Update local settings immediately
+    this.settings.update(s => s ? { ...s, activeProjectId: projectId, activeTaskId: null } : s);
+
+    // Optionally fetch tasks if not already loaded
+    if (projectId && !this.tasksByProject()[projectId]?.length) {
+      const tasks = await this.settingsService.getTasksForProject(projectId);
+      this.tasksByProject.update(map => ({ ...map, [projectId]: tasks }));
+    }
+
+    // Persist on backend
+    await this.settingsService.setActiveProject(projectId ?? null);
   }
 
   async setActiveTask(taskId: number | null) {
-    await this.settingsService.setActiveTask(taskId ?? undefined);
-    await this.loadData();
+    this.settings.update(s => s ? { ...s, activeTaskId: taskId } : s);
+    await this.settingsService.setActiveTask(taskId ?? null);
   }
+
 
   async addProject() {
     const name = this.newProjectName().trim();
@@ -101,6 +97,7 @@ export class Settings {
     this.newTaskName.set('');
     await this.loadData();
   }
+
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);

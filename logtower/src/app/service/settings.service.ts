@@ -12,8 +12,16 @@ export class SettingsService {
     }
 
     async getCurrentSettings(): Promise<UserSettings> {
-        return await invoke<UserSettings>('get_current_settings');
+        const raw = await invoke<{ active_project_id: number | null, active_task_id: number | null }>(
+            'get_current_settings'
+        );
+
+        return {
+            activeProjectId: raw.active_project_id,
+            activeTaskId: raw.active_task_id
+        };
     }
+
 
     async addProject(name: string): Promise<Project> {
         return await invoke<Project>('add_project', { name });
@@ -23,13 +31,14 @@ export class SettingsService {
         return await invoke<Task>('add_task', { projectId, name });
     }
 
-    async setActiveProject(projectId?: number): Promise<void> {
-        await invoke('set_active_project', { projectId });
+    async setActiveProject(projectId?: number | null): Promise<void> {
+        await invoke('set_active_project', { projectId: projectId ?? null });
     }
 
-    async setActiveTask(taskId?: number): Promise<void> {
-        await invoke('set_active_task', { taskId });
+    async setActiveTask(taskId?: number | null): Promise<void> {
+        await invoke('set_active_task', { taskId: taskId ?? null });
     }
+
 
     async getProjectById(projectId: number): Promise<Project | null> {
         return await invoke<Project | null>('get_project_by_id', { projectId });

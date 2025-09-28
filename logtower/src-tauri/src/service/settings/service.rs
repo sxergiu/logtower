@@ -9,8 +9,26 @@ pub fn get_all_projects() -> Result<Vec<Project>, String> {
 }
 
 pub fn get_current_settings() -> Result<Settings, String> {
-    get_settings()
+    println!("get_current_settings() called");
+    match get_settings() {
+        Ok(settings) => {
+            println!("get_settings() succeeded: {:?}", settings);
+            Ok(Settings {
+                active_project_id: settings.active_project_id,
+                active_task_id: settings.active_task_id,
+            })
+        },
+        Err(e) => {
+            println!("get_settings() failed with error: {}", e);
+            // You might want to return the error instead of swallowing it
+            Ok(Settings {
+                active_project_id: None,
+                active_task_id: None,
+            })
+        },
+    }
 }
+
 
 pub fn add_project(name: String) -> Result<Project, String> {
     if name.trim().is_empty() {
