@@ -27,12 +27,30 @@ pub fn get_db_path() -> PathBuf {
     base_dir.join(filename)
 }
 
-pub fn create_tables() -> Result<Connection> {
+/// Get a connection to the database
+pub fn get_connection() -> Result<Connection> {
+    let db_path = get_db_path();
+    Connection::open(db_path)
+}
+
+/// Initialize the database - creates tables and seeds data if needed
+/// This should be called once at application startup
+pub fn initialize_database() -> Result<()> {
     let db_path = get_db_path();
     println!("DB path: {:?}", db_path);
 
     let conn = Connection::open(db_path)?;
 
+    // Create tables
+    create_tables(&conn)?;
+
+    // Seed with initial data
+    seed_database(&conn)?;
+
+    Ok(())
+}
+
+fn create_tables(conn: &Connection) -> Result<()> {
     conn.execute(
         "
             CREATE TABLE IF NOT EXISTS projects (
@@ -76,37 +94,39 @@ pub fn create_tables() -> Result<Connection> {
         [],
     )?;
 
-    seed_database(&conn)?;
-
-    Ok(conn)
+    Ok(())
 }
 
 #[cfg(debug_assertions)]
 pub fn test_connection() {
-    match create_tables() {
-        Ok(conn) => {
-            println!("✅ Database connection successful!");
-            seed_database(&conn).unwrap();
+    match initialize_database() {
+        Ok(()) => {
+            println!("✅ Database initialization successful!");
 
-            let projects = get_projects_with_tasks(&conn).unwrap();
-            let settings = get_settings(&conn).unwrap();
+            // Import the repository functions
+            use crate::domain::settings::repository::{get_projects_with_tasks, get_settings};
 
-            println!("📂 Projects:");
-            for p in projects {
-                println!("- {} (id={})", p.name, p.id);
-                for t in p.tasks {
-                    println!("   • {} (id={})", t.name, t.id);
+            match (get_projects_with_tasks(), get_settings()) {
+                (Ok(projects), Ok(settings)) => {
+                    println!("📂 Projects:");
+                    for p in projects {
+                        println!("- {} (id={})", p.name, p.id);
+                        for t in p.tasks {
+                            println!("   • {} (id={})", t.name, t.id);
+                        }
+                    }
+
+                    println!("⚙️ Settings: {:?}", settings);
                 }
+                (Err(err), _) => println!("❌ Failed to get projects: {}", err),
+                (_, Err(err)) => println!("❌ Failed to get settings: {}", err),
             }
-
-            println!("⚙️ Settings: {:?}", settings);
         }
-        Err(err) => println!("❌ Database connection failed: {}", err),
+        Err(err) => println!("❌ Database initialization failed: {}", err),
     }
 }
 
-
-pub fn seed_database(conn: &Connection) -> rusqlite::Result<()> {
+fn seed_database(conn: &Connection) -> rusqlite::Result<()> {
     let project_count: i32 = conn.query_row(
         "SELECT COUNT(*) FROM projects",
         [],
@@ -169,4 +189,3 @@ pub fn seed_database(conn: &Connection) -> rusqlite::Result<()> {
 
     Ok(())
 }
-

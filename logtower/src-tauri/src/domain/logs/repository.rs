@@ -1,10 +1,9 @@
-
 use rusqlite::params;
-use crate::data::connection::{create_tables};
+use crate::data::connection::get_connection;
 use crate::domain::logs::models::LogEntry;
 
 pub fn insert_log(message: String) -> Result<(), String> {
-    let conn = create_tables().map_err(|e| e.to_string())?;
+    let conn = get_connection().map_err(|e| e.to_string())?;
     conn.execute(
         "INSERT INTO logs (timestamp, message) VALUES (datetime('now'), ?1)",
         params![message],
@@ -14,7 +13,7 @@ pub fn insert_log(message: String) -> Result<(), String> {
 }
 
 pub fn fetch_logs() -> Result<Vec<LogEntry>, String> {
-    let conn = create_tables().map_err(|e| e.to_string())?;
+    let conn = get_connection().map_err(|e| e.to_string())?;
     let mut stmt = conn
         .prepare("SELECT id, timestamp, message FROM logs ORDER BY timestamp DESC")
         .map_err(|e| e.to_string())?;
@@ -37,7 +36,7 @@ pub fn fetch_logs() -> Result<Vec<LogEntry>, String> {
 }
 
 pub fn delete_all_logs() -> Result<(), String> {
-    let conn = create_tables().map_err(|e| e.to_string())?;
+    let conn = get_connection().map_err(|e| e.to_string())?;
     conn.execute("DELETE FROM logs", [])
         .map_err(|e| e.to_string())?;
     Ok(())
