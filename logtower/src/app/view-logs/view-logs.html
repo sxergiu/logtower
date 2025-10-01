@@ -4,43 +4,57 @@
     <h2 class="text-xl font-bold">Log Viewer</h2>
 </div>
 
-      <ul class="space-y-2">
-          @if( logs.length === 0 ) {
-              <strong> No available logs. </strong>
-          }
-          @for ( log of logs; track log.id ) {
-                <li class="border p-2 rounded shadow-sm">
-                  <strong>Time:</strong> {{ log.timestamp }}
-                    -
-                  <strong>Message:</strong> {{ log.message }}
-                    -
-                    <strong>Project:</strong> {{log.projectName}}
-                    -
-                   <strong>Task:</strong> {{log.taskName }}
-                </li>
-          }
-      </ul>
 
+<div class="log-container">
+
+
+    <div class="table-wrapper">
+        <table class="log-table">
+            <thead>
+            <tr>
+                <th>Time</th>
+                <th>Project</th>
+                <th>Task</th>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody>
+                @for (log of logs(); track log.id) {
+                    <tr class="log-row">
+                        <td class="timestamp">
+                            <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
+                            <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
+                        </td>
+                        <td class="project">
+                            <span class="project-badge">{{ log.projectName }}</span>
+                        </td>
+                        <td class="task">{{ log.taskName }}</td>
+                        <td class="message">{{ log.message }}</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <div class="row">
 
-    @if( logs.length !== 0 ) {
+    @if( logs().length !== 0 ) {
         <div>
             <button
                     (click)="deleteLogs()"
                     class="delete-logs-btn"
             >
-               Delete
+                Delete
             </button>
         </div>
     }
-        <div>
-            <button
-                    (click)="loadLogs()"
-                    class="logs-btn"
-            >
-                Refresh
-            </button>
-        </div>
+    <div>
+        <button
+                (click)="loadLogs()"
+                class="logs-btn"
+        >
+            Refresh
+        </button>
+    </div>
 </div>
-

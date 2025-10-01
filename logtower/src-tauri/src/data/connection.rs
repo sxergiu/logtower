@@ -78,7 +78,9 @@ fn create_tables(conn: &Connection) -> Result<()> {
             CREATE TABLE IF NOT EXISTS logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
-            message TEXT NOT NULL
+            message TEXT NOT NULL,
+            project_id INTEGER,
+            task_id INTEGER
             )
             ",
         [],

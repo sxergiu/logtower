@@ -8,9 +8,3 @@ pub struct LogEntry {
     pub project_id: Option<i32>, 
     pub task_id: Option<i32>,
 }
-
-
-#[derive(Debug, serde::Deserialize)]
-pub struct NewLogDTO {
-    pub message: String,
-}
