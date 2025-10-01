@@ -2,6 +2,12 @@
 
 
 html {
+
+    --logtower-white: #f8faf8;
+    --logtower-wood: #fc9e3f;
+    --logtower-wood-dark: #f83601;
+    --logtower-gradient: linear-gradient(135deg, var(--logtower-wood) 0%, var(--logtower-wood-dark) 100%);
+
     background-color: #f8faf8 !important;
 }
 
@@ -65,13 +71,14 @@ html {
     padding: 1rem;
     margin: 5rem;
     color: #000000;
-    background-color: #fc9e3f;
+    background: var(--logtower-gradient);
     border: 1px solid #000000;
     box-shadow: #0f0f0f 2px 2px;
     width: 100px;
 }
 
 .menu-btn:hover {
+    color: white;
     outline: none;
     border: 1px solid white;
     box-shadow: none;
@@ -118,13 +125,14 @@ button {
 .logs-btn {
     margin: 0 1rem;
     color: #000000;
-    background-color: #fc9e3f;
+    background: var(--logtower-gradient);
     border: 1px solid #000000;
     box-shadow: #0f0f0f 2px 2px;
 }
 
 .logs-btn:hover {
     outline: none;
+    color: white;
     border: 1px solid white;
     box-shadow: none;
 }
