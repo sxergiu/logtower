@@ -32,7 +32,20 @@ fn main() {
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(|app, _shortcut, event| {
-                    // Hotkey event logic...
+
+                    println!("🔥 GLOBAL SHORTCUT TRIGGERED! Event: {:?}", event);
+
+                    // Convert event to string and check if it contains "Pressed"
+
+                    let event_str = format!("{:?}", event);
+                    if event_str.contains("Pressed") {
+                        println!("🔥 Processing PRESSED event");
+                        match create_hotkey_window(app) {
+                            Ok(_) => println!("✓ Hotkey window created successfully"),
+                            Err(e) => println!("✗ Failed to create hotkey window: {:?}", e),
+                        }
+
+                    }
                 })
                 .build()
         )
