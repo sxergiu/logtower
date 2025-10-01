@@ -1,6 +1,6 @@
 
 <div class="row">
-    <button (click)="goToDashboard()" class="logs-btn"> 🡸 </button>
+    <button (click)="goToDashboard()" class="logs-btn"> < </button>
     <h2 class="text-xl font-bold">Log Viewer</h2>
 </div>
 
@@ -13,6 +13,10 @@
                   <strong>Time:</strong> {{ log.timestamp }}
                     -
                   <strong>Message:</strong> {{ log.message }}
+                    -
+                    <strong>Project:</strong> {{log.projectName}}
+                    -
+                   <strong>Task:</strong> {{log.taskName }}
                 </li>
           }
       </ul>

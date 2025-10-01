@@ -1,12 +1,16 @@
 use rusqlite::params;
 use crate::data::connection::get_connection;
 use crate::domain::logs::models::LogEntry;
+use crate::domain::settings::repository::get_settings;
 
 pub fn insert_log(message: String) -> Result<(), String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
+
+    let settings = get_settings()?;
+
     conn.execute(
-        "INSERT INTO logs (timestamp, message) VALUES (datetime('now'), ?1)",
-        params![message],
+        "INSERT INTO logs (timestamp, message, project_id, task_id) VALUES (datetime('now'), ?1, ?2, ?3)",
+        params![message, settings.active_project_id, settings.active_task_id],
     )
         .map_err(|e| e.to_string())?;
     Ok(())
@@ -15,7 +19,7 @@ pub fn insert_log(message: String) -> Result<(), String> {
 pub fn fetch_logs() -> Result<Vec<LogEntry>, String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
     let mut stmt = conn
-        .prepare("SELECT id, timestamp, message FROM logs ORDER BY timestamp DESC")
+        .prepare("SELECT id, timestamp, message, project_id, task_id FROM logs ORDER BY timestamp DESC")
         .map_err(|e| e.to_string())?;
 
     let logs_iter = stmt
@@ -24,6 +28,8 @@ pub fn fetch_logs() -> Result<Vec<LogEntry>, String> {
                 id: row.get(0)?,
                 timestamp: row.get(1)?,
                 message: row.get(2)?,
+                project_id: row.get(3)?,
+                task_id: row.get(4)?,
             })
         })
         .map_err(|e| e.to_string())?;

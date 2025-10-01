@@ -1,5 +1,5 @@
 <div class="row">
-    <button (click)="goToDashboard()" class="logs-btn"> 🡸 </button>
+    <button (click)="goToDashboard()" class="logs-btn"> < </button>
     <h2 class="text-xl font-bold"> Log Manager </h2>
 
     <div class="current-settings">
@@ -37,29 +37,29 @@
     </div>
 </div>
 
-<div style="margin: 35rem 0"></div>
-
 <h3>Add Project</h3>
-<input
-        [ngModel]="newProjectName()"
-        (ngModelChange)="newProjectName.set($event)"
-        placeholder="New project name"
-        (keyup.enter)="addProject()"
-/>
-<button (click)="addProject()">Add</button>
-
-<h3>Add Task</h3>
-@if (activeProject) {
+<div class="change-setup">
     <input
-            [ngModel]="newTaskName()"
-            (ngModelChange)="newTaskName.set($event)"
-            placeholder="New task name"
-            (keyup.enter)="addTask(activeProject.id)"
+            [ngModel]="newProjectName()"
+            (ngModelChange)="newProjectName.set($event)"
+            placeholder="New project name"
+            (keyup.enter)="addProject()"
     />
-    <button (click)="addTask(activeProject.id)">Add</button>
-} @else {
-    <p>Please select a project first.</p>
-}
+    <button (click)="addProject()">Add</button>
+
+    <h3>Add Task</h3>
+    @if (activeProject) {
+        <input
+                [ngModel]="newTaskName()"
+                (ngModelChange)="newTaskName.set($event)"
+                placeholder="New task name"
+                (keyup.enter)="addTask(activeProject.id)"
+        />
+        <button (click)="addTask(activeProject.id)">Add</button>
+    } @else {
+        <p>Please select a project first.</p>
+    }
+</div>
 
 <h3>All Projects</h3>
 <ul>
