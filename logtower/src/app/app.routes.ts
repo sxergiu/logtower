@@ -3,6 +3,7 @@ import {Dashboard} from "./dashboard/dashboard";
 import {ViewLogs} from "./view-logs/view-logs";
 import {Settings} from "./settings/settings";
 import {QuickLog} from "./quick-log/quick-log";
+import {ManageProjects} from "./settings/manage-projects/manage-projects";
 
 export const routes: Routes = [
 
@@ -15,6 +16,8 @@ export const routes: Routes = [
     { path: 'settings', component: Settings },
 
     { path: 'quick-log', component: QuickLog },
+
+    { path: 'manage', component: ManageProjects },
 
     { path: '**', redirectTo: 'dashboard' }
 ];
