@@ -98,8 +98,11 @@ export class Settings implements OnInit{
     await this.loadData();
   }
 
-
   goToDashboard() {
     this.router.navigate(['/dashboard']);
+  }
+
+  goToManage() {
+    this.router.navigate(['/manage']);
   }
 }

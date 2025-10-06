@@ -6,8 +6,6 @@
 
 
 <div class="log-container">
-
-
     <div class="table-wrapper">
         <table class="log-table">
             <thead>
@@ -35,26 +33,27 @@
             </tbody>
         </table>
     </div>
-</div>
 
-<div class="row">
+    <div class="row">
 
-    @if( logs().length !== 0 ) {
+        @if( logs().length !== 0 ) {
+            <div>
+                <button
+                        (click)="deleteLogs()"
+                        class="delete-logs-btn"
+                >
+                    Delete
+                </button>
+            </div>
+        }
         <div>
             <button
-                    (click)="deleteLogs()"
-                    class="delete-logs-btn"
+                    (click)="loadLogs()"
+                    class="logs-btn"
             >
-                Delete
+                Refresh
             </button>
         </div>
-    }
-    <div>
-        <button
-                (click)="loadLogs()"
-                class="logs-btn"
-        >
-            Refresh
-        </button>
     </div>
 </div>
+

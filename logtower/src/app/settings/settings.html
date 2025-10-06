@@ -1,77 +1,43 @@
 <div class="row">
     <button (click)="goToDashboard()" class="logs-btn"> < </button>
-    <h2 class="text-xl font-bold"> Log Manager </h2>
+    <h2 class="text-xl font-bold"> Log Context </h2>
+</div>
 
-    <div class="current-settings">
-        <h2>Current setup</h2>
+<div class="setup">
+
+    <div class="settings">
+        <h2>Current Setup</h2>
         <p><strong>Project:</strong> {{ activeProject?.name || 'None selected' }}</p>
         <p><strong>Task:</strong> {{ activeTask?.name || 'None selected' }}</p>
     </div>
-</div>
 
-<h3> Change Setup </h3>
+    <div class="settings">
+        <h2> Change Setup </h2>
 
-<div class="change-setup">
-
-    <div class="change-active-project">
-        <select [value]="settings()?.activeProjectId ?? ''"
-                (change)="setActiveProject($any($event.target).value ? +$any($event.target).value : null)">
-            <option value="">-- None --</option>
-            @for (project of projects(); track project.id) {
-                <option [value]="project.id">{{ project.name }}</option>
-            }
-        </select>
-    </div>
-
-    <div class="change-active-task">
-        <select [value]="settings()?.activeTaskId ?? ''"
-                (change)="setActiveTask($any($event.target).value ? +$any($event.target).value : null)"
-                [disabled]="!activeProject">
-            <option value="">-- None --</option>
-            @if (activeProject) {
-                @for (task of tasksByProject()[activeProject.id]; track task.id) {
-                    <option [value]="task.id">{{ task.name }}</option>
+            <select [value]="settings()?.activeProjectId ?? ''"
+                    (change)="setActiveProject($any($event.target).value ? +$any($event.target).value : null)">
+                <option value=""> {{ activeProject?.name }} </option>
+                @for (project of projects(); track project.id) {
+                    <option [value]="project.id">{{ project.name }}</option>
                 }
-            }
-        </select>
+            </select>
+
+            <select [value]="settings()?.activeTaskId ?? ''"
+                    (change)="setActiveTask($any($event.target).value ? +$any($event.target).value : null)"
+                    [disabled]="!activeProject">
+                <option value=""> {{ activeTask?.name }}</option>
+                @if (activeProject) {
+                    @for (task of tasksByProject()[activeProject.id]; track task.id) {
+                        <option [value]="task.id">{{ task.name }}</option>
+                    }
+                }
+            </select>
     </div>
 </div>
 
-<h3>Add Project</h3>
-<div class="change-setup">
-    <input
-            [ngModel]="newProjectName()"
-            (ngModelChange)="newProjectName.set($event)"
-            placeholder="New project name"
-            (keyup.enter)="addProject()"
-    />
-    <button (click)="addProject()">Add</button>
 
-    <h3>Add Task</h3>
-    @if (activeProject) {
-        <input
-                [ngModel]="newTaskName()"
-                (ngModelChange)="newTaskName.set($event)"
-                placeholder="New task name"
-                (keyup.enter)="addTask(activeProject.id)"
-        />
-        <button (click)="addTask(activeProject.id)">Add</button>
-    } @else {
-        <p>Please select a project first.</p>
-    }
+<div class="manage-section">
+    <button class="logs-btn manage-btn" (click)="goToManage()">
+        Manage Projects
+    </button>
 </div>
-
-<h3>All Projects</h3>
-<ul>
-    @for (project of projects(); track project.id) {
-        <li>
-            <strong>{{ project.name }}</strong>
-            <ul>
-                @for (task of tasksByProject()[project.id]; track task.id) {
-                    <li>{{ task.name }}</li>
-                }
-            </ul>
-        </li>
-    }
-</ul>
-

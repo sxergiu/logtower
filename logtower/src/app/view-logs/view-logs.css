@@ -1,11 +1,4 @@
 
-.view-logs-header {
-    display: flex;
-    justify-content: flex-start;
-}
-
-
-
 .delete-logs-btn {
     background-color: #fb2222;
     margin: 0 1rem;
@@ -19,13 +12,13 @@
     outline: none;
     border: 1px solid white;
     box-shadow: none;
+    color: white;
 }
 
 .log-container {
     padding: 24px;
-    background: #f8faf8;
-    min-height: 100vh;
-    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+    background: var(--logtower-white);
+    font-family: var(--logtower-font), monospace;
     color: #e4e4e7;
 }
 
@@ -38,17 +31,14 @@
     border-bottom: 1px solid #27272a;
 }
 
-h2 {
-    margin: 0;
-    color: black;
-    font-weight: 600;
-    font-size: 24px;
-}
 
 .table-wrapper {
+    position: relative;
+    max-height: 400px;
     background: #fafafa;
     border-radius: 12px;
-    overflow: hidden;
+    margin-bottom: 1rem;
+    overflow: auto;
     border: 1px solid #27272a;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
@@ -60,6 +50,8 @@ h2 {
 
 thead {
     background: #fafafa;
+    position: sticky;
+    top: 0;
 }
 
 th {
