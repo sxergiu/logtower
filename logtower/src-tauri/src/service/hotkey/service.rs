@@ -37,7 +37,7 @@ pub fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::e
         WebviewUrl::App("index.html?route=quick-log".into()) // This will load your Angular app
     )
         .title("Quick Log")
-        .inner_size(440.0, 120.0)
+        .inner_size(500.0, 100.0)
         .center()
         .resizable(true)
         .minimizable(true)
