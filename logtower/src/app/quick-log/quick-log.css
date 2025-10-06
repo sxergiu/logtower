@@ -6,10 +6,17 @@
     box-shadow: #0f0f0f 2px 2px;
 }
 
+.quick-log-container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin-top: 1.5rem;
+}
+
 .add-log-btn {
     margin: 0 1rem;
     color: #000000;
-    background-color: #fc9e3f;
+    background-color: var(--logtower-wood);
     background: var(--logtower-gradient);
     border: 1px solid #000000;
     box-shadow: #0f0f0f 2px 2px;
