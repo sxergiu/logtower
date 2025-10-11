@@ -1,0 +1,132 @@
+import {Component, inject} from '@angular/core';
+import {Router} from "@angular/router";
+import {Project} from "../models/project.model";
+import {FormsModule} from "@angular/forms";
+import {SettingsService} from "../service/settings.service";
+import {NgOptimizedImage} from "@angular/common";
+
+@Component({
+  selector: 'app-manage-projects',
+  imports: [
+    FormsModule,
+    NgOptimizedImage,
+  ],
+  templateUrl: './manage-projects.html',
+  styleUrl: './manage-projects.css'
+})
+export class ManageProjects {
+
+  settingsService = inject(SettingsService);
+  router = inject(Router);
+
+  projects = this.settingsService.projects;
+  tasksByProject = this.settingsService.tasksByProject;
+
+  newProjectName = '';
+  newTaskNames: { [key: number]: string } = {};
+
+  // Edit state variables
+  editingProject: number | null = null;
+  editingTask: { projectId: number; taskId: number } | null = null;
+  editProjectValue = '';
+  editTaskValue = '';
+
+  addProject(): void {
+    if (this.newProjectName.trim()) {
+      const newProject: Project = {
+        id: Date.now(),
+        name: this.newProjectName,
+        createdAt: new Date().toISOString()
+      };
+      this.projects.set([...this.projects(), newProject]);
+      this.newProjectName = '';
+    }
+  }
+
+  deleteProject(projectId: number): void {
+    this.projects.set(this.projects().filter(p => p.id !== projectId));
+  }
+
+  startEditProject(project: Project): void {
+    this.editingProject = project.id;
+    this.editProjectValue = project.name;
+  }
+
+  saveProjectEdit(projectId: number): void {
+    if (this.editProjectValue.trim()) {
+      this.projects.set(
+          this.projects().map(project =>
+              project.id === projectId
+                  ? { ...project, name: this.editProjectValue.trim() }
+                  : project
+          )
+      );
+    }
+    this.editingProject = null;
+    this.editProjectValue = '';
+  }
+
+  cancelProjectEdit(): void {
+    this.editingProject = null;
+    this.editProjectValue = '';
+  }
+
+  addTask(projectId: number): void {
+    const taskName = this.newTaskNames[projectId];
+    if (taskName && taskName.trim()) {
+      const tasks = this.tasksByProject();
+      const projectTasks = tasks[projectId] || [];
+
+      this.tasksByProject.set({
+        ...tasks,
+        [projectId]: [...projectTasks, {
+          id: Date.now(),
+          name: taskName.trim(),
+          completed: false,
+          projectId: projectId
+        }]
+      });
+
+      this.newTaskNames[projectId] = '';
+    }
+  }
+
+  deleteTask(projectId: number, taskId: number): void {
+    const tasks = this.tasksByProject();
+    this.tasksByProject.set({
+      ...tasks,
+      [projectId]: tasks[projectId].filter(t => t.id !== taskId)
+    });
+  }
+
+  startEditTask(projectId: number, task: any): void {
+    this.editingTask = { projectId, taskId: task.id };
+    this.editTaskValue = task.name;
+  }
+
+  saveTaskEdit(projectId: number, taskId: number): void {
+    if (this.editTaskValue.trim()) {
+      const tasks = this.tasksByProject();
+      this.tasksByProject.set({
+        ...tasks,
+        [projectId]: tasks[projectId].map(task =>
+            task.id === taskId
+                ? { ...task, name: this.editTaskValue.trim() }
+                : task
+        )
+      });
+    }
+    this.editingTask = null;
+    this.editTaskValue = '';
+  }
+
+  cancelTaskEdit(): void {
+    this.editingTask = null;
+    this.editTaskValue = '';
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
+}

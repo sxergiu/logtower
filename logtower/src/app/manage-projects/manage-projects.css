@@ -1,0 +1,144 @@
+@import "../settings/settings.css";
+
+.log-manager-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem;
+    background-color: #f7f7f9;
+    border-radius: 12px;
+
+    h2 {
+        margin-block-start: 0;
+        margin-block-end: 0;
+        margin: 0 0 1rem 0;
+    }
+}
+
+.log-manager-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.add-section {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+
+    input {
+        flex: 1;
+    }
+}
+
+.task-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    background: var(--logtower-white);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+    span {
+        margin-left: 1rem;
+    }
+}
+
+.svg-green:hover img {
+    filter: brightness(0) saturate(100%) invert(61%) sepia(42%) saturate(617%) hue-rotate(56deg) brightness(94%) contrast(88%);
+    transform: scale(1.1);
+}
+
+.svg-wood:hover img {
+    filter: brightness(0) saturate(100%) invert(53%) sepia(85%) saturate(900%) hue-rotate(357deg) brightness(90%) contrast(95%);
+    transform: scale(1.1);
+}
+
+.svg-red:hover img {
+    filter: brightness(0) saturate(100%) invert(32%) sepia(94%) saturate(3853%) hue-rotate(346deg) brightness(101%) contrast(101%);
+    transform: scale(1.1);
+}
+
+.btn-edit:hover img {
+    filter: brightness(0) saturate(100%) invert(29%) sepia(99%) saturate(747%) hue-rotate(190deg) brightness(95%) contrast(97%);
+    transform: scale(1.1);
+}
+
+.project-header {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       margin-bottom: 1rem;
+       min-height: 2.5rem;
+
+       h2 {
+           margin: 0;
+           flex: 1;
+       }
+}
+
+.add-section {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+
+    input {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+
+        &:focus {
+            outline: none;
+            border: 2px solid var(--logtower-wood);
+            box-shadow: rgba(255, 255, 255, 0.07) 2px 2px;
+        }
+
+        &::placeholder {
+            color: #999;
+        }
+    }
+}
+
+   .edit-section {
+       display: flex;
+       align-items: center;
+       gap: 0.5rem;
+       flex: 1;
+   }
+
+.edit-input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--logtower-wood);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s;
+
+    &:focus {
+        outline: none;
+        border-color: var(--logtower-wood);
+        box-shadow: rgba(255, 255, 255, 0.07) 2px 2px;
+    }
+}
+
+.task-list-item {
+    &:hover {
+        background: #f3f4f6;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
