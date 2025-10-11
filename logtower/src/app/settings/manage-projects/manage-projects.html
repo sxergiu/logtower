@@ -3,17 +3,64 @@
     <h2 class="text-xl font-bold"> Log Manager </h2>
 </div>
 
-<div class="setup">
-    <div class="settings">
+<div class="log-manager-container">
+    <div class="log-manager-card">
         <h2>Add Project</h2>
         <div class="add-section">
-    <!--        <input-->
-    <!--                [ngModel]="newProjectName()"-->
-    <!--                (ngModelChange)="newProjectName.set($event)"-->
-    <!--                placeholder="New project name"-->
-    <!--                (keyup.enter)="addProject()"-->
-    <!--        />-->
-            <button class="logs-btn" >Add</button>
+<!--            <input-->
+<!--                    [ngModel]="newProjectName()"-->
+<!--                    (ngModelChange)="newProjectName.set($event)"-->
+            <input
+                    placeholder="New project name"
+                    (keyup.enter)="addProject()"
+            />
+            <button class="logs-btn">
+                Add Project
+            </button>
+
         </div>
     </div>
+
+    @for( project of projects(); track project.id ) {
+        <div class="log-manager-card">
+          <h2>  {{project.name}} </h2>
+            <div class="add-section">
+                <input placeholder="New task name" />
+                <button class="add-logs-btn">
+                    Add Task
+                </button>
+            </div>
+
+
+            @for ( task of tasksByProject()[project.id]; track task.id ) {
+                <div class="task-list-item">
+                    <span> {{task.name}} </span>
+                    <button
+                            class="delete-task-btn"
+                    >
+                        <div style="display: flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            }
+
+            <button
+                    class="delete-logs-btn"
+            >
+                <div style="display: flex;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    </svg>
+                </div>
+            </button>
+
+        </div>
+    }
 </div>
