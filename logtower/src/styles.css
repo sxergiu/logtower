@@ -6,7 +6,10 @@ html {
     --logtower-wood: #fc9e3f;
     --logtower-green: #69bd4f;
     --logtower-wood-dark: #f83601;
+    --logtower-green-dark: #0c3e02;
+    --logtower-red: #fb2222;
     --logtower-gradient: linear-gradient(135deg, var(--logtower-wood) 0%, var(--logtower-wood-dark) 100%);
+    --logtower-green-gradient: linear-gradient(135deg, var(--logtower-green) 0%, var(--logtower-green-dark) 100%);
     --logtower-font: 'SF Mono', 'Monaco', 'Cascadia Code';
 
     background-color: var(--logtower-white) !important;
@@ -136,6 +139,38 @@ button {
     color: white;
     border: 1px solid white;
     box-shadow: none;
+}
+
+.add-logs-btn {
+    margin: 0 1rem;
+    /*background: var(--logtower-green-gradient);*/
+    background-color: var(--logtower-green);
+    color: #000000;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
+.add-logs-btn:hover {
+    outline: none;
+    color: white;
+    border: 1px solid white;
+    box-shadow: none;
+}
+
+.delete-logs-btn {
+    background-color: var(--logtower-red);
+    margin: 0 1rem;
+    color: #000000;
+    border: 1px solid #000000;
+    box-shadow: #0f0f0f 2px 2px;
+}
+
+
+.delete-logs-btn:hover {
+    outline: none;
+    border: 1px solid white;
+    box-shadow: none;
+    color: white;
 }
 
 @media (prefers-color-scheme: dark) {
