@@ -14,24 +14,26 @@
     <div class="settings">
         <h2> Change Setup </h2>
 
-            <select [value]="settings()?.activeProjectId ?? ''"
-                    (change)="setActiveProject($any($event.target).value ? +$any($event.target).value : null)">
-                <option value=""> {{ activeProject?.name }} </option>
-                @for (project of projects(); track project.id) {
-                    <option [value]="project.id">{{ project.name }}</option>
-                }
-            </select>
+        <select
+                [ngModel]="settings()?.activeProjectId"
+                (ngModelChange)="setActiveProject($event)"
+        >
+            @for (project of projects(); track project.id) {
+                <option [ngValue]="project.id">{{ project.name }}</option>
+            }
+        </select>
 
-            <select [value]="settings()?.activeTaskId ?? ''"
-                    (change)="setActiveTask($any($event.target).value ? +$any($event.target).value : null)"
-                    [disabled]="!activeProject">
-                <option value=""> {{ activeTask?.name }}</option>
-                @if (activeProject) {
-                    @for (task of tasksByProject()[activeProject.id]; track task.id) {
-                        <option [value]="task.id">{{ task.name }}</option>
-                    }
+        <select
+                [ngModel]="settings()?.activeTaskId"
+                (ngModelChange)="setActiveTask($event)"
+                [disabled]="!activeProject"
+        >
+            @if (activeProject) {
+                @for (task of tasksByProject()[activeProject.id]; track task.id) {
+                    <option [ngValue]="task.id">{{ task.name }}</option>
                 }
-            </select>
+            }
+        </select>
     </div>
 </div>
 

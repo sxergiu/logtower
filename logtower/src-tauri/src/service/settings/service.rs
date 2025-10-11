@@ -61,16 +61,44 @@ pub fn add_task(project_id: i32, name: String) -> Result<Task, String> {
 }
 
 pub fn set_active_project(project_id: Option<i32>) -> Result<(), String> {
+    let projects = get_projects_with_tasks()?;
+
+    // ✅ Validate that the project exists (if provided)
     if let Some(id) = project_id {
-        // Validate that the project exists
-        let projects = get_projects_with_tasks()?;
         if !projects.iter().any(|p| p.id == id) {
             return Err(format!("Project with ID {} does not exist", id));
         }
     }
 
-    update_active_project(project_id)
+    // ✅ Update the active project
+    update_active_project(project_id.clone())?;
+
+    // ✅ Set task automatically based on selected project
+    match project_id {
+        Some(pid) => {
+            // Find the selected project
+            if let Some(project) = projects.iter().find(|p| p.id == pid) {
+                if let Some(first_task) = project.tasks.first() {
+                    // Set to first task if available
+                    println!("Setting active task to first task ({}) of project {}", first_task.id, pid);
+                    update_active_task(Some(first_task.id))?;
+                } else {
+                    // No tasks → clear active task
+                    println!("Project {} has no tasks — clearing active task", pid);
+                    update_active_task(None)?;
+                }
+            }
+        }
+        None => {
+            // No project selected → clear active task
+            println!("Clearing active task since no project selected");
+            update_active_task(None)?;
+        }
+    }
+
+    Ok(())
 }
+
 
 pub fn set_active_task(task_id: Option<i32>) -> Result<(), String> {
     if let Some(id) = task_id {
