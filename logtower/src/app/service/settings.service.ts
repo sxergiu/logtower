@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { Project } from '../models/project.model';
 import { UserSettings } from '../models/user-settings.model';
@@ -6,6 +6,23 @@ import { Task } from '../models/task.model';
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
+
+    projects = signal<Project[]>([]);
+    tasksByProject = signal<{ [projectId: number]: Task[] }>({});
+
+    constructor() {
+        this.loadData();
+    }
+
+    async loadData() {
+        const projects = await this.getAllProjects(); // API call
+        const tasksMap: { [projectId: number]: Task[] } = {};
+        for (const project of projects) {
+            tasksMap[project.id] = await this.getTasksForProject(project.id);
+        }
+        this.projects.set(projects);
+        this.tasksByProject.set(tasksMap);
+    }
 
     async getAllProjects(): Promise<Project[]> {
         return await invoke<Project[]>('get_all_projects');
@@ -21,7 +38,6 @@ export class SettingsService {
             activeTaskId: raw.active_task_id
         };
     }
-
 
     async addProject(name: string): Promise<Project> {
         return await invoke<Project>('add_project', { name });

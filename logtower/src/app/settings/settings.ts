@@ -21,8 +21,8 @@ export class Settings implements OnInit{
 
   // signals for state
   settings = signal<UserSettings | null>(null);
-  projects = signal<Project[]>([]);
-  tasksByProject = signal<{ [projectId: number]: Task[] }>({});
+  projects = this.settingsService.projects;
+  tasksByProject = this.settingsService.tasksByProject;
 
   // form inputs
   newProjectName = signal('');
