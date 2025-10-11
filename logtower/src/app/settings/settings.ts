@@ -80,7 +80,4 @@ export class Settings {
     this.router.navigate(['/dashboard']);
   }
 
-  goToManage() {
-    this.router.navigate(['/manage']);
-  }
 }

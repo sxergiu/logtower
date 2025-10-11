@@ -63,11 +63,30 @@ html {
     filter: drop-shadow(0 0 2em #ffffff);
 }
 
+.svg-white img{
+    transform: scale(1.1);
+}
+
+.svg-white:hover img {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
+.page-header {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5rem;
+
+    span,h2 {
+        margin-block-start: 0;
+        margin-block-end: 0;
+    }
+}
 
 .row {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    align-content: center;
 }
 
 
@@ -175,6 +194,19 @@ button {
 
 .svg-icon {
     display: flex;
+}
+
+.icon-btn {
+    box-shadow: none;
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (prefers-color-scheme: dark) {
