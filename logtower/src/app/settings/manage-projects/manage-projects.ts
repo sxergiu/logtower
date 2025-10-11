@@ -3,11 +3,13 @@ import {Router} from "@angular/router";
 import {Project} from "../../models/project.model";
 import {FormsModule} from "@angular/forms";
 import {SettingsService} from "../../service/settings.service";
+import {NgOptimizedImage} from "@angular/common";
 
 @Component({
   selector: 'app-manage-projects',
   imports: [
     FormsModule,
+    NgOptimizedImage,
   ],
   templateUrl: './manage-projects.html',
   styleUrl: './manage-projects.css'

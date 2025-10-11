@@ -3,13 +3,14 @@ import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {LogService} from "../service/log.service";
 import {LogEntry} from "../models/log-entry.model";
-import {NgForOf} from "@angular/common";
+import {NgOptimizedImage} from "@angular/common";
 
 @Component({
   selector: 'app-view-logs',
-  imports: [
-    FormsModule,
-  ],
+    imports: [
+        FormsModule,
+        NgOptimizedImage,
+    ],
   templateUrl: './view-logs.html',
   styleUrl: './view-logs.css'
 })
@@ -18,7 +19,6 @@ export class ViewLogs {
   router = inject(Router);
 
   logs = signal<LogEntry[]>([]);
-
 
   constructor(private logService: LogService) {}
 

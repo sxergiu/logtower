@@ -173,6 +173,10 @@ button {
     color: white;
 }
 
+.svg-icon {
+    display: flex;
+}
+
 @media (prefers-color-scheme: dark) {
 
 }

@@ -7,6 +7,7 @@ import { Task } from '../models/task.model';
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
 
+    userSettings = signal<UserSettings | null>(null);
     projects = signal<Project[]>([]);
     tasksByProject = signal<{ [projectId: number]: Task[] }>({});
 
@@ -15,11 +16,13 @@ export class SettingsService {
     }
 
     async loadData() {
+        const userSettings = await this.getCurrentSettings();
         const projects = await this.getAllProjects(); // API call
         const tasksMap: { [projectId: number]: Task[] } = {};
         for (const project of projects) {
             tasksMap[project.id] = await this.getTasksForProject(project.id);
         }
+        this.userSettings.set(userSettings);
         this.projects.set(projects);
         this.tasksByProject.set(tasksMap);
     }

@@ -1,6 +1,10 @@
 
 <div class="row">
-    <button (click)="goToDashboard()" class="logs-btn"> < </button>
+    <button (click)="goToDashboard()" class="logs-btn">
+        <div class="svg-icon">
+            <img ngSrc="assets/back-arrow.svg" alt="Go Back" width="20" height="20">
+        </div>
+    </button>
     <h2 class="text-xl font-bold">Log Viewer</h2>
 </div>
 
@@ -41,12 +45,8 @@
                         (click)="deleteLogs()"
                         class="delete-logs-btn"
                 >
-                    <div style="display: flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 6h18"></path>
-                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                        </svg>
+                    <div class="svg-icon">
+                        <img ngSrc="assets/trashcan.svg" alt="Delete" width="20" height="20">
                     </div>
                 </button>
         }

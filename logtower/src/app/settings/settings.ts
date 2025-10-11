@@ -1,53 +1,33 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { SettingsService } from '../service/settings.service';
 import { Project } from '../models/project.model';
 import { Task } from '../models/task.model';
-import { UserSettings } from '../models/user-settings.model';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './settings.html',
   styleUrl: './settings.css',
 })
-export class Settings implements OnInit{
+
+export class Settings {
+
   router = inject(Router);
   private settingsService = inject(SettingsService);
 
   // signals for state
-  settings = signal<UserSettings | null>(null);
+  settings = this.settingsService.userSettings;
   projects = this.settingsService.projects;
   tasksByProject = this.settingsService.tasksByProject;
 
   // form inputs
   newProjectName = signal('');
   newTaskName = signal('');
-
-  async ngOnInit() {
-    await this.loadData();
-  }
-
-  async loadData() {
-
-      const settings = await this.settingsService.getCurrentSettings();
-      this.settings.set(settings);
-
-      const projects = await this.settingsService.getAllProjects();
-      this.projects.set(projects);
-
-      const tasksMap: { [projectId: number]: Task[] } = {};
-      for (const project of projects) {
-        const tasks = await this.settingsService.getTasksForProject(project.id);
-        tasksMap[project.id] = tasks;
-      }
-      this.tasksByProject.set(tasksMap);
-  }
-
 
   get activeProject(): Project | null {
     const settings = this.settings();
@@ -74,6 +54,7 @@ export class Settings implements OnInit{
 
     // Persist on backend
     await this.settingsService.setActiveProject(projectId ?? null);
+    await this.settingsService.loadData();
   }
 
   async setActiveTask(taskId: number | null) {
@@ -81,13 +62,11 @@ export class Settings implements OnInit{
     await this.settingsService.setActiveTask(taskId ?? null);
   }
 
-
   async addProject() {
     const name = this.newProjectName().trim();
     if (!name) return;
     await this.settingsService.addProject(name);
     this.newProjectName.set('');
-    await this.loadData();
   }
 
   async addTask(projectId: number) {
@@ -95,7 +74,6 @@ export class Settings implements OnInit{
     if (!name) return;
     await this.settingsService.addTask(projectId, name);
     this.newTaskName.set('');
-    await this.loadData();
   }
 
   goToDashboard() {
