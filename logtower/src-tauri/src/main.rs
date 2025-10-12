@@ -14,7 +14,7 @@ use tauri_commands::logs::{add_log, get_logs, delete_all_logs};
 use tauri_commands::hotkey::{ hide_window, test_hotkey_event };
 use tauri_commands::settings::{get_current_settings, set_active_project, set_active_task};
 use tauri_commands::projects::{add_project, get_all_projects, get_project_by_id, delete_project};
-use tauri_commands::tasks::{add_task, get_task_by_id, get_tasks_for_project};
+use tauri_commands::tasks::{add_task, get_task_by_id, get_tasks_for_project,delete_task};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -64,6 +64,7 @@ fn main() {
             get_all_projects, get_tasks_for_project,
             delete_project,
             get_project_by_id,  get_task_by_id,
+            delete_task,
             get_current_settings, set_active_project, set_active_task
         ])
         .run(tauri::generate_context!())

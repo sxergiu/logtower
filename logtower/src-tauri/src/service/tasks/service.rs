@@ -1,6 +1,6 @@
-use crate::domain::projects::repository::get_projects_with_tasks;
+use crate::domain::projects::repository::{get_projects_with_tasks};
 use crate::domain::tasks::models::Task;
-use crate::domain::tasks::repository::create_task;
+use crate::domain::tasks::repository::{create_task,remove_task};
 
 pub fn get_task_by_id(task_id: i32) -> Result<Option<Task>, String> {
     let projects = get_projects_with_tasks()?;
@@ -36,4 +36,8 @@ pub fn add_task(project_id: i32, name: String) -> Result<Task, String> {
     }
 
     create_task(project_id, name.trim().to_string())
+}
+
+pub fn delete_task(task_id: i32) -> Result<(), String> {
+    remove_task(task_id)
 }

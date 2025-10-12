@@ -18,3 +18,20 @@ pub fn create_task(project_id: i32, name: String) -> Result<Task, String> {
         name,
     })
 }
+
+pub fn remove_task(task_id: i32) -> Result<(), String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+
+    let rows_affected = conn
+        .execute(
+            "DELETE FROM tasks WHERE id = ?1",
+            rusqlite::params![task_id],
+        )
+        .map_err(|e| e.to_string())?;
+
+    if rows_affected == 0 {
+        return Err(format!("Task with id {} not found", task_id));
+    }
+
+    Ok(())
+}

@@ -21,7 +21,6 @@ export class TaskService {
       }
     });
   }
-
   async fetchTasks() {
     const tasksMap: { [projectId: number]: Task[] } = {};
     for (const project of this.projects()) {
@@ -38,5 +37,8 @@ export class TaskService {
 
   async addTask(projectId: number, name: string): Promise<Task> {
     return await invoke<Task>('add_task', { projectId, name });
+  }
+  async deleteTask(taskId: number): Promise<void> {
+    return await invoke<void>('delete_task', { taskId });
   }
 }

@@ -1,6 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
 import {Router} from "@angular/router";
-import {Project} from "../models/project.model";
 import {FormsModule} from "@angular/forms";
 import {NgOptimizedImage} from "@angular/common";
 import {ProjectService} from "../service/project.service";
@@ -86,11 +85,13 @@ export class ManageProjects {
         }]
       });
 
+      this.taskService.addTask(projectId, taskName);
       this.newTaskNames[projectId] = '';
     }
   }
 
   deleteTask(projectId: number, taskId: number): void {
+    this.taskService.deleteTask(taskId);
     const tasks = this.tasksByProject();
     this.tasksByProject.set({
       ...tasks,

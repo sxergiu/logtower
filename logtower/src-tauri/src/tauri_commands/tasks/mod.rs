@@ -15,3 +15,7 @@ pub fn get_tasks_for_project(project_id: i32) -> Result<Vec<Task>, String> {
 pub fn add_task(project_id: i32, name: String) -> Result<Task, String> {
     service::add_task(project_id, name)
 }
+
+#[tauri::command]
+pub fn delete_task(task_id: i32) -> Result<(), String> { service::delete_task(task_id) }
+
