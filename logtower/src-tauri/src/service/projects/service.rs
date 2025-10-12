@@ -1,5 +1,5 @@
 use crate::domain::projects::models::Project;
-use crate::domain::projects::repository::{create_project, get_projects_with_tasks};
+use crate::domain::projects::repository::{create_project, delete_project_by_id, get_projects_with_tasks};
 
 pub fn get_project_by_id(project_id: i32) -> Result<Option<Project>, String> {
     let projects = get_projects_with_tasks()?;
@@ -20,4 +20,8 @@ pub fn add_project(name: String) -> Result<Project, String> {
     }
 
     create_project(name.trim().to_string())
+}
+
+pub fn delete_project(project_id: i32) -> Result<(), String> {
+    delete_project_by_id(project_id)
 }

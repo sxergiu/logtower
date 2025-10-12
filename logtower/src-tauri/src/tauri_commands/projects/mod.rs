@@ -14,3 +14,7 @@ pub fn get_all_projects() -> Result<Vec<Project>, String> {
 pub fn add_project(name: String) -> Result<Project, String> {
     service::add_project(name)
 }
+
+#[tauri::command]
+pub fn delete_project(project_id: i32) -> Result<(), String> { service::delete_project(project_id) }
+

@@ -41,7 +41,9 @@ export class ManageProjects {
   }
 
   deleteProject(projectId: number): void {
-    this.projects.set(this.projects().filter(p => p.id !== projectId));
+    this.projectService.deleteProject(projectId).then(() => {
+      this.projects.set(this.projects().filter(p => p.id !== projectId));
+    });
   }
 
   // startEditProject(project: Project): void {

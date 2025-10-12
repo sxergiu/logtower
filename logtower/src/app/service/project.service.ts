@@ -31,4 +31,8 @@ export class ProjectService {
     this.projects.update(prev => [...prev, newProject]);
   }
 
+  deleteProject(projectId: number) {
+    return invoke('delete_project', { projectId }) as Promise<void>;
+  }
+
 }
