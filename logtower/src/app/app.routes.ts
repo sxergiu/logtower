@@ -3,7 +3,7 @@ import {Dashboard} from "./dashboard/dashboard";
 import {ViewLogs} from "./view-logs/view-logs";
 import {Settings} from "./settings/settings";
 import {QuickLog} from "./quick-log/quick-log";
-import {ManageProjects} from "./settings/manage-projects/manage-projects";
+import {ManageProjects} from "./manage-projects/manage-projects";
 
 export const routes: Routes = [
 

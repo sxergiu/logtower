@@ -1,6 +1,13 @@
 <div class="row">
-    <button (click)="goToDashboard()" class="logs-btn"> < </button>
-    <h2 class="text-xl font-bold"> Log Context </h2>
+    <button (click)="goToDashboard()" class="logs-btn svg-white">
+        <div class="svg-icon">
+            <img ngSrc="assets/back-arrow.svg" alt="Go Back" width="20" height="20">
+        </div>
+    </button>
+    <div class="page-header">
+        <h2> Logtower Context </h2>
+        <span> What are you logging for? </span>
+    </div>
 </div>
 
 <div class="setup">
@@ -14,30 +21,28 @@
     <div class="settings">
         <h2> Change Setup </h2>
 
-            <select [value]="settings()?.activeProjectId ?? ''"
-                    (change)="setActiveProject($any($event.target).value ? +$any($event.target).value : null)">
-                <option value=""> {{ activeProject?.name }} </option>
-                @for (project of projects(); track project.id) {
-                    <option [value]="project.id">{{ project.name }}</option>
+        <select
+                [ngModel]="settings()?.activeProjectId"
+                (ngModelChange)="setActiveProject($event)"
+        >
+            @for (project of projects(); track project.id) {
+                @if( tasksByProject()[project.id].length !== 0) {
+                    <option [ngValue]="project.id">{{ project.name }}</option>
                 }
-            </select>
+            }
+        </select>
 
-            <select [value]="settings()?.activeTaskId ?? ''"
-                    (change)="setActiveTask($any($event.target).value ? +$any($event.target).value : null)"
-                    [disabled]="!activeProject">
-                <option value=""> {{ activeTask?.name }}</option>
-                @if (activeProject) {
-                    @for (task of tasksByProject()[activeProject.id]; track task.id) {
-                        <option [value]="task.id">{{ task.name }}</option>
-                    }
+        <select
+                [ngModel]="settings()?.activeTaskId"
+                (ngModelChange)="setActiveTask($event)"
+                [disabled]="!activeProject"
+        >
+            @if (activeProject) {
+                @for (task of tasksByProject()[activeProject.id]; track task.id) {
+                    <option [ngValue]="task.id">{{ task.name }}</option>
                 }
-            </select>
+            }
+        </select>
     </div>
 </div>
 
-
-<div class="manage-section">
-    <button class="logs-btn manage-btn" (click)="goToManage()">
-        Manage Projects
-    </button>
-</div>

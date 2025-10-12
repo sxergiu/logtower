@@ -60,12 +60,3 @@
     color: #888;
     cursor: not-allowed;
 }
-
-.manage-section {
-    display: flex;
-    justify-content: center;
-}
-
-.manage-btn {
-    width: 90%;
-}
