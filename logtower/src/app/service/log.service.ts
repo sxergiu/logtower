@@ -1,18 +1,40 @@
 
-import {inject, Injectable} from '@angular/core';
+import {effect, inject, Injectable, signal} from '@angular/core';
 import { invoke} from "@tauri-apps/api/core";
 import { LogEntry } from '../models/log-entry.model';
 import {TaskService} from "./task.service";
 import {ProjectService} from "./project.service";
+import {listen} from "@tauri-apps/api/event";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'root'})
 export class LogService {
 
     private taskService = inject(TaskService);
     private projectService = inject(ProjectService);
 
+    logs = signal<LogEntry[]>([]);
+
+    constructor() {
+        this.fetchLogs();
+        this.setupEventListeners();
+    }
+
+    private async setupEventListeners() {
+        // Listen for log updates from other windows
+        await listen('logs-updated', async () => {
+            await this.fetchLogs();
+        });
+    }
+    async fetchLogs() {
+        const logs = await this.getLogs();
+        this.logs.set(logs);
+    }
+
     async addLog(message: string): Promise<void> {
-        await invoke('add_log', { message });
+        const addedLog = await invoke<LogEntry>('add_log', { message });
+        this.logs.update(currentLogs => [...currentLogs, addedLog]);
+        // Emit event to notify other windows
+        await invoke('emit_logs_updated');
     }
 
     async getLogs(): Promise<LogEntry[]> {

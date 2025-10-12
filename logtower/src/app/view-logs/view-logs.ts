@@ -1,8 +1,7 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {LogService} from "../service/log.service";
-import {LogEntry} from "../models/log-entry.model";
 import {NgOptimizedImage} from "@angular/common";
 
 @Component({
@@ -17,22 +16,14 @@ import {NgOptimizedImage} from "@angular/common";
 export class ViewLogs {
 
   router = inject(Router);
+  logService = inject(LogService);
 
-  logs = signal<LogEntry[]>([]);
+  logs = this.logService.logs;
 
-  constructor(private logService: LogService) {}
+  showModal = false;
 
-  async loadLogs() {
-    this.logs.set( await this.logService.getLogs() );
-  }
-
-  async deleteLogs() {
-    await this.logService.deleteAllLogs();
-    await this.loadLogs()
-  }
-
-  ngOnInit() {
-    this.loadLogs();
+  deleteLogs() {
+      this.logService.deleteAllLogs();
   }
 
   goToDashboard() {
