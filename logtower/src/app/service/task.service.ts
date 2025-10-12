@@ -41,4 +41,13 @@ export class TaskService {
   async deleteTask(taskId: number): Promise<void> {
     return await invoke<void>('delete_task', { taskId });
   }
+
+  async renameTask(id: number, newName: string) {
+    try {
+      const updated = await invoke("edit_task", {taskId: id, newName});
+      console.log("Updated:", updated);
+    } catch (err) {
+      console.error("Failed to edit project:", err);
+    }
+  }
 }

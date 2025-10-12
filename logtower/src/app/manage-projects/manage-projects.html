@@ -59,8 +59,6 @@
                                 [(ngModel)]="editProjectValue"
                                 placeholder="Project name"
                                 class="edit-input"
-                                (keyup.enter)="saveProjectEdit(project.id)"
-                                (keyup.escape)="cancelProjectEdit()"
                         />
                         <button (click)="saveProjectEdit(project.id)" class="icon-btn svg-green" title="Save">
                             <div class="svg-icon">

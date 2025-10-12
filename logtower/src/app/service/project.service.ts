@@ -35,4 +35,12 @@ export class ProjectService {
     return invoke('delete_project', { projectId }) as Promise<void>;
   }
 
+  async renameProject(id: number, newName: string) {
+    try {
+      const updated = await invoke("edit_project", {projectId: id, newName});
+      console.log("Updated:", updated);
+    } catch (err) {
+      console.error("Failed to edit project:", err);
+    }
+  }
 }

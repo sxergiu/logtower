@@ -29,8 +29,11 @@ export class ManageProjects {
 
   editingProject: number | null = null;
   editingTask: { projectId: number; taskId: number } | null = null;
-  editProjectValue = '';
-  editTaskValue = '';
+  editProjectValue: string = '';
+  editTaskValue: string = '';
+
+  showEditButtons: number | null = null;
+  expandedProject: number | null = null;
 
   async addProject() {
     const name = this.newProjectName().trim();
@@ -60,6 +63,7 @@ export class ManageProjects {
           )
       );
     }
+    this.projectService.renameProject(projectId, this.editProjectValue);
     this.editingProject = null;
     this.editProjectValue = '';
   }
@@ -116,6 +120,7 @@ export class ManageProjects {
         )
       });
     }
+    this.taskService.renameTask(taskId, this.editTaskValue);
     this.editingTask = null;
     this.editTaskValue = '';
   }
@@ -129,21 +134,6 @@ export class ManageProjects {
     this.router.navigate(['/dashboard']);
   }
 
-  // Add this property to track which project is expanded
-// Change from string | null to number | null
-  expandedProject: number | null = null;
-
-// Update the method parameter type
-//   toggleProject(projectId: number): void {
-//     // If clicking the same project, collapse it
-//     if (this.expandedProject === projectId) {
-//       this.expandedProject = null;
-//     } else {
-//       // Otherwise, expand this project (automatically collapses others)
-//       this.expandedProject = projectId;
-//     }
-//   }
-
 // Update startEditProject parameter type
   startEditProject(project: any): void {
     this.expandedProject = project.id;
@@ -151,12 +141,10 @@ export class ManageProjects {
     this.editProjectValue = project.name;
   }
 
-  // Add this property to track which project's edit buttons are visible
-  showEditButtons: number | null = null;
-
 // Add this method to toggle edit button visibility
   toggleEditButtons(projectId: number): void {
     if (this.showEditButtons === projectId) {
+
       this.showEditButtons = null;
     } else {
       this.showEditButtons = projectId;
@@ -165,6 +153,10 @@ export class ManageProjects {
 
 // Update toggleProject to hide edit buttons when collapsing
   toggleProject(projectId: number): void {
+
+    this.editingProject = null;
+    this.editingTask = null;
+
     if (this.expandedProject === projectId) {
       this.expandedProject = null;
       this.showEditButtons = null; // Hide edit buttons when collapsing
