@@ -26,7 +26,9 @@
                 (ngModelChange)="setActiveProject($event)"
         >
             @for (project of projects(); track project.id) {
-                <option [ngValue]="project.id">{{ project.name }}</option>
+                @if( tasksByProject()[project.id].length !== 0) {
+                    <option [ngValue]="project.id">{{ project.name }}</option>
+                }
             }
         </select>
 
