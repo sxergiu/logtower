@@ -4,7 +4,8 @@ use rusqlite::params;
 use std::path::PathBuf;
 use std::fs;
 use dirs::data_dir;
-use crate::domain::settings::repository::{get_projects_with_tasks, get_settings};
+use crate::domain::settings::repository::get_settings;
+use crate::domain::projects::repository::get_projects_with_tasks;
 
 pub fn get_db_path() -> PathBuf {
     // Get OS-specific data dir, e.g.:
@@ -104,10 +105,7 @@ pub fn test_connection() {
     match initialize_database() {
         Ok(()) => {
             println!("✅ Database initialization successful!");
-
-            // Import the repository functions
-            use crate::domain::settings::repository::{get_projects_with_tasks, get_settings};
-
+            
             match (get_projects_with_tasks(), get_settings()) {
                 (Ok(projects), Ok(settings)) => {
                     println!("📂 Projects:");
@@ -162,21 +160,21 @@ fn seed_database(conn: &Connection) -> rusqlite::Result<()> {
     // Insert tasks for Alpha
     conn.execute(
         "INSERT INTO tasks (project_id, name) VALUES (?1, ?2)",
-        params![project_alpha_id, "Design database schema"],
+        params![project_alpha_id, "Task #1"],
     )?;
     conn.execute(
         "INSERT INTO tasks (project_id, name) VALUES (?1, ?2)",
-        params![project_alpha_id, "Implement API"],
+        params![project_alpha_id, "Task #2"],
     )?;
 
     // Insert tasks for Beta
     conn.execute(
         "INSERT INTO tasks (project_id, name) VALUES (?1, ?2)",
-        params![project_beta_id, "Write documentation"],
+        params![project_beta_id, "Task #1"],
     )?;
     conn.execute(
         "INSERT INTO tasks (project_id, name) VALUES (?1, ?2)",
-        params![project_beta_id, "Create UI mockups"],
+    params![project_beta_id, "Task #2"],
     )?;
 
     // Default settings
