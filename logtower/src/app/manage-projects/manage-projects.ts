@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {Router} from "@angular/router";
 import {Project} from "../models/project.model";
 import {FormsModule} from "@angular/forms";
@@ -25,25 +25,19 @@ export class ManageProjects {
   projects = this.projectService.projects;
   tasksByProject = this.taskService.tasksByProject;
 
-  newProjectName = '';
+  newProjectName = signal<string>('');
   newTaskNames: { [key: number]: string } = {};
 
-  // Edit state variables
   editingProject: number | null = null;
   editingTask: { projectId: number; taskId: number } | null = null;
   editProjectValue = '';
   editTaskValue = '';
 
-  addProject(): void {
-    if (this.newProjectName.trim()) {
-      const newProject: Project = {
-        id: Date.now(),
-        name: this.newProjectName,
-        createdAt: new Date().toISOString()
-      };
-      this.projects.set([...this.projects(), newProject]);
-      this.newProjectName = '';
-    }
+  async addProject() {
+    const name = this.newProjectName().trim();
+    if (!name) return;
+    await this.projectService.addProject(name);
+    this.newProjectName.set('');
   }
 
   deleteProject(projectId: number): void {

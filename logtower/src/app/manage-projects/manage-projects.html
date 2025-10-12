@@ -15,10 +15,10 @@
         <h2>Add Project</h2>
         <div class="add-section">
             <input
-                    placeholder="New project name"
-                    (keyup.enter)="addProject()"
+                    [(ngModel)]="newProjectName"
+                    placeholder="New project name..."
             />
-            <button class="logs-btn">
+            <button (click)="addProject()" class="logs-btn">
                 Add Project
             </button>
         </div>
