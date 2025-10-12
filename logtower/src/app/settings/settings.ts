@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../service/settings.service';
 import { Project } from '../models/project.model';
 import { Task } from '../models/task.model';
+import {TaskService} from "../service/task.service";
+import {ProjectService} from "../service/project.service";
 
 @Component({
   selector: 'app-settings',
@@ -19,15 +21,12 @@ export class Settings {
 
   router = inject(Router);
   private settingsService = inject(SettingsService);
+  private taskService = inject(TaskService);
+  private projectService = inject(ProjectService);
 
-  // signals for state
   settings = this.settingsService.userSettings;
-  projects = this.settingsService.projects;
-  tasksByProject = this.settingsService.tasksByProject;
-
-  // form inputs
-  newProjectName = signal('');
-  newTaskName = signal('');
+  projects = this.projectService.projects;
+  tasksByProject = this.taskService.tasksByProject;
 
   get activeProject(): Project | null {
     const settings = this.settings();
@@ -46,11 +45,11 @@ export class Settings {
     // Update local settings immediately
     this.settings.update(s => s ? { ...s, activeProjectId: projectId, activeTaskId: null } : s);
 
-    // Optionally fetch tasks if not already loaded
-    if (projectId && !this.tasksByProject()[projectId]?.length) {
-      const tasks = await this.settingsService.getTasksForProject(projectId);
-      this.tasksByProject.update(map => ({ ...map, [projectId]: tasks }));
-    }
+    // // Optionally fetch tasks if not already loaded
+    // if (projectId && !this.tasksByProject()[projectId]?.length) {
+    //   const tasks = await this.taskService.getTasksForProject(projectId);
+    //   this.tasksByProject.update(map => ({ ...map, [projectId]: tasks }));
+    // }
 
     // Persist on backend
     await this.settingsService.setActiveProject(projectId ?? null);
@@ -62,19 +61,19 @@ export class Settings {
     await this.settingsService.setActiveTask(taskId ?? null);
   }
 
-  async addProject() {
-    const name = this.newProjectName().trim();
-    if (!name) return;
-    await this.settingsService.addProject(name);
-    this.newProjectName.set('');
-  }
-
-  async addTask(projectId: number) {
-    const name = this.newTaskName().trim();
-    if (!name) return;
-    await this.settingsService.addTask(projectId, name);
-    this.newTaskName.set('');
-  }
+  // async addProject() {
+  //   const name = this.newProjectName().trim();
+  //   if (!name) return;
+  //   await this.settingsService.addProject(name);
+  //   this.newProjectName.set('');
+  // }
+  //
+  // async addTask(projectId: number) {
+  //   const name = this.newTaskName().trim();
+  //   if (!name) return;
+  //   await this.settingsService.addTask(projectId, name);
+  //   this.newTaskName.set('');
+  // }
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);

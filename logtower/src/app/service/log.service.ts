@@ -3,11 +3,14 @@ import {inject, Injectable} from '@angular/core';
 import { invoke} from "@tauri-apps/api/core";
 import { LogEntry } from '../models/log-entry.model';
 import {SettingsService} from "./settings.service";
+import {TaskService} from "./task.service";
+import {ProjectService} from "./project.service";
 
 @Injectable({ providedIn: 'root' })
 export class LogService {
 
-    private settingsService = inject(SettingsService);
+    private taskService = inject(TaskService);
+    private projectService = inject(ProjectService);
 
     async addLog(message: string): Promise<void> {
         await invoke('add_log', { message });
@@ -22,8 +25,8 @@ export class LogService {
 
         // Fetch all projects and tasks in parallel
         const [projects, tasks] = await Promise.all([
-            Promise.all(projectIds.map(id => this.settingsService.getProjectById(id!))),
-            Promise.all(taskIds.map(id => this.settingsService.getTaskById(id!)))
+            Promise.all(projectIds.map(id => this.projectService.getProjectById(id!))),
+            Promise.all(taskIds.map(id => this.taskService.getTaskById(id!)))
         ]);
 
         // Create lookup maps
