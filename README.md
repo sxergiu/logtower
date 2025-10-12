@@ -11,11 +11,11 @@ Tasks:
 >   - reactive form with validators for unselected setup
 > - lasi unknown task / implement change log msg/task/project 
 >#### [FEATURE] view by project,task
+> >-filter? click?
 >#### [FEATURE] edit log message/ delete log/by task/by project separat
 >#### [ADDON] table scrollbar
 >#### [ADDON] responsiveness?
 >#### [ADDON] Are you sure modal?
->-filter? click?
 >#### [DEPLOYMENT]? cross-platform issues
 >#### [ADDON] handling startup cases/ empty cases
 >#### [DECISION] Remove setup page and enable setup selection in quicklog?
