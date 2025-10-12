@@ -57,7 +57,7 @@ th {
 }
 
 .log-row:hover {
-    background: rgba(252, 158, 63, 0.09);
+    background: var(--logtower-hover);
 }
 
 .log-row:last-child {
