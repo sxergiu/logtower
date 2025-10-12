@@ -67,8 +67,8 @@
     transform: scale(1.1);
 }
 
-.btn-edit:hover img {
-    filter: brightness(0) saturate(100%) invert(29%) sepia(99%) saturate(747%) hue-rotate(190deg) brightness(95%) contrast(97%);
+.svg-grey:hover img {
+    filter: brightness(0) saturate(100%) invert(50%) brightness(101%) contrast(101%);
     transform: scale(1.1);
 }
 
@@ -80,9 +80,34 @@
        min-height: 2.5rem;
 
        h2 {
-           margin: 0;
+           margin: 0 0 0 1rem;
            flex: 1;
        }
+}
+
+.task-edit-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+
+    .edit-input {
+        font-size: 0.95rem;
+        font-weight: 400;
+        border-width: 2px;
+    }
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .add-section {
@@ -110,12 +135,12 @@
     }
 }
 
-   .edit-section {
-       display: flex;
-       align-items: center;
-       gap: 0.5rem;
-       flex: 1;
-   }
+.edit-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
 
 .edit-input {
     flex: 1;
@@ -135,7 +160,7 @@
 
 .task-list-item {
     &:hover {
-        background: #f3f4f6;
+        background: rgba(252, 158, 63, 0.09);;
     }
 
     &:last-child {

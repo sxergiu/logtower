@@ -47,10 +47,10 @@ export class ManageProjects {
     this.projects.set(this.projects().filter(p => p.id !== projectId));
   }
 
-  startEditProject(project: Project): void {
-    this.editingProject = project.id;
-    this.editProjectValue = project.name;
-  }
+  // startEditProject(project: Project): void {
+  //   this.editingProject = project.id;
+  //   this.editProjectValue = project.name;
+  // }
 
   saveProjectEdit(projectId: number): void {
     if (this.editProjectValue.trim()) {
@@ -129,4 +129,48 @@ export class ManageProjects {
     this.router.navigate(['/dashboard']);
   }
 
+  // Add this property to track which project is expanded
+// Change from string | null to number | null
+  expandedProject: number | null = null;
+
+// Update the method parameter type
+//   toggleProject(projectId: number): void {
+//     // If clicking the same project, collapse it
+//     if (this.expandedProject === projectId) {
+//       this.expandedProject = null;
+//     } else {
+//       // Otherwise, expand this project (automatically collapses others)
+//       this.expandedProject = projectId;
+//     }
+//   }
+
+// Update startEditProject parameter type
+  startEditProject(project: any): void {
+    this.expandedProject = project.id;
+    this.editingProject = project.id;
+    this.editProjectValue = project.name;
+  }
+
+  // Add this property to track which project's edit buttons are visible
+  showEditButtons: number | null = null;
+
+// Add this method to toggle edit button visibility
+  toggleEditButtons(projectId: number): void {
+    if (this.showEditButtons === projectId) {
+      this.showEditButtons = null;
+    } else {
+      this.showEditButtons = projectId;
+    }
+  }
+
+// Update toggleProject to hide edit buttons when collapsing
+  toggleProject(projectId: number): void {
+    if (this.expandedProject === projectId) {
+      this.expandedProject = null;
+      this.showEditButtons = null; // Hide edit buttons when collapsing
+    } else {
+      this.expandedProject = projectId;
+      this.showEditButtons = null; // Reset edit buttons for new project
+    }
+  }
 }
