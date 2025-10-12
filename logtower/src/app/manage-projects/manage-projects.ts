@@ -2,8 +2,9 @@ import {Component, inject} from '@angular/core';
 import {Router} from "@angular/router";
 import {Project} from "../models/project.model";
 import {FormsModule} from "@angular/forms";
-import {SettingsService} from "../service/settings.service";
 import {NgOptimizedImage} from "@angular/common";
+import {ProjectService} from "../service/project.service";
+import {TaskService} from "../service/task.service";
 
 @Component({
   selector: 'app-manage-projects',
@@ -16,11 +17,13 @@ import {NgOptimizedImage} from "@angular/common";
 })
 export class ManageProjects {
 
-  settingsService = inject(SettingsService);
   router = inject(Router);
 
-  projects = this.settingsService.projects;
-  tasksByProject = this.settingsService.tasksByProject;
+  projectService = inject(ProjectService);
+  taskService = inject(TaskService);
+
+  projects = this.projectService.projects;
+  tasksByProject = this.taskService.tasksByProject;
 
   newProjectName = '';
   newTaskNames: { [key: number]: string } = {};
