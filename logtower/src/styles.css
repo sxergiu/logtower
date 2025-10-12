@@ -8,7 +8,7 @@ html {
     --logtower-wood-dark: #f83601;
     --logtower-green-dark: #0c3e02;
     --logtower-red: #fb2222;
-    --logtower-hover: rgba(252, 158, 63, 0.09);
+    --logtower-hover: rgba(0, 0, 0, 0.1);
     --logtower-gradient: linear-gradient(135deg, var(--logtower-wood) 0%, var(--logtower-wood-dark) 100%);
     --logtower-green-gradient: linear-gradient(135deg, var(--logtower-green) 0%, var(--logtower-green-dark) 100%);
     --logtower-font: 'SF Mono', 'Monaco', 'Cascadia Code';

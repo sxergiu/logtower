@@ -16,8 +16,8 @@
 }
 
 .log-manager-card {
-    background: #fff;
-    border: 1px solid #ddd;
+    background: white;
+    border: 2px solid #ddd;
     border-radius: 10px;
     padding: 1.5rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -49,6 +49,14 @@
 
     span {
         margin-left: 1rem;
+    }
+
+    &:hover {
+        background-color: var(--logtower-hover);
+    }
+
+    &:last-child {
+        margin-bottom: 0;
     }
 }
 
@@ -155,15 +163,5 @@
         outline: none;
         border-color: var(--logtower-wood);
         box-shadow: rgba(255, 255, 255, 0.07) 2px 2px;
-    }
-}
-
-.task-list-item {
-    &:hover {
-        background: rgba(252, 158, 63, 0.09);;
-    }
-
-    &:last-child {
-        margin-bottom: 0;
     }
 }
