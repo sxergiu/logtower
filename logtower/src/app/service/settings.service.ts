@@ -1,8 +1,6 @@
 import {inject, Injectable, signal} from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
-import { Project } from '../models/project.model';
 import { UserSettings } from '../models/user-settings.model';
-import { Task } from '../models/task.model';
 import {TaskService} from "./task.service";
 import {ProjectService} from "./project.service";
 

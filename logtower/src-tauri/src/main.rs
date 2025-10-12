@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
-use tauri_plugin_global_shortcut::{Code, Modifiers, Shortcut, GlobalShortcutExt};
+use tauri::{Emitter, Manager};
+use tauri_plugin_global_shortcut::{ GlobalShortcutExt};
 
 mod data;
 mod domain;

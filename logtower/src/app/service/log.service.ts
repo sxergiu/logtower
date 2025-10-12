@@ -2,7 +2,6 @@
 import {inject, Injectable} from '@angular/core';
 import { invoke} from "@tauri-apps/api/core";
 import { LogEntry } from '../models/log-entry.model';
-import {SettingsService} from "./settings.service";
 import {TaskService} from "./task.service";
 import {ProjectService} from "./project.service";
 
