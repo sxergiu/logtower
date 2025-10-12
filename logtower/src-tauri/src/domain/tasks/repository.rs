@@ -35,3 +35,21 @@ pub fn remove_task(task_id: i32) -> Result<(), String> {
 
     Ok(())
 }
+
+
+pub fn update_task(task_id: i32, new_name: String) -> Result<(), String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+
+    let rows_affected = conn
+        .execute(
+            "UPDATE tasks SET name = ?1 WHERE id = ?2",
+            params![new_name, task_id],
+        )
+        .map_err(|e| e.to_string())?;
+
+    if rows_affected == 0 {
+        return Err(format!("Project with id {} not found", task_id));
+    }
+
+    Ok(())
+}

@@ -13,9 +13,8 @@ use crate::service::hotkey::service::create_hotkey_window;
 use tauri_commands::logs::{add_log, get_logs, delete_all_logs};
 use tauri_commands::hotkey::{ hide_window, test_hotkey_event };
 use tauri_commands::settings::{get_current_settings, set_active_project, set_active_task};
-use tauri_commands::projects::{add_project, get_all_projects, get_project_by_id, delete_project};
-use tauri_commands::tasks::{add_task, get_task_by_id, get_tasks_for_project,delete_task};
-
+use tauri_commands::projects::{add_project, get_all_projects, get_project_by_id, delete_project,edit_project};
+use tauri_commands::tasks::{add_task, get_task_by_id, get_tasks_for_project,delete_task,edit_task};
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! Log your logs.", name)
@@ -62,9 +61,9 @@ fn main() {
             test_hotkey_event, hide_window,
             add_project, add_task,
             get_all_projects, get_tasks_for_project,
-            delete_project,
+            delete_project, edit_project,
             get_project_by_id,  get_task_by_id,
-            delete_task,
+            delete_task, edit_task,
             get_current_settings, set_active_project, set_active_task
         ])
         .run(tauri::generate_context!())

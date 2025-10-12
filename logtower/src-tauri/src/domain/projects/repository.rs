@@ -69,11 +69,28 @@ pub fn create_project(name: String) -> Result<Project, String> {
 
 pub fn delete_project_by_id(project_id: i32) -> Result<(), String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
-    
+
     let rows_affected = conn
         .execute(
             "DELETE FROM projects WHERE id = ?1",
             rusqlite::params![project_id],
+        )
+        .map_err(|e| e.to_string())?;
+
+    if rows_affected == 0 {
+        return Err(format!("Project with id {} not found", project_id));
+    }
+
+    Ok(())
+}
+
+pub fn update_project(project_id: i32, new_name: String) -> Result<(), String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+
+    let rows_affected = conn
+        .execute(
+            "UPDATE projects SET name = ?1 WHERE id = ?2",
+            params![new_name, project_id],
         )
         .map_err(|e| e.to_string())?;
 

@@ -1,6 +1,6 @@
 use crate::domain::projects::repository::{get_projects_with_tasks};
 use crate::domain::tasks::models::Task;
-use crate::domain::tasks::repository::{create_task,remove_task};
+use crate::domain::tasks::repository::{create_task, remove_task, update_task};
 
 pub fn get_task_by_id(task_id: i32) -> Result<Option<Task>, String> {
     let projects = get_projects_with_tasks()?;
@@ -40,4 +40,23 @@ pub fn add_task(project_id: i32, name: String) -> Result<Task, String> {
 
 pub fn delete_task(task_id: i32) -> Result<(), String> {
     remove_task(task_id)
+}
+
+pub fn edit_task(task_id: i32, new_name: String) -> Result<Task, String> {
+    if new_name.trim().is_empty() {
+        return Err("Project name cannot be empty".into());
+    }
+
+    if new_name.len() > 100 {
+        return Err("Project name cannot exceed 100 characters".into());
+    }
+
+    // Perform update
+    update_task(task_id, new_name.trim().to_string())?;
+
+    // Return updated project
+    let updated_task = get_task_by_id(task_id)?
+        .ok_or_else(|| format!("Task with id {} not found", task_id))?;
+
+    Ok(updated_task)
 }

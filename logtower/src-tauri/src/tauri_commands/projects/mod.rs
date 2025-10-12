@@ -18,3 +18,5 @@ pub fn add_project(name: String) -> Result<Project, String> {
 #[tauri::command]
 pub fn delete_project(project_id: i32) -> Result<(), String> { service::delete_project(project_id) }
 
+#[tauri::command]
+pub fn edit_project(project_id: i32, new_name: String) -> Result<Project, String> { service::edit_project(project_id, new_name) }
