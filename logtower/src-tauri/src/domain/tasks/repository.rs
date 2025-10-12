@@ -36,7 +36,6 @@ pub fn remove_task(task_id: i32) -> Result<(), String> {
     Ok(())
 }
 
-
 pub fn update_task(task_id: i32, new_name: String) -> Result<(), String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
 

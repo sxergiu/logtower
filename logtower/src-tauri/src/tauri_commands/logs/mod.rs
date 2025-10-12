@@ -1,9 +1,9 @@
-
+use tauri::Emitter;
 use crate::domain::logs::models::LogEntry;
 use crate::service::logs::service;
 
 #[tauri::command]
-pub fn add_log(message: String) -> Result<(), String> {
+pub fn add_log(message: String) -> Result<LogEntry, String> {
     service::add_log(message)
 }
 
@@ -15,4 +15,10 @@ pub fn get_logs() -> Result<Vec<LogEntry>, String> {
 #[tauri::command]
 pub fn delete_all_logs() -> Result<(), String> {
     service::remove_all_logs()
+}
+
+#[tauri::command]
+pub fn emit_logs_updated(app: tauri::AppHandle) -> Result<(), String> {
+    app.emit("logs-updated", ()).map_err(|e| e.to_string())?;
+    Ok(())
 }
