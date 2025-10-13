@@ -23,7 +23,20 @@ export class ViewLogs {
   showModal = false;
 
   deleteLogs() {
-      this.logService.deleteAllLogs();
+    this.showModal = true;
+  }
+
+  confirmDelete() {
+    this.showModal = false;
+    this.performLogDeletion();
+  }
+
+  cancelDelete() {
+    this.showModal = false;
+  }
+
+  performLogDeletion() {
+    this.logService.deleteAllLogs();
   }
 
   goToDashboard() {

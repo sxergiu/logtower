@@ -1,5 +1,5 @@
 
-import {effect, inject, Injectable, signal} from '@angular/core';
+import { inject, Injectable, signal} from '@angular/core';
 import { invoke} from "@tauri-apps/api/core";
 import { LogEntry } from '../models/log-entry.model';
 import {TaskService} from "./task.service";
@@ -64,5 +64,6 @@ export class LogService {
 
     async deleteAllLogs(): Promise<void> {
         await invoke('delete_all_logs');
+        await invoke('emit_logs_updated');
     }
 }
