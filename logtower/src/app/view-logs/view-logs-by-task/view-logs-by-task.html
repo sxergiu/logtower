@@ -1,0 +1,39 @@
+
+<div class="row">
+    <button (click)="goBack()" class="logs-btn svg-white">
+        <div class="svg-icon">
+            <img ngSrc="assets/back-arrow.svg" alt="Go Back" width="20" height="20">
+        </div>
+    </button>
+    <div class="page-header">
+        <h2>Log Viewer</h2>
+        <span>This what you logged for
+            <i><b>{{logsByTask[0].projectName}}</b></i>: <i><b>{{logsByTask[0].taskName}}</b></i></span>
+    </div>
+</div>
+
+<div style="width: 35%;">
+    <div class="log-container">
+        <div class="table-wrapper">
+            <table class="log-table">
+                <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for (log of logsByTask; track log.id) {
+                        <tr class="log-row">
+                            <td class="timestamp">
+                                <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
+                                <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
+                            </td>
+                            <td class="message">{{ log.message }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

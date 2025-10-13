@@ -39,10 +39,6 @@ export class ViewLogs {
     this.logService.deleteAllLogs();
   }
 
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
-  }
-
   formatTime(dateString: string): string {
     const timePart = dateString.split(' ')[1];
     return timePart || dateString;
@@ -51,6 +47,18 @@ export class ViewLogs {
   formatDate(dateString: string): string {
     const timePart = dateString.split(' ')[0];
     return timePart || dateString;
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
+  goToProjectView(projectId: number) {
+    this.router.navigate(['/logs', projectId]);
+  }
+
+  goToTaskView(projectId: number,taskId: number) {
+    this.router.navigate(['/logs',projectId,taskId]);
   }
 
 }

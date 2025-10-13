@@ -19,7 +19,7 @@
 
 .table-wrapper {
     position: relative;
-    max-height: 400px;
+    max-height: 1024px;
     background: #fafafa;
     border-radius: 12px;
     margin-bottom: 1rem;
@@ -70,7 +70,7 @@ td {
 }
 
 .timestamp {
-    min-width: 64px;
+    min-width: 80px;
 }
 
 .time-primary {
@@ -86,13 +86,13 @@ td {
 }
 
 .project {
-    min-width: 64px;
+    min-width: 128px;
 }
 
 .project-badge {
     display: inline-block;
     padding: 4px 10px;
-    background: linear-gradient(135deg, var(--logtower-wood) 0%, var(--logtower-wood-dark) 100%);
+    background: var(--logtower-gradient);
     color: white;
     border-radius: 6px;
     font-size: 11px;
@@ -102,16 +102,36 @@ td {
 }
 
 .project-badge:hover {
-   background: var(--logtower-wood);
+    background: var(--logtower-wood);
     transform: scale(1.05);
+    cursor: pointer;
 }
 
 .task {
     color: black;
     font-weight: 500;
     font-size: 13px;
-    min-width: 256px;
+    min-width: 128px;
 }
+
+.task-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--logtower-green-gradient);
+    color: white;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.task-badge:hover {
+    background: var(--logtower-green);
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
 
 .source {
     color: #a1a1aa;

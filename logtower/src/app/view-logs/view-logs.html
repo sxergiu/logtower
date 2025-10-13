@@ -31,9 +31,15 @@
                             <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
                         </td>
                         <td class="project">
-                            <span class="project-badge">{{ log.projectName }}</span>
+                            <span class="project-badge" (click)="this.goToProjectView(log.project_id)">
+                                {{ log.projectName }}
+                            </span>
                         </td>
-                        <td class="task">{{ log.taskName }}</td>
+                        <td class="task">
+                          <span class="task-badge" (click)="this.goToTaskView(log.project_id,log.task_id)">
+                              {{ log.taskName }}
+                          </span>
+                        </td>
                         <td class="message">{{ log.message }}</td>
                     </tr>
                 }
