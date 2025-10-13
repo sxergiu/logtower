@@ -143,8 +143,11 @@ export class ManageProjects {
 
 // Add this method to toggle edit button visibility
   toggleEditButtons(projectId: number): void {
-    if (this.showEditButtons === projectId) {
 
+    this.editingProject = null;
+    this.editingTask = null;
+
+    if (this.showEditButtons === projectId) {
       this.showEditButtons = null;
     } else {
       this.showEditButtons = projectId;

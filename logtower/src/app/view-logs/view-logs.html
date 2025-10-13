@@ -31,9 +31,15 @@
                             <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
                         </td>
                         <td class="project">
-                            <span class="project-badge">{{ log.projectName }}</span>
+                            <span class="project-badge" (click)="this.goToProjectView(log.project_id)">
+                                {{ log.projectName }}
+                            </span>
                         </td>
-                        <td class="task">{{ log.taskName }}</td>
+                        <td class="task">
+                          <span class="task-badge" (click)="this.goToTaskView(log.project_id,log.task_id)">
+                              {{ log.taskName }}
+                          </span>
+                        </td>
                         <td class="message">{{ log.message }}</td>
                     </tr>
                 }
@@ -48,19 +54,22 @@
                         (click)="deleteLogs()"
                         class="delete-logs-btn"
                 >
-                    <div class="svg-icon">
-                        <img ngSrc="assets/trashcan.svg" alt="Delete" width="20" height="20">
-                    </div>
+                    Delete
                 </button>
         }
-        <div>
-            <button
-                    (click)="loadLogs()"
-                    class="logs-btn"
-            >
-                Refresh
-            </button>
-        </div>
+
+        @if(showModal) {
+            <div class="modal-backdrop" (click)="cancelDelete()">
+                <div class="modal-card" (click)="$event.stopPropagation()">
+                    <h2>Delete Logs</h2>
+                    <p>Are you sure you want to delete all logs? This action cannot be undone.</p>
+                    <div class="modal-actions">
+                        <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>
+                        <button (click)="confirmDelete()" class="btn-delete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
 

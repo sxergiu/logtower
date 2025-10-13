@@ -1,0 +1,70 @@
+
+<div class="row">
+    <button (click)="goBack()" class="logs-btn svg-white">
+        <div class="svg-icon">
+            <img ngSrc="assets/back-arrow.svg" alt="Go Back" width="20" height="20">
+        </div>
+    </button>
+    <div class="page-header">
+        <h2>Log Viewer</h2>
+        <span>This what you logged for <i><b>{{logsByProject[0].projectName}}</b></i> </span>
+    </div>
+</div>
+
+<div style="width: 85%">
+    <div class="log-container">
+        <div class="table-wrapper">
+            <table class="log-table">
+                <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Task</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for (log of logsByProject; track log.id) {
+                        <tr class="log-row">
+                            <td class="timestamp">
+                                <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
+                                <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
+                            </td>
+                            <td class="task">
+                                <span class="task-badge" (click)="goToTaskView(log.task_id)">
+                                    {{ log.taskName }}
+                                </span>
+                            </td>
+                            <td class="message">{{ log.message }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<!--    <div class="row">-->
+
+<!--        @if( logs().length !== 0 ) {-->
+<!--            <button-->
+<!--                    (click)="deleteLogs()"-->
+<!--                    class="delete-logs-btn"-->
+<!--            >-->
+<!--                Delete-->
+<!--            </button>-->
+<!--        }-->
+
+<!--        @if(showModal) {-->
+<!--            <div class="modal-backdrop" (click)="cancelDelete()">-->
+<!--                <div class="modal-card" (click)="$event.stopPropagation()">-->
+<!--                    <h2>Delete Logs</h2>-->
+<!--                    <p>Are you sure you want to delete all logs? This action cannot be undone.</p>-->
+<!--                    <div class="modal-actions">-->
+<!--                        <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>-->
+<!--                        <button (click)="confirmDelete()" class="btn-delete">Delete</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        }-->
+<!--    </div>-->
+</div>
+

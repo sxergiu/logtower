@@ -1,8 +1,7 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {LogService} from "../service/log.service";
-import {LogEntry} from "../models/log-entry.model";
 import {NgOptimizedImage} from "@angular/common";
 
 @Component({
@@ -17,26 +16,27 @@ import {NgOptimizedImage} from "@angular/common";
 export class ViewLogs {
 
   router = inject(Router);
+  logService = inject(LogService);
 
-  logs = signal<LogEntry[]>([]);
+  logs = this.logService.logs;
 
-  constructor(private logService: LogService) {}
+  showModal = false;
 
-  async loadLogs() {
-    this.logs.set( await this.logService.getLogs() );
+  deleteLogs() {
+    this.showModal = true;
   }
 
-  async deleteLogs() {
-    await this.logService.deleteAllLogs();
-    await this.loadLogs()
+  confirmDelete() {
+    this.showModal = false;
+    this.performLogDeletion();
   }
 
-  ngOnInit() {
-    this.loadLogs();
+  cancelDelete() {
+    this.showModal = false;
   }
 
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
+  performLogDeletion() {
+    this.logService.deleteAllLogs();
   }
 
   formatTime(dateString: string): string {
@@ -47,6 +47,18 @@ export class ViewLogs {
   formatDate(dateString: string): string {
     const timePart = dateString.split(' ')[0];
     return timePart || dateString;
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
+  goToProjectView(projectId: number) {
+    this.router.navigate(['/logs', projectId]);
+  }
+
+  goToTaskView(projectId: number,taskId: number) {
+    this.router.navigate(['/logs',projectId,taskId]);
   }
 
 }

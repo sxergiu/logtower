@@ -47,12 +47,12 @@
 }
 
 .settings select:focus {
-    box-shadow: 0 0 0 3px rgb(105, 189, 79);
+    box-shadow: 0 0 0 2px var(--logtower-wood);
     outline: none;
 }
 
 .settings select:hover {
-    border-color: var(--logtower-green);
+    border-color: var(--logtower-wood);
 }
 
 .settings select:disabled {
