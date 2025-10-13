@@ -42,6 +42,7 @@ export class Settings {
   }
 
   async setActiveProject(projectId: number | null) {
+    alert(`setting active project id ${projectId}`);
     // Update local settings immediately
     this.settings.update(s => s ? { ...s, activeProjectId: projectId, activeTaskId: null } : s);
 
@@ -57,23 +58,10 @@ export class Settings {
   }
 
   async setActiveTask(taskId: number | null) {
+    alert(`setting active task id ${taskId}`);
     this.settings.update(s => s ? { ...s, activeTaskId: taskId } : s);
     await this.settingsService.setActiveTask(taskId ?? null);
   }
-
-  // async addProject() {
-  //   const name = this.newProjectName().trim();
-  //   if (!name) return;
-  //   await this.settingsService.addProject(name);
-  //   this.newProjectName.set('');
-  // }
-  //
-  // async addTask(projectId: number) {
-  //   const name = this.newTaskName().trim();
-  //   if (!name) return;
-  //   await this.settingsService.addTask(projectId, name);
-  //   this.newTaskName.set('');
-  // }
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);

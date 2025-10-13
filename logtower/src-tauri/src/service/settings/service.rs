@@ -75,6 +75,6 @@ pub fn set_active_task(task_id: Option<i32>) -> Result<(), String> {
             return Err(format!("Task with ID {} does not exist", id));
         }
     }
-
+    println!("Setting active task {} taskid", task_id.unwrap());
     update_active_task(task_id)
 }

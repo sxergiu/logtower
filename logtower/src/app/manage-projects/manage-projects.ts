@@ -76,19 +76,6 @@ export class ManageProjects {
   addTask(projectId: number): void {
     const taskName = this.newTaskNames[projectId];
     if (taskName && taskName.trim()) {
-      const tasks = this.tasksByProject();
-      const projectTasks = tasks[projectId] || [];
-
-      this.tasksByProject.set({
-        ...tasks,
-        [projectId]: [...projectTasks, {
-          id: Date.now(),
-          name: taskName.trim(),
-          completed: false,
-          projectId: projectId
-        }]
-      });
-
       this.taskService.addTask(projectId, taskName);
       this.newTaskNames[projectId] = '';
     }

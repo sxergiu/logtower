@@ -35,8 +35,15 @@ export class TaskService {
     return await invoke<Task | null>('get_task_by_id', { taskId });
   }
 
-  async addTask(projectId: number, name: string): Promise<Task> {
-    return await invoke<Task>('add_task', { projectId, name });
+  async addTask(projectId: number, name: string): Promise<void> {
+    const newTask = await invoke<Task>('add_task', { projectId, name });
+    this.tasksByProject.update(prev => ({
+      ...prev,
+      [projectId]: [
+        ...(prev[projectId] ?? []),
+        newTask
+      ]
+    }));
   }
   async deleteTask(taskId: number): Promise<void> {
     return await invoke<void>('delete_task', { taskId });

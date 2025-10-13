@@ -11,7 +11,7 @@ pub fn create_task(project_id: i32, name: String) -> Result<Task, String> {
     ).map_err(|e| e.to_string())?;
 
     let id = conn.last_insert_rowid() as i32;
-
+    println!("created task id:{}", id);
     Ok(Task {
         id,
         project_id,
@@ -49,6 +49,5 @@ pub fn update_task(task_id: i32, new_name: String) -> Result<(), String> {
     if rows_affected == 0 {
         return Err(format!("Project with id {} not found", task_id));
     }
-
     Ok(())
 }

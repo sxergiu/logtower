@@ -1,18 +1,11 @@
-import {inject, Injectable, signal} from '@angular/core';
+import { Injectable, signal} from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { UserSettings } from '../models/user-settings.model';
-import {TaskService} from "./task.service";
-import {ProjectService} from "./project.service";
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
 
-    taskService = inject(TaskService);
-    projectService = inject(ProjectService);
-
     userSettings = signal<UserSettings | null>(null);
-    projects = this.projectService.projects;
-    tasksByProject = this.taskService.tasksByProject;
 
     constructor() {
         this.loadData();
@@ -20,7 +13,6 @@ export class SettingsService {
 
     async loadData() {
         const userSettings = await this.getCurrentSettings();
-
         this.userSettings.set(userSettings);
 
     }
