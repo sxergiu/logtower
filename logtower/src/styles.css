@@ -72,6 +72,26 @@ html {
     filter: brightness(0) saturate(100%) invert(100%);
 }
 
+.svg-green:hover img {
+    filter: brightness(0) saturate(100%) invert(61%) sepia(42%) saturate(617%) hue-rotate(56deg) brightness(94%) contrast(88%);
+    transform: scale(1.1);
+}
+
+.svg-wood:hover img {
+    filter: brightness(0) saturate(100%) invert(53%) sepia(85%) saturate(900%) hue-rotate(357deg) brightness(90%) contrast(95%);
+    transform: scale(1.1);
+}
+
+.svg-red:hover img {
+    filter: brightness(0) saturate(100%) invert(32%) sepia(94%) saturate(3853%) hue-rotate(346deg) brightness(101%) contrast(101%);
+    transform: scale(1.1);
+}
+
+.svg-grey:hover img {
+    filter: brightness(0) saturate(100%) invert(50%) brightness(101%) contrast(101%);
+    transform: scale(1.1);
+}
+
 .page-header {
     display: flex;
     flex-direction: column;

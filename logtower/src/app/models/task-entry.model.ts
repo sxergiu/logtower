@@ -1,4 +1,4 @@
-export interface Task {
+export interface TaskEntry {
     id: number;
     projectId: number;
     name: string;
