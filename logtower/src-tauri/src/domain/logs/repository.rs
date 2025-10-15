@@ -3,36 +3,19 @@ use crate::data::connection::get_connection;
 use crate::domain::logs::models::LogEntry;
 use crate::domain::settings::repository::get_settings;
 
-pub fn insert_log(message: String) -> Result<LogEntry, String> {
+pub fn insert_log(message: String) -> Result<(),String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
 
     let settings = get_settings()?;
 
+    // Only insert task_id, not project_id
     conn.execute(
-        "INSERT INTO logs (timestamp, message, project_id, task_id) VALUES (datetime('now'), ?1, ?2, ?3)",
-        params![message, settings.active_project_id, settings.active_task_id],
+        "INSERT INTO logs (timestamp, message, task_id) VALUES (datetime('now'), ?1, ?2)",
+        params![message, settings.active_task_id],
     )
         .map_err(|e| e.to_string())?;
 
-    let id = conn.last_insert_rowid() as i32;
-
-    let log: LogEntry = conn.query_row(
-        "SELECT id, timestamp, message, project_id, task_id FROM logs WHERE id = ?1",
-        params![id],
-        |row| {
-            Ok(LogEntry {
-                id: row.get(0)?,
-                timestamp: row.get(1)?,
-                message: row.get(2)?,
-                project_id: row.get(3)?,
-                task_id: row.get(4)?,
-            })
-        },
-    )
-        .map_err(|e| e.to_string())?;
-
-    Ok(log)
-
+    Ok(())
 }
 
 pub fn fetch_logs() -> Result<Vec<LogEntry>, String> {

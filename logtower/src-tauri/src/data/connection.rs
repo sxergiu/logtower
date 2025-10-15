@@ -80,10 +80,8 @@ fn create_tables(conn: &Connection) -> Result<()> {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
             message TEXT NOT NULL,
-            project_id INTEGER,
             task_id INTEGER,
-            FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-            FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
+            FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE
             )
             ",
         [],
