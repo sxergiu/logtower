@@ -13,6 +13,9 @@ pub fn get_logs() -> Result<Vec<LogEntry>, String> {
 }
 
 #[tauri::command]
+pub fn get_logs_with_project() -> Result<Vec<LogEntry>, String> { service::get_logs_with_project() }
+
+#[tauri::command]
 pub fn delete_all_logs() -> Result<(), String> {
     service::remove_all_logs()
 }

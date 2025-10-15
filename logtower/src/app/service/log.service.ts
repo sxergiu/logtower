@@ -38,7 +38,7 @@ export class LogService {
     }
 
     async getLogs(): Promise<LogEntry[]> {
-        const logs = await invoke<LogEntry[]>('get_logs');
+        const logs = await invoke<LogEntry[]>('get_logs_with_project');
 
         // Get unique IDs
         const projectIds = [...new Set(logs.map(l => l.project_id).filter(id => id !== null))];
@@ -57,7 +57,7 @@ export class LogService {
         // Enrich logs
         return logs.map(log => ({
             ...log,
-            projectName: log.project_id ? projectMap.get(log.project_id) ?? 'Unknown Project' : 'No Project',
+            projectName: projectMap.get(log.project_id) ?? 'Unknown Project',
             taskName: log.task_id ? taskMap.get(log.task_id) ?? 'Unknown Task' : 'No Task'
         }));
     }
