@@ -48,11 +48,6 @@ export class ManageProjects {
     });
   }
 
-  // startEditProject(project: Project): void {
-  //   this.editingProject = project.id;
-  //   this.editProjectValue = project.name;
-  // }
-
   saveProjectEdit(projectId: number): void {
     if (this.editProjectValue.trim()) {
       this.projects.set(
