@@ -3,13 +3,15 @@ import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {LogService} from "../service/log.service";
 import {NgOptimizedImage} from "@angular/common";
+import {LogViewFilter} from "./log-view-filter/log-view-filter";
 
 @Component({
   selector: 'app-view-logs',
-    imports: [
-        FormsModule,
-        NgOptimizedImage,
-    ],
+  imports: [
+    FormsModule,
+    NgOptimizedImage,
+    LogViewFilter,
+  ],
   templateUrl: './view-logs.html',
   styleUrl: './view-logs.css'
 })

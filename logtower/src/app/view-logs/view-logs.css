@@ -1,7 +1,7 @@
 
 
 .log-container {
-    padding: 24px;
+    padding: 16px 24px 24px 24px;
     background: var(--logtower-white);
     font-family: var(--logtower-font), monospace;
     color: #e4e4e7;
@@ -20,7 +20,7 @@
 .table-wrapper {
     position: relative;
     max-height: 1024px;
-    background: #fafafa;
+    background: #fff;
     border-radius: 12px;
     margin-bottom: 1rem;
     overflow: auto;
