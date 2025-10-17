@@ -1,0 +1,75 @@
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: -1200px; /* hidden off-screen */
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    z-index: 3000;
+    padding: 1rem;
+    /*border-top-left-radius: 12px;*/
+    /*border-bottom-left-radius: 12px;*/
+}
+
+.drawer.open {
+    right: 0;
+}
+
+/* toggle button */
+.drawer-toggle {
+    position: fixed;
+    right: -8px;
+    transform: translateY(-50%);
+    background: var(--logtower-gradient);
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    cursor: pointer;
+    box-shadow: -2px 0 4px rgba(0,0,0,0.2);
+    z-index: 5000;
+}
+
+.drawer-toggle:hover {
+    transform: translateY(-50%) translateX(-10%);
+}
+
+.drawer-toggle span {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.drawer-toggle span.rotated {
+    transform: rotate(180deg);
+}
+
+@media (min-width: 554px) {
+
+    .drawer {
+        width: 500px;
+        height: 100%;
+    }
+    
+}
+
+@media(min-width: 1032px) {
+    .drawer {
+        width: 1000px;
+        height: auto;
+        border-bottom-left-radius: 12px;
+    }
+}

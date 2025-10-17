@@ -1,4 +1,3 @@
-
 <div class="row">
     <button (click)="goBack()" class="logs-btn svg-white">
         <div class="svg-icon">
@@ -7,33 +6,98 @@
     </button>
     <div class="page-header">
         <h2>Log Viewer</h2>
-        <span>This what you logged for
-            <i><b>{{logsByTask[0].projectName}}</b></i>: <i><b>{{logsByTask[0].taskName}}</b></i></span>
+            <span>Displaying logs for
+                <i><b>{{project()?.name}}</b></i>: <i><b>{{task()?.name}}</b></i>
+            </span>
     </div>
 </div>
 
-<div style="width: 35%;">
-    <div class="log-container">
-        <div class="table-wrapper">
-            <table class="log-table">
-                <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Message</th>
-                </tr>
-                </thead>
-                <tbody>
-                    @for (log of logsByTask; track log.id) {
-                        <tr class="log-row">
-                            <td class="timestamp">
-                                <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
-                                <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
-                            </td>
-                            <td class="message">{{ log.message }}</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+<app-log-view-filter
+        (filteredLogs)="onLogsFiltered($event)"
+        (filterLoading)="onFilterLoading($event)">
+
+</app-log-view-filter>
+
+
+<div class="task-view">
+    <div class="task-view-table">
+        <div class="log-container">
+            <div class="table-wrapper">
+                <table class="log-table">
+                    <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Message</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @for (log of logsByTask(); track log.id) {
+                            <tr class="log-row">
+                                <td class="timestamp">
+                                    <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
+                                    <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
+                                </td>
+                                <td class="message">{{ log.message }}</td>
+                                <td class="actions">
+                                    <button class="icon-btn svg-wood" title="Edit log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../../assets/edit.svg" alt="Edit" width="20" height="20">
+                                        </div>
+                                    </button>
+                                    <button (click)="deleteLog(log.id)" class="icon-btn svg-red" title="Delete log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../../assets/trashcan.svg" alt="Delete" width="20" height="20">
+                                        </div>
+                                    </button>
+                                </td>
+                            </tr>
+
+                        } @empty {
+                            <tr>
+                                <td colspan="2" style="text-align: center;">No logs found for this task</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                @if( logsByTask().length !== 0 ) {
+                    <button
+                            (click)="deleteLogsByTask(task()!.id)"
+                            class="delete-logs-btn"
+                    >
+                        Delete
+                    </button>
+                }
+            </div>
         </div>
     </div>
+
+
+
+
+    <!-- drawer-toggle button -->
+    <div class="drawer-toggle" (click)="toggleDrawer()">
+        <span [class.rotated]="drawerOpen">➤</span>
+    </div>
+
+    <!-- right-side drawer -->
+    @if( drawerOpen ){
+        <div class="modal-backdrop">
+        </div>
+    }
+    <div class="drawer" [class.open]="drawerOpen">
+            <div class="drawer-content">
+                <h2>{{ project()?.name }}</h2>
+
+                <div *ngFor="let task of tasksByProject()[projectId()]; trackBy: trackById"
+                     class="task-list-item"
+                     (click)="setSelectedTask(task)">
+                    {{ task.name }}
+                </div>
+            </div>
+    </div>
+
 </div>

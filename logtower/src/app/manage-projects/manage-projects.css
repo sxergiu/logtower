@@ -1,37 +1,103 @@
 @import "../settings/settings.css";
 
+.search-section {
+    /*border: 2px solid #ddd;*/
+    display: flex;
+    padding: 1rem;
+    justify-content: center;
+
+    input {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s;
+        width: 95%;
+
+        &:focus {
+            outline: none;
+            border: 2px solid var(--logtower-wood);
+            box-shadow: rgba(255, 255, 255, 0.07) 2px 2px;
+        }
+
+        &::placeholder {
+            color: #999;
+        }
+    }
+}
+
+.my-projects-container {
+    display: flex;
+    flex-direction: column;
+    /*!*width: 100%;*!*/
+    /*border: 2px solid #ddd;*/
+    /*padding: 0 1rem;*/
+}
+
+.my-projects-header {
+    display: flex;
+    padding: 0.2rem 0;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.project-scroller {
+        height: calc(100vh - 200px);
+        width: 100%;
+        overflow-y: auto; /* enable vertical scrolling */
+        overflow-x: hidden;
+        /*padding-right: 0.5rem; !* optional, for scrollbar spacing *!*/
+        scroll-behavior: smooth; /* nice smooth scroll */
+}
+
 .log-manager-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    justify-content: space-between;
+    /*gap: 2rem;*/
     padding: 1.5rem;
-    background-color: #f7f7f9;
     border-radius: 12px;
 
     h2 {
         margin-block-start: 0;
         margin-block-end: 0;
-        margin: 0 0 1rem 0;
+        /*margin: 0 0 1rem 0;*/
+    }
+
+
+    h1 {
+        /*margin-block-start: 0;*/
     }
 }
 
 .log-manager-card {
+
     background: white;
     border: 2px solid #ddd;
     border-radius: 10px;
-    padding: 1.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .add-section {
     display: flex;
+    flex-direction: column;
     gap: 8px;
     align-items: center;
     justify-content: center;
     align-content: center;
+    flex-wrap: wrap;
 
     input {
         flex: 1;
+    }
+
+    button {
+        margin: 0;
+        width: auto;
     }
 }
 
@@ -60,34 +126,14 @@
     }
 }
 
-.svg-green:hover img {
-    filter: brightness(0) saturate(100%) invert(61%) sepia(42%) saturate(617%) hue-rotate(56deg) brightness(94%) contrast(88%);
-    transform: scale(1.1);
-}
-
-.svg-wood:hover img {
-    filter: brightness(0) saturate(100%) invert(53%) sepia(85%) saturate(900%) hue-rotate(357deg) brightness(90%) contrast(95%);
-    transform: scale(1.1);
-}
-
-.svg-red:hover img {
-    filter: brightness(0) saturate(100%) invert(32%) sepia(94%) saturate(3853%) hue-rotate(346deg) brightness(101%) contrast(101%);
-    transform: scale(1.1);
-}
-
-.svg-grey:hover img {
-    filter: brightness(0) saturate(100%) invert(50%) brightness(101%) contrast(101%);
-    transform: scale(1.1);
-}
-
 .project-header {
        display: flex;
        align-items: center;
        justify-content: space-between;
        margin-bottom: 1rem;
-       min-height: 2.5rem;
+       /*max-height: 0.5rem;*/
 
-       h2 {
+       h3 {
            margin: 0 0 0 1rem;
            flex: 1;
        }
@@ -120,6 +166,7 @@
 
 .add-section {
     display: flex;
+    flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
 
@@ -130,6 +177,7 @@
         border-radius: 6px;
         font-size: 0.95rem;
         transition: border-color 0.2s;
+        width: 95%;
 
         &:focus {
             outline: none;
@@ -140,6 +188,10 @@
         &::placeholder {
             color: #999;
         }
+    }
+
+    button {
+        width: 100%;
     }
 }
 
@@ -163,5 +215,104 @@
         outline: none;
         border-color: var(--logtower-wood);
         box-shadow: rgba(255, 255, 255, 0.07) 2px 2px;
+    }
+}
+
+.project-cards {
+    display: flex;
+    justify-content: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 4.1rem;
+    max-width: 300px;
+
+}
+
+.project-card {
+    max-width: 300px;
+    max-height: 128px;
+
+}
+
+@media(min-height: 800px) {
+
+    /*.project-scroller {*/
+    /*    height: 55vh;*/
+    /*}*/
+
+    .project-cards {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        max-width: 5000px;
+        width: 100%;
+        margin-top: 0;
+        gap: 0;
+        justify-content: space-between;
+    }
+
+    .project-card {
+        max-width: 5000px;
+        width: 45%;
+    }
+
+    .log-manager-container {
+        flex-direction: column;
+    }
+
+    .add-section {
+        input {
+            width: 95%;
+        }
+
+    }
+
+}
+
+.add-project-section {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    gap: 0.5rem;
+
+    input {
+        align-self: center;
+        width: 90%;
+    }
+
+    button {
+        align-self: center;
+        margin: 0;
+        width: 100%;
+    }
+}
+
+@media(min-width: 1000px)  {
+
+    .add-section {
+        flex-direction: row;
+
+        input {
+            width: 100%;
+        }
+
+        button {
+            width: auto;
+        }
+    }
+
+    .add-project-section {
+        flex-direction: row;
+
+        input {
+            width: 100%;
+        }
+
+        button {
+            min-width: 150px;
+            width: auto;
+        }
     }
 }

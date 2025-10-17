@@ -1,0 +1,74 @@
+
+
+
+@if( showFilters ) {
+    <div class="filter-container">
+        <div class="filter-bar">
+            <div style="display: flex; width: 100%; justify-content: flex-end">
+
+                <button (click)="toggleFilters()" class="icon-btn svg-wood"
+                        [title]="showFilters ? 'Hide filters' : 'Show filters'">
+                    <div class="svg-icon">
+                        <img [ngSrc]="showFilters ? '../../assets/eye-on.svg' : '../../assets/eye-off.svg'"
+                             alt="Toggle actions" width="24" height="24">
+                    </div>
+                </button>
+
+            </div>
+                <div class="filter-dropdowns">
+                            <span>Project</span>
+                            <select
+                                    [ngModel]="selectedProjectId"
+                                    (ngModelChange)="setSelectedProject($event)"
+                            >
+                                @for( project of projects(); track project.id) {
+                                    @if(tasks()[project.id].length !== 0) {
+                                    <option [ngValue]="project.id">{{ project.name}} </option>
+                                        }
+                                }
+
+                            </select>
+
+                            <div class="filter-space"></div>
+                            <span>Task</span>
+                            <select
+                                            [ngModel]="selectedTaskId"
+                                            (ngModelChange)="setSelectedTask($event)"
+
+                                    >
+                                    @if( selectedProjectId ) {
+                                            @for (task of tasks()[selectedProjectId]; track task.id) {
+                                                <option [ngValue]="task.id">{{ task.name }}</option>
+                                            }
+                                    }
+
+                            </select>
+
+                            @if( selectedProjectId ) {
+                                    <button (click)="clearFilters()" class="icon-btn svg-red"
+                                            [title]="'Clear filters'">
+                                        <div class="svg-icon">
+                                            <img [ngSrc]="'../../assets/cancel.svg'"
+                                                 alt="Toggle actions" width="24" height="24">
+                                        </div>
+                                    </button>
+                            }
+
+                </div>
+        </div>
+    </div>
+} @else {
+
+    <div class="filter-container">
+        <div  (click)="toggleFilters()" class="no-filter-bar">
+            <button class="icon-btn svg-wood"
+                    [title]="showFilters ? 'Hide filters' : 'Show filters'">
+                <div class="svg-icon">
+                    <img [ngSrc]="showFilters ? '../../assets/eye-on.svg' : '../../assets/eye-off.svg'"
+                         alt="Toggle actions" width="24" height="24">
+                </div>
+            </button>
+        </div>
+    </div>
+
+}

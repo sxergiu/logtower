@@ -7,11 +7,16 @@
     </button>
     <div class="page-header">
         <h2>Log Viewer</h2>
-        <span>This what you logged for <i><b>{{logsByProject[0].projectName}}</b></i> </span>
+        <span>Displaying logs for <i><b>{{logsByProject()[0].projectName}}</b></i> </span>
     </div>
 </div>
 
-<div style="width: 85%">
+<app-log-view-filter (filteredLogs)="onLogsFiltered($event)"
+                     (filterLoading)="onFilterLoading($event)">
+
+</app-log-view-filter>
+
+<div>
     <div class="log-container">
         <div class="table-wrapper">
             <table class="log-table">
@@ -20,10 +25,11 @@
                     <th>Time</th>
                     <th>Task</th>
                     <th>Message</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                    @for (log of logsByProject; track log.id) {
+                    @for (log of logsByProject(); track log.id) {
                         <tr class="log-row">
                             <td class="timestamp">
                                 <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
@@ -35,23 +41,39 @@
                                 </span>
                             </td>
                             <td class="message">{{ log.message }}</td>
+                            <td class="actions">
+                                <button class="icon-btn svg-wood" title="Edit log">
+                                    <div class="svg-icon">
+                                        <img ngSrc="../../../assets/edit.svg" alt="Edit" width="20" height="20">
+                                    </div>
+                                </button>
+                                <button (click)="deleteLog(log.id)" class="icon-btn svg-red" title="Delete log">
+                                    <div class="svg-icon">
+                                        <img ngSrc="../../../assets/trashcan.svg" alt="Delete" width="20" height="20">
+                                    </div>
+                                </button>
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
+
+        <div class="row">
+
+            @if( logsByProject().length !== 0 ) {
+                <button
+                        (click)="deleteLogsByProject(projectId)"
+                        class="delete-logs-btn"
+                >
+                    Delete
+                </button>
+            }
+        </div>
+
+
     </div>
 
-<!--    <div class="row">-->
-
-<!--        @if( logs().length !== 0 ) {-->
-<!--            <button-->
-<!--                    (click)="deleteLogs()"-->
-<!--                    class="delete-logs-btn"-->
-<!--            >-->
-<!--                Delete-->
-<!--            </button>-->
-<!--        }-->
 
 <!--        @if(showModal) {-->
 <!--            <div class="modal-backdrop" (click)="cancelDelete()">-->

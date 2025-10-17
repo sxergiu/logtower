@@ -1,24 +1,31 @@
 
-<main class="container">
+<div class="row" style="height: 56px">
+    <app-settings-drawer>
+    </app-settings-drawer>
+</div>
 
-    <div class="row">
+<main class="menu-container">
 
-        <a href="https://angular.io" target="_blank">
-            <img src="/assets/logtower.svg" class="logo" alt="App logo" />
-        </a>
+        <div class="row">
 
-        <div class="column">
-            <h1 style="margin-bottom: 0.4rem">Welcome to Logtower!</h1>
-<!--            <p>What are you waiting for? Log your logs!</p>-->
-            <p>Press <i><b>Ctrl+Space</b></i> and log your logs!</p>
+            <a href="https://angular.io" target="_blank">
+                <img src="/assets/logtower.svg" class="logo" alt="App logo" />
+            </a>
+
+            <div class="column">
+                <h1 style="margin-bottom: 0.4rem">Welcome to Logtower!</h1>
+    <!--            <p>What are you waiting for? Log your logs!</p>-->
+                <p>Press <i><b>Ctrl+Space</b></i> and log your logs!</p>
+            </div>
+
         </div>
 
-    </div>
-
-    <div class="row">
-        <button class="menu-btn" (click)="goToSettings()"> Setup </button>
-        <button class="menu-btn" (click)="goToLogs()"> Logs </button>
-        <button class="menu-btn" (click)="goToManage()"> Manage </button>
-    </div>
+        <div class="menu">
+    <!--        <button class="menu-btn" (click)="goToSettings()"> Setup </button>-->
+            <button class="menu-btn" (click)="goToLogs()"> Logs </button>
+            <button class="menu-btn" (click)="goToManage()"> Manage </button>
+        </div>
 
 </main>
+
+

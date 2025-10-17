@@ -1,15 +1,17 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {NgOptimizedImage} from "@angular/common";
 import {ProjectService} from "../service/project.service";
 import {TaskService} from "../service/task.service";
+import {SettingsDrawer} from "../settings-drawer/settings-drawer";
 
 @Component({
   selector: 'app-manage-projects',
   imports: [
     FormsModule,
     NgOptimizedImage,
+    SettingsDrawer,
   ],
   templateUrl: './manage-projects.html',
   styleUrl: './manage-projects.css'
@@ -25,6 +27,7 @@ export class ManageProjects {
   tasksByProject = this.taskService.tasksByProject;
 
   newProjectName = signal<string>('');
+  searchQuery = signal<string>(''); // New signal for search
   newTaskNames: { [key: number]: string } = {};
 
   editingProject: number | null = null;
@@ -34,6 +37,17 @@ export class ManageProjects {
 
   showEditButtons: number | null = null;
   expandedProject: number | null = null;
+
+  // Computed signal for filtered projects
+  filteredProjects = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) {
+      return this.projects();
+    }
+    return this.projects().filter(project =>
+        project.name.toLowerCase().includes(query)
+    );
+  });
 
   async addProject() {
     const name = this.newProjectName().trim();
@@ -47,11 +61,6 @@ export class ManageProjects {
       this.projects.set(this.projects().filter(p => p.id !== projectId));
     });
   }
-
-  // startEditProject(project: Project): void {
-  //   this.editingProject = project.id;
-  //   this.editProjectValue = project.name;
-  // }
 
   saveProjectEdit(projectId: number): void {
     if (this.editProjectValue.trim()) {
@@ -121,16 +130,13 @@ export class ManageProjects {
     this.router.navigate(['/dashboard']);
   }
 
-// Update startEditProject parameter type
   startEditProject(project: any): void {
     this.expandedProject = project.id;
     this.editingProject = project.id;
     this.editProjectValue = project.name;
   }
 
-// Add this method to toggle edit button visibility
   toggleEditButtons(projectId: number): void {
-
     this.editingProject = null;
     this.editingTask = null;
 
@@ -141,18 +147,21 @@ export class ManageProjects {
     }
   }
 
-// Update toggleProject to hide edit buttons when collapsing
   toggleProject(projectId: number): void {
-
     this.editingProject = null;
     this.editingTask = null;
 
     if (this.expandedProject === projectId) {
       this.expandedProject = null;
-      this.showEditButtons = null; // Hide edit buttons when collapsing
+      this.showEditButtons = null;
     } else {
       this.expandedProject = projectId;
-      this.showEditButtons = null; // Reset edit buttons for new project
+      this.showEditButtons = null;
     }
   }
+
+  isAddProjectToggled = false;
+    toggleAddProject() {
+        this.isAddProjectToggled = !this.isAddProjectToggled;
+    }
 }

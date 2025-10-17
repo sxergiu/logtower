@@ -1,0 +1,24 @@
+
+<div>
+    <div style="display: flex;justify-content: flex-start; height: 100%">
+        <div class="drawer-toggle" (click)="toggleDrawer()">
+            <span [class.rotated]="drawerOpen">➤</span>
+        </div>
+    </div>
+
+
+    @if( drawerOpen ){
+        <div class="modal-backdrop">
+        </div>
+    }
+
+    <div class="drawer" [class.open]="drawerOpen">
+        <div class="drawer-content">
+            <app-settings
+                >
+
+            </app-settings>
+
+        </div>
+    </div>
+</div>

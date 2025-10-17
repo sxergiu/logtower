@@ -3,12 +3,17 @@ import {Router} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {LogService} from "../service/log.service";
 import {NgOptimizedImage} from "@angular/common";
+import {LogViewFilter} from "./log-view-filter/log-view-filter";
+import {SettingsDrawer} from "../settings-drawer/settings-drawer";
+import {LogEntry} from "../models/log-entry.model";
 
 @Component({
   selector: 'app-view-logs',
     imports: [
         FormsModule,
         NgOptimizedImage,
+        LogViewFilter,
+        SettingsDrawer,
     ],
   templateUrl: './view-logs.html',
   styleUrl: './view-logs.css'
@@ -21,6 +26,8 @@ export class ViewLogs {
   logs = this.logService.logs;
 
   showModal = false;
+  editingLog: number | null = null;
+  editLogValue = '';
 
   deleteLogs() {
     this.showModal = true;
@@ -28,14 +35,14 @@ export class ViewLogs {
 
   confirmDelete() {
     this.showModal = false;
-    this.performLogDeletion();
+    this.performAllLogsDeletion();
   }
 
   cancelDelete() {
     this.showModal = false;
   }
 
-  performLogDeletion() {
+  performAllLogsDeletion() {
     this.logService.deleteAllLogs();
   }
 
@@ -61,4 +68,43 @@ export class ViewLogs {
     this.router.navigate(['/logs',projectId,taskId]);
   }
 
+  deleteLog(id: number) {
+    this.logService.deleteLogById(id);
+  }
+
+  startEditLog(log: any) {
+    this.editingLog = log.id;
+    this.editLogValue = log.message;
+  }
+
+  cancelEditLog() {
+    this.editingLog = null;
+    this.editLogValue = '';
+  }
+
+  saveEditLog(logId: number) {
+    if( this.editLogValue.trim()) {
+
+      const logs = this.logs();
+
+      const updatedLogs = logs.map(log =>
+          log.id === logId ? { ...log, message: this.editLogValue } : log
+      );
+
+      this.logs.set(updatedLogs);
+
+      this.logService.editLog(logId, this.editLogValue);
+      this.editLogValue = '';
+      this.editingLog = null;
+    }
+  }
+
+  onLogsFiltered(logs: LogEntry[]) {
+    this.logs.set(logs);
+  }
+
+  loading=false;
+  onFilterLoading(loading: boolean) {
+    this.loading = loading;
+  }
 }

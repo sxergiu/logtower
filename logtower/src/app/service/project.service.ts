@@ -28,19 +28,16 @@ export class ProjectService {
 
   async addProject(name: string): Promise<void> {
     const newProject = await invoke<Project>('add_project', { name });
-    this.projects.update(prev => [...prev, newProject]);
+    this.projects.update(prev => [newProject,...prev]);
   }
 
-  deleteProject(projectId: number) {
-    return invoke('delete_project', { projectId }) as Promise<void>;
+  async deleteProject(projectId: number) {
+    await invoke('delete_project', { projectId });
+    await invoke('emit_logs_updated');
   }
 
   async renameProject(id: number, newName: string) {
-    try {
-      const updated = await invoke("edit_project", {projectId: id, newName});
-      console.log("Updated:", updated);
-    } catch (err) {
-      console.error("Failed to edit project:", err);
-    }
+    await invoke("edit_project", {projectId: id, newName});
+    await invoke('emit_logs_updated');
   }
 }

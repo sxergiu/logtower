@@ -1,16 +1,23 @@
 
 <div class="row">
-    <button (click)="goToDashboard()" class="logs-btn svg-white">
+    <button (click)="goToDashboard()" class="icon-btn svg-wood">
         <div class="svg-icon">
             <img ngSrc="assets/back-arrow.svg" alt="Go Back" width="20" height="20">
         </div>
     </button>
     <div class="page-header">
         <h2>Log Viewer</h2>
-        <span>This where all your logs end up!</span>
+        <span>All logs eventually end up here!</span>
     </div>
+
+    <app-settings-drawer>
+    </app-settings-drawer>
 </div>
 
+<app-log-view-filter (filteredLogs)="onLogsFiltered($event)"
+                     (filterLoading)="onFilterLoading($event)">>
+
+</app-log-view-filter>
 
 <div class="log-container">
     <div class="table-wrapper">
@@ -21,6 +28,7 @@
                 <th>Project</th>
                 <th>Task</th>
                 <th>Message</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -40,7 +48,45 @@
                               {{ log.taskName }}
                           </span>
                         </td>
-                        <td class="message">{{ log.message }}</td>
+
+                            @if(editingLog === log.id ) {
+                                <td class="message">
+                                    <input
+                                            class="edit-log"
+                                            [(ngModel)]="editLogValue"
+                                            placeholder="Log message.."
+                                    />
+                                </td>
+                                <td class="actions">
+                                    <button (click)="saveEditLog(log.id)" class="icon-btn svg-green" title="Edit log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/save.svg" alt="Edit" width="20" height="20">
+                                        </div>
+                                    </button>
+                                    <button (click)="cancelEditLog()" class="icon-btn svg-red" title="Delete log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/cancel.svg" alt="Delete" width="20" height="20">
+                                        </div>
+                                    </button>
+                                </td>
+                            } @else {
+                                <td class="message">
+                                    {{ log.message }}
+                                </td>
+                                <td class="actions">
+                                    <button (click)="startEditLog(log)" class="icon-btn svg-wood" title="Edit log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/edit.svg" alt="Edit" width="20" height="20">
+                                        </div>
+                                    </button>
+                                    <button (click)="deleteLog(log.id)" class="icon-btn svg-red" title="Delete log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/trashcan.svg" alt="Delete" width="20" height="20">
+                                        </div>
+                                    </button>
+                                </td>
+                            }
+
                     </tr>
                 }
             </tbody>
