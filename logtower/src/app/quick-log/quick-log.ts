@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {LogService} from "../service/log.service";
 import { Window } from '@tauri-apps/api/window';
@@ -11,10 +11,18 @@ import { Window } from '@tauri-apps/api/window';
   templateUrl: './quick-log.html',
   styleUrl: './quick-log.css'
 })
-export class QuickLog {
+export class QuickLog implements AfterViewInit{
 
   newMessage = '';
   constructor(private logService: LogService) {}
+
+  @ViewChild('logInput') logInput!: ElementRef<HTMLInputElement>;
+
+  ngAfterViewInit() {
+    // Give Angular a tick to render the input before focusing
+    setTimeout(() => this.logInput.nativeElement.focus(), 0);
+  }
+
 
   async addLog() {
     if (!this.newMessage.trim()) return;
@@ -36,4 +44,5 @@ export class QuickLog {
     }
   }
 
+  protected readonly close = close;
 }

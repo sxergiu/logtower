@@ -2,10 +2,12 @@
 <div class="quick-log-container">
     <div class="row">
         <input
+                #logInput
                 class="add-log-input"
                 [(ngModel)]="newMessage"
                 placeholder="Enter log message"
-
+                (keyup.enter)="addLog()"
+                (keyup.esc)="closeWindow()"
         />
         <button
                 class="add-log-btn"
