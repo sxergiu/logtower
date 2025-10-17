@@ -1,12 +1,12 @@
 <div class="row">
-    <button (click)="goToDashboard()" class="logs-btn svg-white">
+    <button (click)="goToDashboard()" class="icon-btn svg-wood">
         <div class="svg-icon">
             <img ngSrc="../../assets/back-arrow.svg" alt="Go Back" width="20" height="20">
         </div>
     </button>
     <div class="page-header">
         <h2> Work Tower </h2>
-        <span> Manage your projects and tasks here. </span>
+        <span> Manage projects and tasks here. </span>
     </div>
 
     <app-settings-drawer>
@@ -17,174 +17,199 @@
 
 <div class="log-manager-container">
 
-    <div class="project-cards">
-        <div class="log-manager-card project-card">
-            <h2>Search Project</h2>
-            <div class="add-section">
-                <input
-                        [(ngModel)]="searchQuery"
-                        placeholder="Project name..."
-                />
-            </div>
-        </div>
-
-        <div class="log-manager-card project-card">
-            <h2>Add Project</h2>
-            <div class="add-section">
-                <input
-                        [(ngModel)]="newProjectName"
-                        placeholder="New project name..."
-                />
-                <button (click)="addProject()" class="logs-btn">
-                    Add Project
-                </button>
-            </div>
-        </div>
+    <div class="search-section">
+        <input
+                [(ngModel)]="searchQuery"
+                placeholder="Find project..."
+        />
     </div>
+<!--    <div class="project-cards">-->
+<!--&lt;!&ndash;            <h2>Search Project</h2>&ndash;&gt;-->
 
-    <h1> Your Projects </h1>
+<!--    </div>-->
 
-    @for( project of filteredProjects(); track project.id ) {
+    <div style="height: 1px; background-color: #ccc; width: 100%; margin: 1rem 0;"></div>
 
-        <div class="log-manager-card">
+    <div class="my-projects-container">
 
-            <div style=" display: flex; justify-content: flex-end">
+        <div class="project-scroller">
 
-                @if( expandedProject === project.id ){
-                    <div style="display: flex; justify-content: flex-end">
-                        <button (click)="toggleEditButtons(project.id)" class="icon-btn svg-grey"
-                                [title]="showEditButtons === project.id ? 'Hide actions' : 'Show actions'">
+            <div style="padding: 0 2rem">
+                <div class="my-projects-header">
+                    <h2> My Projects </h2>
+                    <div style=" display: flex; justify-content: flex-end">
+                        <button (click)="toggleAddProject()" class="icon-btn svg-wood" title="Expand/Collapse">
                             <div class="svg-icon">
-                                <img [ngSrc]="showEditButtons === project.id ? '../../assets/gear-off.svg' : '../../assets/gear-on.svg'"
-                                     alt="Toggle actions" width="20" height="20">
+                                <img [ngSrc]="isAddProjectToggled ? '../../assets/minus.svg' : '../../assets/plus.svg'"
+                                     alt="Toggle" width="16" height="16">
                             </div>
                         </button>
                     </div>
-                }
+                </div>
+            @if( isAddProjectToggled ) {
 
-                <button (click)="toggleProject(project.id)" class="icon-btn svg-grey" title="Expand/Collapse">
-                    <div class="svg-icon">
-                        <img [ngSrc]="expandedProject === project.id ? '../../assets/chevron-up.svg' : '../../assets/chevron-down.svg'"
-                             alt="Toggle" width="20" height="20">
+                <div class="log-manager-card">
+                    <div style="margin-left:1rem">
+                        <h3>Create New</h3>
                     </div>
-                </button>
-            </div>
-
-            <!-- Project Header with Edit Mode -->
-            <div class="project-header">
-                @if (editingProject === project.id) {
-                    <!-- Edit Mode -->
-                    <div class="edit-section">
-                        <input
-                                [(ngModel)]="editProjectValue"
-                                placeholder="Project name"
-                                class="edit-input"
-                        />
-                        <button (click)="saveProjectEdit(project.id)" class="icon-btn svg-green" title="Save">
-                            <div class="svg-icon">
-                                <img ngSrc="../../assets/save.svg" alt="Save" width="20" height="20">
-                            </div>
-                        </button>
-                        <button (click)="cancelProjectEdit()" class="icon-btn svg-red" title="Cancel">
-                            <div class="svg-icon">
-                                <img ngSrc="../../assets/cancel.svg" alt="Cancel" width="20" height="20">
-                            </div>
-                        </button>
-                    </div>
-                } @else {
-
-                    <div style="display: flex; justify-content: center">
-                        <h2>{{project.name}}</h2>
-                    </div>
-
-                    <!-- View Mode with Toggle Buttons -->
-                    <div class="project-title-section">
-                        <div style="display: flex">
-
-                            <div class="action-buttons">
-                                @if (expandedProject === project.id) {
-                                    @if (showEditButtons === project.id) {
-                                        <button (click)="startEditProject(project)" class="icon-btn icon-btn svg-wood" title="Edit project name">
-                                            <div class="svg-icon">
-                                                <img ngSrc="../../assets/edit.svg" alt="Edit" width="20" height="20">
-                                            </div>
-                                        </button>
-                                        <button (click)="deleteProject(project.id)" class="icon-btn svg-red" title="Delete project">
-                                            <div class="svg-icon">
-                                                <img ngSrc="../../assets/trashcan.svg" alt="Delete" width="20" height="20">
-                                            </div>
-                                        </button>
-                                    }
-                                }
-                            </div>
+                        <div class="add-project-section">
+                            <input
+                                    [(ngModel)]="newProjectName"
+                                    placeholder="New project name..."
+                            />
+                            <button (click)="addProject()" class="logs-btn">
+                                Add Project
+                            </button>
                         </div>
+                </div>
+            }
 
-                    </div>
+            <div style="height: 1px; background-color: #ccc; width: 100%; margin: 1rem 0;"></div>
 
-                }
-            </div>
+            @for( project of filteredProjects(); track project.id ) {
 
-            <!-- Show content only when expanded -->
-            @if (expandedProject === project.id) {
+                <div class="log-manager-card">
 
-                <!-- Task List -->
-                @for ( task of tasksByProject()[project.id]; track task.id ) {
-                    <div class="task-list-item">
-                        @if (editingTask?.projectId === project.id && editingTask?.taskId === task.id) {
-                            <!-- Task Edit Mode -->
-                            <div class="task-edit-section">
-                                <input
-                                        [(ngModel)]="editTaskValue"
-                                        placeholder="Task name"
-                                        class="edit-input"
-                                        (keyup.enter)="saveTaskEdit(project.id, task.id)"
-                                        (keyup.escape)="cancelTaskEdit()"
-                                />
-                                <button (click)="saveTaskEdit(project.id, task.id)" class="icon-btn svg-green" title="Save">
+                    <div style=" display: flex; justify-content: flex-end">
+
+                        @if( expandedProject === project.id ){
+                            <div style="display: flex; justify-content: flex-end">
+                                <button (click)="toggleEditButtons(project.id)" class="icon-btn svg-grey"
+                                        [title]="showEditButtons === project.id ? 'Hide actions' : 'Show actions'">
                                     <div class="svg-icon">
-                                        <img ngSrc="../../assets/save.svg" alt="Save" width="18" height="18">
+                                        <img [ngSrc]="showEditButtons === project.id ? '../../assets/gear-off.svg' : '../../assets/gear-on.svg'"
+                                             alt="Toggle actions" width="20" height="20">
                                     </div>
                                 </button>
-                                <button (click)="cancelTaskEdit()" class="icon-btn svg-red" title="Cancel">
+                            </div>
+                        }
+
+                        <button (click)="toggleProject(project.id)" class="icon-btn svg-grey" title="Expand/Collapse">
+                            <div class="svg-icon">
+                                <img [ngSrc]="expandedProject === project.id ? '../../assets/chevron-up.svg' : '../../assets/chevron-down.svg'"
+                                     alt="Toggle" width="20" height="20">
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Project Header with Edit Mode -->
+                    <div class="project-header">
+                        @if (editingProject === project.id) {
+                            <!-- Edit Mode -->
+                            <div class="edit-section">
+                                <input
+                                        [(ngModel)]="editProjectValue"
+                                        placeholder="Project name"
+                                        class="edit-input"
+                                />
+                                <button (click)="saveProjectEdit(project.id)" class="icon-btn svg-green" title="Save">
                                     <div class="svg-icon">
-                                        <img ngSrc="../../assets/cancel.svg" alt="Cancel" width="18" height="18">
+                                        <img ngSrc="../../assets/save.svg" alt="Save" width="20" height="20">
+                                    </div>
+                                </button>
+                                <button (click)="cancelProjectEdit()" class="icon-btn svg-red" title="Cancel">
+                                    <div class="svg-icon">
+                                        <img ngSrc="../../assets/cancel.svg" alt="Cancel" width="20" height="20">
                                     </div>
                                 </button>
                             </div>
                         } @else {
-                            <!-- Task View Mode -->
-                            <span>{{task.name}}</span>
-                            @if (showEditButtons === project.id) {
-                                <div class="task-actions">
-                                    <button (click)="startEditTask(project.id, task)" class="icon-btn svg-wood" title="Edit task name">
-                                        <div class="svg-icon">
-                                            <img ngSrc="../../assets/edit.svg" alt="Edit" width="18" height="18">
-                                        </div>
-                                    </button>
-                                    <button (click)="deleteTask(project.id, task.id)" class="icon-btn svg-red" title="Delete task">
-                                        <div class="svg-icon">
-                                            <img ngSrc="../../assets/trashcan.svg" alt="Delete" width="20" height="20">
-                                        </div>
-                                    </button>
+
+                            <div style="display: flex; justify-content: center">
+                                <h3>{{project.name}}</h3>
+                            </div>
+
+                            <!-- View Mode with Toggle Buttons -->
+                            <div class="project-title-section">
+                                <div style="display: flex">
+
+                                    <div class="action-buttons">
+                                        @if (expandedProject === project.id) {
+                                            @if (showEditButtons === project.id) {
+                                                <button (click)="startEditProject(project)" class="icon-btn icon-btn svg-wood" title="Edit project name">
+                                                    <div class="svg-icon">
+                                                        <img ngSrc="../../assets/edit.svg" alt="Edit" width="20" height="20">
+                                                    </div>
+                                                </button>
+                                                <button (click)="deleteProject(project.id)" class="icon-btn svg-red" title="Delete project">
+                                                    <div class="svg-icon">
+                                                        <img ngSrc="../../assets/trashcan.svg" alt="Delete" width="20" height="20">
+                                                    </div>
+                                                </button>
+                                            }
+                                        }
+                                    </div>
                                 </div>
-                            }
+
+                            </div>
+
                         }
                     </div>
-                }
-                @if( expandedProject === project.id ) {
-                    <!-- Add Task Section -->
-                    <div class="add-section">
-                        <input
-                                [(ngModel)]="newTaskNames[project.id]"
-                                placeholder="New task name"
-                                (keyup.enter)="addTask(project.id)"
-                        />
-                        <button (click)="addTask(project.id)" class="add-logs-btn">
-                            Add Task
-                        </button>
-                    </div>
-                }
+
+                    <!-- Show content only when expanded -->
+                    @if (expandedProject === project.id) {
+
+                        <!-- Task List -->
+                        @for ( task of tasksByProject()[project.id]; track task.id ) {
+                            <div class="task-list-item">
+                                @if (editingTask?.projectId === project.id && editingTask?.taskId === task.id) {
+                                    <!-- Task Edit Mode -->
+                                    <div class="task-edit-section">
+                                        <input
+                                                [(ngModel)]="editTaskValue"
+                                                placeholder="Task name"
+                                                class="edit-input"
+                                                (keyup.enter)="saveTaskEdit(project.id, task.id)"
+                                                (keyup.escape)="cancelTaskEdit()"
+                                        />
+                                        <button (click)="saveTaskEdit(project.id, task.id)" class="icon-btn svg-green" title="Save">
+                                            <div class="svg-icon">
+                                                <img ngSrc="../../assets/save.svg" alt="Save" width="18" height="18">
+                                            </div>
+                                        </button>
+                                        <button (click)="cancelTaskEdit()" class="icon-btn svg-red" title="Cancel">
+                                            <div class="svg-icon">
+                                                <img ngSrc="../../assets/cancel.svg" alt="Cancel" width="18" height="18">
+                                            </div>
+                                        </button>
+                                    </div>
+                                } @else {
+                                    <!-- Task View Mode -->
+                                    <span>{{task.name}}</span>
+                                    @if (showEditButtons === project.id) {
+                                        <div class="task-actions">
+                                            <button (click)="startEditTask(project.id, task)" class="icon-btn svg-wood" title="Edit task name">
+                                                <div class="svg-icon">
+                                                    <img ngSrc="../../assets/edit.svg" alt="Edit" width="18" height="18">
+                                                </div>
+                                            </button>
+                                            <button (click)="deleteTask(project.id, task.id)" class="icon-btn svg-red" title="Delete task">
+                                                <div class="svg-icon">
+                                                    <img ngSrc="../../assets/trashcan.svg" alt="Delete" width="20" height="20">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                        @if( expandedProject === project.id ) {
+                            <!-- Add Task Section -->
+                            <div class="add-section">
+                                <input
+                                        [(ngModel)]="newTaskNames[project.id]"
+                                        placeholder="New task name"
+                                        (keyup.enter)="addTask(project.id)"
+                                />
+                                <button (click)="addTask(project.id)" class="add-logs-btn">
+                                    Add Task
+                                </button>
+                            </div>
+                        }
+                    }
+                </div>
             }
         </div>
-    }
+        </div>
+    </div>
 </div>

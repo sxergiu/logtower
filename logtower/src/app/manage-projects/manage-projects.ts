@@ -159,4 +159,9 @@ export class ManageProjects {
       this.showEditButtons = null;
     }
   }
+
+  isAddProjectToggled = false;
+    toggleAddProject() {
+        this.isAddProjectToggled = !this.isAddProjectToggled;
+    }
 }

@@ -4,14 +4,16 @@ import {FormsModule} from "@angular/forms";
 import {LogService} from "../service/log.service";
 import {NgOptimizedImage} from "@angular/common";
 import {LogViewFilter} from "./log-view-filter/log-view-filter";
+import {SettingsDrawer} from "../settings-drawer/settings-drawer";
 
 @Component({
   selector: 'app-view-logs',
-  imports: [
-    FormsModule,
-    NgOptimizedImage,
-    LogViewFilter,
-  ],
+    imports: [
+        FormsModule,
+        NgOptimizedImage,
+        LogViewFilter,
+        SettingsDrawer,
+    ],
   templateUrl: './view-logs.html',
   styleUrl: './view-logs.css'
 })
