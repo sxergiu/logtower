@@ -8,23 +8,43 @@
         <h2> Work Tower </h2>
         <span> Manage your projects and tasks here. </span>
     </div>
+
+    <app-settings-drawer>
+    </app-settings-drawer>
+
 </div>
 
+
 <div class="log-manager-container">
-    <div class="log-manager-card">
-        <h2>Add Project</h2>
-        <div class="add-section">
-            <input
-                    [(ngModel)]="newProjectName"
-                    placeholder="New project name..."
-            />
-            <button (click)="addProject()" class="logs-btn">
-                Add Project
-            </button>
+
+    <div class="project-cards">
+        <div class="log-manager-card project-card">
+            <h2>Search Project</h2>
+            <div class="add-section">
+                <input
+                        [(ngModel)]="searchQuery"
+                        placeholder="Project name..."
+                />
+            </div>
+        </div>
+
+        <div class="log-manager-card project-card">
+            <h2>Add Project</h2>
+            <div class="add-section">
+                <input
+                        [(ngModel)]="newProjectName"
+                        placeholder="New project name..."
+                />
+                <button (click)="addProject()" class="logs-btn">
+                    Add Project
+                </button>
+            </div>
         </div>
     </div>
 
-    @for( project of projects(); track project.id ) {
+    <h1> Your Projects </h1>
+
+    @for( project of filteredProjects(); track project.id ) {
 
         <div class="log-manager-card">
 

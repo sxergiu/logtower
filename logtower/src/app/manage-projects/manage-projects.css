@@ -5,7 +5,6 @@
     flex-direction: column;
     gap: 2rem;
     padding: 1.5rem;
-    background-color: #f7f7f9;
     border-radius: 12px;
 
     h2 {
@@ -29,9 +28,15 @@
     align-items: center;
     justify-content: center;
     align-content: center;
+    flex-wrap: wrap;
 
     input {
         flex: 1;
+    }
+
+    button {
+        margin: 0.5rem 0;
+        width: 100%;
     }
 }
 
@@ -143,5 +148,47 @@
         outline: none;
         border-color: var(--logtower-wood);
         box-shadow: rgba(255, 255, 255, 0.07) 2px 2px;
+    }
+}
+
+.project-cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.project-card {
+    width: 100%;
+}
+
+@media(min-width: 1044px) {
+
+    .project-cards {
+        flex-wrap: nowrap;
+    }
+
+    .project-card {
+        width: 45%;
+    }
+}
+
+@media(min-width: 554px){
+    .add-section {
+        display: flex;
+        gap: 8px;
+        min-height: 64px;
+        align-items: center;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: nowrap;
+
+        input {
+            flex: 1;
+        }
+
+        button {
+            width: auto;
+        }
     }
 }
