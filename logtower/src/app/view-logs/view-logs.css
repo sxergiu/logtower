@@ -320,7 +320,7 @@ td {
     top: 50%;
     right: -1%;
     transform: translateY(-50%);
-    background-color: var(--logtower-wood);
+    background:var(--logtower-gradient);
     color: white;
     width: 48px;
     height: 48px;

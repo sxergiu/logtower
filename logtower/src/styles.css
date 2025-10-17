@@ -110,24 +110,6 @@ html {
     align-content: center;
 }
 
-
-.menu-btn {
-    padding: 1rem;
-    margin: 5rem;
-    color: #000000;
-    background: var(--logtower-gradient);
-    border: 1px solid #000000;
-    box-shadow: #0f0f0f 2px 2px;
-    width: 100px;
-}
-
-.menu-btn:hover {
-    color: white;
-    outline: none;
-    border: 1px solid white;
-    box-shadow: none;
-}
-
 .column {
     display: flex;
     flex-direction: column;

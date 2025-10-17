@@ -1,10 +1,13 @@
 import {Component, inject} from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import {Router} from "@angular/router";
+import {SettingsDrawer} from "../settings-drawer/settings-drawer";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  imports: [
+    SettingsDrawer
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
