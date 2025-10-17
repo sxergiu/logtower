@@ -62,6 +62,62 @@ export class LogService {
         }));
     }
 
+    async getLogsByProjectId(projectId: number): Promise<LogEntry[]> {
+        const logs = await invoke<LogEntry[]>('get_logs_by_project_id', {
+            projectId
+        });
+
+        // Get unique task IDs
+        const taskIds = [...new Set(logs.map(l => l.task_id).filter(id => id !== null))];
+
+        // Fetch all tasks in parallel
+        const tasks = await Promise.all(
+            taskIds.map(id => this.taskService.getTaskById(id!))
+        );
+
+        // Create lookup map
+        const taskMap = new Map(tasks.filter(t => t !== null).map(t => [t!.id, t!.name]));
+
+        // Get project name once (since all logs are from the same project)
+        const project = await this.projectService.getProjectById(projectId);
+        const projectName = project?.name ?? 'Unknown Project';
+
+        // Enrich logs
+        return logs.map(log => ({
+            ...log,
+            projectName,
+            taskName: log.task_id ? taskMap.get(log.task_id) ?? 'Unknown Task' : 'No Task'
+        }));
+    }
+
+    async getLogsByTaskId(taskId: number): Promise<LogEntry[]> {
+        const logs = await invoke<LogEntry[]>('get_logs_by_task_id', {
+            taskId
+        });
+
+        // Get unique project IDs
+        const projectIds = [...new Set(logs.map(l => l.project_id).filter(id => id !== null))];
+
+        // Fetch all projects in parallel
+        const projects = await Promise.all(
+            projectIds.map(id => this.projectService.getProjectById(id!))
+        );
+
+        // Create lookup map
+        const projectMap = new Map(projects.filter(p => p !== null).map(p => [p!.id, p!.name]));
+
+        // Get task name once (since all logs are from the same task)
+        const task = await this.taskService.getTaskById(taskId);
+        const taskName = task?.name ?? 'Unknown Task';
+
+        // Enrich logs
+        return logs.map(log => ({
+            ...log,
+            projectName: projectMap.get(log.project_id) ?? 'Unknown Project',
+            taskName
+        }));
+    }
+
     async editLog(id: number, newMessage: string) {
         await invoke("edit_log", {logId: id, newMessage});
         await invoke('emit_logs_updated');

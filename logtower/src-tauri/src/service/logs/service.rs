@@ -2,8 +2,6 @@
 
 use crate::domain::logs::models::LogEntry;
 use crate::domain::logs::repository::{insert_log, fetch_logs, delete_all_logs, fetch_logs_with_project, delete_log_by_id, delete_logs_by_task_id, delete_logs_by_project_id, update_log, fetch_logs_by_task_id, fetch_logs_by_project_id};
-use crate::domain::projects::models::Project;
-use crate::domain::projects::repository::{get_projects_with_tasks};
 
 pub fn add_log(message: String) -> Result<(), String> {
     if message.trim().is_empty() {

@@ -7,11 +7,12 @@
     </button>
     <div class="page-header">
         <h2>Log Viewer</h2>
-        <span>Displaying logs for <i><b>{{logsByProject[0].projectName}}</b></i> </span>
+        <span>Displaying logs for <i><b>{{logsByProject()[0].projectName}}</b></i> </span>
     </div>
 </div>
 
-<app-log-view-filter>
+<app-log-view-filter (filteredLogs)="onLogsFiltered($event)"
+                     (filterLoading)="onFilterLoading($event)">
 
 </app-log-view-filter>
 
@@ -28,7 +29,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                    @for (log of logsByProject; track log.id) {
+                    @for (log of logsByProject(); track log.id) {
                         <tr class="log-row">
                             <td class="timestamp">
                                 <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
@@ -60,7 +61,7 @@
 
         <div class="row">
 
-            @if( logsByProject.length !== 0 ) {
+            @if( logsByProject().length !== 0 ) {
                 <button
                         (click)="deleteLogsByProject(projectId)"
                         class="delete-logs-btn"

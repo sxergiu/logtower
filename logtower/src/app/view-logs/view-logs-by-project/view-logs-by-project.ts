@@ -1,4 +1,4 @@
-import {Component, effect, inject } from '@angular/core';
+import {Component, effect, inject, signal, computed } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {LogEntry} from "../../models/log-entry.model";
 import {NgOptimizedImage} from "@angular/common";
@@ -7,26 +7,49 @@ import {LogViewFilter} from "../log-view-filter/log-view-filter";
 
 @Component({
   selector: 'app-view-logs-by-project',
-    imports: [
-        NgOptimizedImage,
-        LogViewFilter
-    ],
+  imports: [
+    NgOptimizedImage,
+    LogViewFilter
+  ],
   templateUrl: './view-logs-by-project.html',
   styleUrl: '../view-logs.css'
 })
 export class ViewLogsByProject{
 
   logService = inject(LogService);
-  logsByProject: LogEntry[] = [] ;
   route = inject(ActivatedRoute);
   router = inject(Router);
 
   projectId = -1;
+
+  // Writable signal for filtered logs
+  filteredLogs = signal<LogEntry[]>([]);
+
+  // Track if filters are active
+  isFiltered = signal<boolean>(false);
+
+  // Default logs from route params
+  defaultLogsByProject = computed(() => {
+    const logs = this.logService.logs();
+    return logs.filter(log => log.project_id === this.projectId);
+  });
+
+  // Display logs: use filtered if available, otherwise use default
+  logsByProject = computed(() =>
+      this.isFiltered() ? this.filteredLogs() : this.defaultLogsByProject()
+  );
+
+  loading = signal<boolean>(false);
+
   constructor() {
     this.projectId = Number(this.route.snapshot.paramMap.get('projectId'));
 
+    // Optional: Load default logs on init
     effect(() => {
-      this.logsByProject = this.logService.logs().filter(log => log.project_id === this.projectId);
+      if (!this.isFiltered()) {
+        // This ensures the default logs are reactive to logService changes
+        this.defaultLogsByProject();
+      }
     });
   }
 
@@ -45,7 +68,7 @@ export class ViewLogsByProject{
   }
 
   goToTaskView(taskId: number) {
-    this.router.navigate(['logs',this.projectId, taskId])
+    this.router.navigate(['logs', this.projectId, taskId])
   }
 
   deleteLogsByProject(projectId: number) {
@@ -54,5 +77,19 @@ export class ViewLogsByProject{
 
   deleteLog(id: number) {
     this.logService.deleteLogById(id);
+  }
+
+  onLogsFiltered(logs: LogEntry[]) {
+    this.filteredLogs.set(logs);
+    this.isFiltered.set(true);
+  }
+
+  onFilterLoading(loading: boolean) {
+    this.loading.set(loading);
+  }
+
+  clearFilters() {
+    this.isFiltered.set(false);
+    this.filteredLogs.set([]);
   }
 }

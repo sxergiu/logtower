@@ -5,6 +5,7 @@ import {LogService} from "../service/log.service";
 import {NgOptimizedImage} from "@angular/common";
 import {LogViewFilter} from "./log-view-filter/log-view-filter";
 import {SettingsDrawer} from "../settings-drawer/settings-drawer";
+import {LogEntry} from "../models/log-entry.model";
 
 @Component({
   selector: 'app-view-logs',
@@ -96,5 +97,14 @@ export class ViewLogs {
       this.editLogValue = '';
       this.editingLog = null;
     }
+  }
+
+  onLogsFiltered(logs: LogEntry[]) {
+    this.logs.set(logs);
+  }
+
+  loading=false;
+  onFilterLoading(loading: boolean) {
+    this.loading = loading;
   }
 }

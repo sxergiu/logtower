@@ -14,7 +14,8 @@
     </app-settings-drawer>
 </div>
 
-<app-log-view-filter>
+<app-log-view-filter (filteredLogs)="onLogsFiltered($event)"
+                     (filterLoading)="onFilterLoading($event)">>
 
 </app-log-view-filter>
 

@@ -9,6 +9,7 @@ import {ProjectService} from "../../service/project.service";
 import {Project} from "../../models/project.model";
 import {TaskEntry} from "../../models/task-entry.model";
 import {LogViewFilter} from "../log-view-filter/log-view-filter";
+import {LogEntry} from "../../models/log-entry.model";
 
 @Component({
   selector: 'app-view-logs-by-task',
@@ -37,8 +38,14 @@ export class ViewLogsByTask {
       { initialValue: { projectId: -1, taskId: -1 } }
   );
 
-  // Use computed instead of effect for derived state
-  logsByTask = computed(() => {
+  // Writable signal for filtered logs
+  filteredLogs = signal<LogEntry[]>([]);
+
+  // Track if filters are active
+  isFiltered = signal<boolean>(false);
+
+  // Default logs from route params
+  defaultLogsByTask = computed(() => {
     const params = this.routeParams();
     const logs = this.logService.logs();
     return logs.filter(log =>
@@ -46,6 +53,11 @@ export class ViewLogsByTask {
         log.task_id === params.taskId
     );
   });
+
+  // Display logs: use filtered if available, otherwise use default
+  logsByTask = computed(() =>
+      this.isFiltered() ? this.filteredLogs() : this.defaultLogsByTask()
+  );
 
   projectId = computed(() => this.routeParams().projectId);
   project = signal<Project | null>(null);
@@ -58,6 +70,7 @@ export class ViewLogsByTask {
       this.getTask();
     });
   }
+
   async getProject() {
     const project = await this.projectService.getProjectById(this.projectId())
     this.project.set(project);
@@ -97,11 +110,25 @@ export class ViewLogsByTask {
   }
 
   deleteLogsByTask(id: number) {
-      this.logService.deleteLogsByTaskId(id);
+    this.logService.deleteLogsByTaskId(id);
   }
 
   deleteLog(id: number) {
     this.logService.deleteLogById(id);
   }
 
+  onLogsFiltered(logs: LogEntry[]) {
+    this.filteredLogs.set(logs);
+    this.isFiltered.set(true);
+  }
+
+  clearFilters() {
+    this.isFiltered.set(false);
+    this.filteredLogs.set([]);
+  }
+
+  loading = false;
+  onFilterLoading(loading: boolean) {
+    this.loading = loading;
+  }
 }
