@@ -75,9 +75,58 @@ pub fn fetch_logs_with_project() -> Result<Vec<LogEntry>, String> {
     Ok(logs)
 }
 
+pub fn update_log(log_id: i32, new_message: String) -> Result<(), String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+
+    let rows_affected = conn
+        .execute(
+            "UPDATE logs SET message = ?1 WHERE id = ?2",
+            params![new_message, log_id],
+        )
+        .map_err(|e| e.to_string())?;
+
+    if rows_affected == 0 {
+        return Err(format!("Project with id {} not found", log_id));
+    }
+
+    Ok(())
+}
+
+
 pub fn delete_all_logs() -> Result<(), String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
     conn.execute("DELETE FROM logs", [])
         .map_err(|e| e.to_string())?;
     Ok(())
+}
+
+pub fn delete_log_by_id(log_id: i32) -> Result<(), String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+    let rows_affected = conn.execute("DELETE FROM logs WHERE id = ?1", params![log_id])
+        .map_err(|e| e.to_string())?;
+
+    if rows_affected == 0 {
+        return Err(format!("No log found with id: {}", log_id));
+    }
+    Ok(())
+}
+
+pub fn delete_logs_by_task_id(task_id: i32) -> Result<usize, String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+    let rows_affected = conn.execute("DELETE FROM logs WHERE task_id = ?1", params![task_id])
+        .map_err(|e| e.to_string())?;
+    Ok(rows_affected)
+}
+
+pub fn delete_logs_by_project_id(project_id: i32) -> Result<usize, String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+
+    // Delete logs where task_id is in tasks that belong to the given project_id
+    let rows_affected = conn.execute(
+        "DELETE FROM logs WHERE task_id IN (SELECT id FROM tasks WHERE project_id = ?1)",
+        params![project_id]
+    )
+        .map_err(|e| e.to_string())?;
+
+    Ok(rows_affected)
 }

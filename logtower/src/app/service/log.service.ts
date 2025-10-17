@@ -62,8 +62,28 @@ export class LogService {
         }));
     }
 
+    async editLog(id: number, newMessage: string) {
+        await invoke("edit_log", {logId: id, newMessage});
+        await invoke('emit_logs_updated');
+    }
+
     async deleteAllLogs(): Promise<void> {
         await invoke('delete_all_logs');
+        await invoke('emit_logs_updated');
+    }
+
+    async deleteLogById(logId: number) {
+        await invoke('delete_log_by_id', {logId} )
+        await invoke('emit_logs_updated');
+    }
+
+    async deleteLogsByTaskId(taskId: number) {
+        await invoke('delete_logs_by_task_id', {taskId} )
+        await invoke('emit_logs_updated');
+    }
+
+    async deleteLogsByProjectId(projectId: number) {
+        await invoke('delete_logs_by_project_id', {projectId} )
         await invoke('emit_logs_updated');
     }
 }

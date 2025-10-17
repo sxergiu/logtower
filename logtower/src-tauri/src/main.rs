@@ -10,11 +10,15 @@ mod tauri_commands;
 use crate::service::hotkey;
 use crate::service::hotkey::service::create_hotkey_window;
 
-use tauri_commands::logs::{add_log, get_logs, delete_all_logs, emit_logs_updated, get_logs_with_project};
+use tauri_commands::logs::{add_log, get_logs, emit_logs_updated, get_logs_with_project,
+                           delete_all_logs, delete_log_by_id,delete_logs_by_project_id,delete_logs_by_task_id
+                           };
 use tauri_commands::hotkey::{ hide_window, test_hotkey_event };
 use tauri_commands::settings::{get_current_settings, set_active_project, set_active_task};
 use tauri_commands::projects::{add_project, get_all_projects, get_project_by_id, delete_project,edit_project};
 use tauri_commands::tasks::{add_task, get_task_by_id, get_tasks_for_project,delete_task,edit_task};
+use crate::tauri_commands::logs::edit_log;
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! Log your logs.", name)
@@ -57,7 +61,8 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             greet,
-            add_log, get_logs, delete_all_logs, emit_logs_updated, get_logs_with_project,
+            add_log, get_logs, delete_all_logs, emit_logs_updated, get_logs_with_project, edit_log,
+            delete_log_by_id, delete_logs_by_project_id, delete_logs_by_task_id,
             test_hotkey_event, hide_window,
             add_project, add_task,
             get_all_projects, get_tasks_for_project,
