@@ -3,7 +3,6 @@
     flex-wrap: wrap;
     gap: 2rem;
     padding: 1.5rem;
-    background-color: #f7f7f9;
     border-radius: 12px;
 }
 
@@ -17,15 +16,15 @@
 }
 
 .settings h2 {
-    margin-bottom: 1rem;
+    /*margin-bottom: 1rem;*/
     font-size: 1.2rem;
     color: #333;
     border-bottom: 2px solid #eee;
-    padding-bottom: 0.5rem;
+    /*padding-bottom: 0.5rem;*/
 }
 
 .settings p {
-    margin: 1.8rem 0;
+
     color: #555;
     font-size: 0.95rem;
 }
@@ -59,4 +58,10 @@
     background-color: #f1f1f1;
     color: #888;
     cursor: not-allowed;
+}
+
+@media(min-width: 1032px) {
+    .settings p {
+        margin: 1.8rem 0;
+    }
 }

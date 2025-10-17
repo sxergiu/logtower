@@ -28,7 +28,7 @@ export class ProjectService {
 
   async addProject(name: string): Promise<void> {
     const newProject = await invoke<Project>('add_project', { name });
-    this.projects.update(prev => [...prev, newProject]);
+    this.projects.update(prev => [newProject,...prev]);
   }
 
   async deleteProject(projectId: number) {
