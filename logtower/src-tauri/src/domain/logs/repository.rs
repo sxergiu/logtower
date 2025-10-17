@@ -18,6 +18,70 @@ pub fn insert_log(message: String) -> Result<(),String> {
     Ok(())
 }
 
+pub fn fetch_logs_by_task_id(task_id: i32) -> Result<Vec<LogEntry>, String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+
+    let mut stmt = conn
+        .prepare(
+            "SELECT l.id, l.timestamp, l.message, t.project_id, l.task_id
+             FROM logs l
+             INNER JOIN tasks t ON l.task_id = t.id
+             WHERE l.task_id = ?1
+             ORDER BY l.timestamp DESC"
+        )
+        .map_err(|e| e.to_string())?;
+
+    let logs_iter = stmt
+        .query_map(params![task_id], |row| {
+            Ok(LogEntry {
+                id: row.get(0)?,
+                timestamp: row.get(1)?,
+                message: row.get(2)?,
+                project_id: row.get(3)?,
+                task_id: row.get(4)?,
+            })
+        })
+        .map_err(|e| e.to_string())?;
+
+    let mut logs = Vec::new();
+    for log in logs_iter {
+        logs.push(log.map_err(|e| e.to_string())?);
+    }
+    Ok(logs)
+}
+
+pub fn fetch_logs_by_project_id(project_id: i32) -> Result<Vec<LogEntry>, String> {
+    let conn = get_connection().map_err(|e| e.to_string())?;
+
+    let mut stmt = conn
+        .prepare(
+            "SELECT l.id, l.timestamp, l.message, t.project_id, l.task_id
+             FROM logs l
+             INNER JOIN tasks t ON l.task_id = t.id
+             WHERE t.project_id = ?1
+             ORDER BY l.timestamp DESC"
+        )
+        .map_err(|e| e.to_string())?;
+
+    let logs_iter = stmt
+        .query_map(params![project_id], |row| {
+            Ok(LogEntry {
+                id: row.get(0)?,
+                timestamp: row.get(1)?,
+                message: row.get(2)?,
+                project_id: row.get(3)?,
+                task_id: row.get(4)?,
+            })
+        })
+        .map_err(|e| e.to_string())?;
+
+    let mut logs = Vec::new();
+    for log in logs_iter {
+        logs.push(log.map_err(|e| e.to_string())?);
+    }
+    Ok(logs)
+}
+
 pub fn fetch_logs() -> Result<Vec<LogEntry>, String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
     let mut stmt = conn

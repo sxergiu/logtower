@@ -10,7 +10,8 @@ mod tauri_commands;
 use crate::service::hotkey;
 use crate::service::hotkey::service::create_hotkey_window;
 
-use tauri_commands::logs::{add_log, get_logs, emit_logs_updated, get_logs_with_project,
+use tauri_commands::logs::{get_logs_by_task_id, get_logs_by_project_id,
+                           add_log, get_logs, emit_logs_updated, get_logs_with_project,
                            delete_all_logs, delete_log_by_id,delete_logs_by_project_id,delete_logs_by_task_id
                            };
 use tauri_commands::hotkey::{ hide_window, test_hotkey_event };
@@ -61,6 +62,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             greet,
+            get_logs_by_task_id, get_logs_by_project_id,
             add_log, get_logs, delete_all_logs, emit_logs_updated, get_logs_with_project, edit_log,
             delete_log_by_id, delete_logs_by_project_id, delete_logs_by_task_id,
             test_hotkey_event, hide_window,
