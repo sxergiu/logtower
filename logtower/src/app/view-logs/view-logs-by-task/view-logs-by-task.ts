@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { NgOptimizedImage } from "@angular/common";
+import {NgForOf, NgOptimizedImage} from "@angular/common";
 import { LogService } from "../../service/log.service";
-import { LogEntry } from "../../models/log-entry.model";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TaskService } from "../../service/task.service";
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -9,10 +8,11 @@ import { map } from 'rxjs';
 import {ProjectService} from "../../service/project.service";
 import {Project} from "../../models/project.model";
 import {TaskEntry} from "../../models/task-entry.model";
+import {LogViewFilter} from "../log-view-filter/log-view-filter";
 
 @Component({
   selector: 'app-view-logs-by-task',
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, LogViewFilter, NgForOf],
   templateUrl: './view-logs-by-task.html',
   styleUrl: '../view-logs.css'
 })
@@ -51,9 +51,12 @@ export class ViewLogsByTask {
   project = signal<Project | null>(null);
   taskId = computed(() => this.routeParams().taskId);
   task = signal<TaskEntry | null>(null);
+
   constructor() {
-    this.getProject();
-    this.getTask();
+    effect(() => {
+      this.getProject();
+      this.getTask();
+    });
   }
   async getProject() {
     const project = await this.projectService.getProjectById(this.projectId())
@@ -82,4 +85,23 @@ export class ViewLogsByTask {
   setSelectedTask(task: any) {
     this.router.navigate(['logs', this.projectId(), task.id]);
   }
+
+  drawerOpen = false;
+
+  toggleDrawer() {
+    this.drawerOpen = !this.drawerOpen;
+  }
+
+  trackById(index: number, item: any) {
+    return item.id;
+  }
+
+  deleteLogsByTask(id: number) {
+      this.logService.deleteLogsByTaskId(id);
+  }
+
+  deleteLog(id: number) {
+    this.logService.deleteLogById(id);
+  }
+
 }

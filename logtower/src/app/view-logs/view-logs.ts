@@ -23,6 +23,8 @@ export class ViewLogs {
   logs = this.logService.logs;
 
   showModal = false;
+  editingLog: number | null = null;
+  editLogValue = '';
 
   deleteLogs() {
     this.showModal = true;
@@ -30,14 +32,14 @@ export class ViewLogs {
 
   confirmDelete() {
     this.showModal = false;
-    this.performLogDeletion();
+    this.performAllLogsDeletion();
   }
 
   cancelDelete() {
     this.showModal = false;
   }
 
-  performLogDeletion() {
+  performAllLogsDeletion() {
     this.logService.deleteAllLogs();
   }
 
@@ -63,4 +65,34 @@ export class ViewLogs {
     this.router.navigate(['/logs',projectId,taskId]);
   }
 
+  deleteLog(id: number) {
+    this.logService.deleteLogById(id);
+  }
+
+  startEditLog(log: any) {
+    this.editingLog = log.id;
+    this.editLogValue = log.message;
+  }
+
+  cancelEditLog() {
+    this.editingLog = null;
+    this.editLogValue = '';
+  }
+
+  saveEditLog(logId: number) {
+    if( this.editLogValue.trim()) {
+
+      const logs = this.logs();
+
+      const updatedLogs = logs.map(log =>
+          log.id === logId ? { ...log, message: this.editLogValue } : log
+      );
+
+      this.logs.set(updatedLogs);
+
+      this.logService.editLog(logId, this.editLogValue);
+      this.editLogValue = '';
+      this.editingLog = null;
+    }
+  }
 }

@@ -3,12 +3,14 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {LogEntry} from "../../models/log-entry.model";
 import {NgOptimizedImage} from "@angular/common";
 import {LogService} from "../../service/log.service";
+import {LogViewFilter} from "../log-view-filter/log-view-filter";
 
 @Component({
   selector: 'app-view-logs-by-project',
-  imports: [
-    NgOptimizedImage
-  ],
+    imports: [
+        NgOptimizedImage,
+        LogViewFilter
+    ],
   templateUrl: './view-logs-by-project.html',
   styleUrl: '../view-logs.css'
 })
@@ -44,5 +46,13 @@ export class ViewLogsByProject{
 
   goToTaskView(taskId: number) {
     this.router.navigate(['logs',this.projectId, taskId])
+  }
+
+  deleteLogsByProject(projectId: number) {
+    this.logService.deleteLogsByProjectId(projectId);
+  }
+
+  deleteLog(id: number) {
+    this.logService.deleteLogById(id);
   }
 }

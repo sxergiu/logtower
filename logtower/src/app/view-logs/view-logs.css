@@ -31,6 +31,23 @@
 .log-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
+}
+
+/* First column (Time) */
+.log-table th:first-child,
+.log-table td:first-child {
+    width: 15%;
+}
+
+.log-table th:last-child,
+.log-table td:last-child {
+    width: 80px;
+    padding-right: 0;
+
+    .icon-btn {
+        padding: 0 6px;
+    }
 }
 
 thead {
@@ -54,6 +71,10 @@ th {
     transition: all 0.2s ease;
     border-bottom: 1px solid #27272a;
     border-left: 3px solid transparent;
+}
+
+.log-row td {
+    vertical-align: middle;
 }
 
 .log-row:hover {
@@ -142,8 +163,11 @@ td {
 .message {
     color: black;
     line-height: 1.5;
-    max-width: 600px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
+
 
 .modal-backdrop {
     position: fixed;
@@ -226,7 +250,7 @@ td {
 }
 
 .task-view-table {
-    width: 60%;
+    width: 100%;
 }
 
 .filter-card-container {
@@ -268,5 +292,74 @@ td {
     &:last-child {
         margin-bottom: 0;
     }
+}
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: -500px; /* hidden off-screen */
+    width: 300px;
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    z-index: 1000;
+    padding: 1rem;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.drawer.open {
+    right: 0;
+}
+
+/* toggle button */
+.drawer-toggle {
+    position: fixed;
+    top: 50%;
+    right: -1%;
+    transform: translateY(-50%);
+    background-color: var(--logtower-wood);
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    cursor: pointer;
+    box-shadow: -2px 0 4px rgba(0,0,0,0.2);
+    z-index: 1100;
+}
+
+.drawer-toggle:hover {
+    transform: translateY(-50%) translateX(-10%);
+}
+
+.drawer-toggle span {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.drawer-toggle span.rotated {
+    transform: rotate(180deg);
+}
+
+/* optional styling for list items */
+.task-list-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.task-list-item:hover {
+    background-color: #f5f5f5;
+}
+
+.edit-log {
+    width: 70%;
 }
 
