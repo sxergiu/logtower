@@ -1,6 +1,6 @@
 import {Component, effect, inject, signal, computed } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {LogEntry} from "../../models/log-entry.model";
+import {LogModel} from "../../models/log.model";
 import {NgOptimizedImage} from "@angular/common";
 import {LogService} from "../../service/log.service";
 import {LogViewFilter} from "../log-view-filter/log-view-filter";
@@ -23,7 +23,7 @@ export class ViewLogsByProject{
   projectId = -1;
 
   // Writable signal for filtered logs
-  filteredLogs = signal<LogEntry[]>([]);
+  filteredLogs = signal<LogModel[]>([]);
 
   // Track if filters are active
   isFiltered = signal<boolean>(false);
@@ -79,7 +79,7 @@ export class ViewLogsByProject{
     this.logService.deleteLogById(id);
   }
 
-  onLogsFiltered(logs: LogEntry[]) {
+  onLogsFiltered(logs: LogModel[]) {
     this.filteredLogs.set(logs);
     this.isFiltered.set(true);
   }

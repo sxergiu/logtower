@@ -6,7 +6,7 @@ import {
     withHooks,
     withMethods
 } from '@ngrx/signals';
-import { computed, effect, inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { LogService } from '../../service/log.service';
 import { LogModel } from '../../models/log.model';
 import { ProjectModel } from '../../models/project.model';
@@ -125,7 +125,7 @@ export const featureLogViewStore = signalStore(
 
         fetchLogsByProjectId: rxMethod<number>(
             pipe(
-                tap((projectId) =>
+                tap(() =>
                     patchState(state, {
                         loading: state.loading() + 1,
                         selectedTask: null,
@@ -140,7 +140,7 @@ export const featureLogViewStore = signalStore(
                             patchState(state, { selectedProject: project })
                         ),
 
-                        switchMap((project) =>
+                        switchMap(() =>
                             from(logService.getLogsByProjectId(projectId)).pipe(
                                 tap((logs) => patchState(state, { logs })),
                                 catchError((error) => {
@@ -185,7 +185,7 @@ export const featureLogViewStore = signalStore(
 
         fetchLogsByTaskId: rxMethod<number>(
             pipe(
-                tap((taskId) =>
+                tap(() =>
                     patchState(state, {
                         loading: state.loading() + 1,
                         selectedProject: null,

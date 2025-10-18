@@ -4,7 +4,7 @@ import {NgOptimizedImage} from "@angular/common";
 import {ProjectService} from "../../service/project.service";
 import {TaskService} from "../../service/task.service";
 import {LogService} from "../../service/log.service";
-import {LogEntry} from "../../models/log-entry.model";
+import {LogModel} from "../../models/log.model";
 import {Router} from "@angular/router";
 
 @Component({
@@ -28,7 +28,7 @@ export class LogViewFilter {
   tasks = this.taskService.tasksByProject;
 
   // Output event to emit filtered logs to parent component
-  filteredLogs = output<LogEntry[]>();
+  filteredLogs = output<LogModel[]>();
 
   // Output event to emit loading state
   filterLoading = output<boolean>();
@@ -55,7 +55,7 @@ export class LogViewFilter {
   async applyFilters() {
     try {
       this.filterLoading.emit(true);
-      let logs: LogEntry[];
+      let logs: LogModel[];
 
       if (this.selectedTaskId) {
         // If task is selected, fetch logs by task (most specific)
@@ -71,6 +71,7 @@ export class LogViewFilter {
       }
 
       this.filteredLogs.emit(logs);
+
     } catch (error) {
       console.error('Error applying filters:', error);
       this.filteredLogs.emit([]);

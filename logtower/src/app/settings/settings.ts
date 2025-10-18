@@ -4,8 +4,8 @@ import {CommonModule} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { SettingsService } from '../service/settings.service';
-import { Project } from '../models/project.model';
-import { TaskEntry } from '../models/task-entry.model';
+import { ProjectModel } from '../models/project.model';
+import { TaskModel } from '../models/task.model';
 import {TaskService} from "../service/task.service";
 import {ProjectService} from "../service/project.service";
 
@@ -28,13 +28,13 @@ export class Settings {
   projects = this.projectService.projects;
   tasksByProject = this.taskService.tasksByProject;
 
-  get activeProject(): Project | null {
+  get activeProject(): ProjectModel | null {
     const settings = this.settings();
     if (!settings?.activeProjectId) return null;
     return this.projects().find((p) => p.id === settings.activeProjectId) ?? null;
   }
 
-  get activeTask(): TaskEntry | null {
+  get activeTask(): TaskModel | null {
     const settings = this.settings();
     const project = this.activeProject;
     if (!settings?.activeTaskId || !project) return null;

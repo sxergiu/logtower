@@ -2,7 +2,6 @@ import {Component, input, output} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {NgOptimizedImage} from "@angular/common";
 import {LogModel} from "../../models/log.model";
-import {ProjectModel} from "../../models/project.model";
 
 @Component({
   selector: 'app-log-view-table',

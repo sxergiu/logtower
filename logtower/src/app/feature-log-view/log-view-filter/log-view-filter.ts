@@ -1,11 +1,8 @@
 import {Component, effect, inject, input, OnInit, output, Signal} from '@angular/core';
 import {NgOptimizedImage} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {Router} from "@angular/router";
 import {ProjectService} from "../../service/project.service";
 import {TaskService} from "../../service/task.service";
-import {LogService} from "../../service/log.service";
-import {LogModel} from "../../models/log.model";
 import {ProjectModel} from "../../models/project.model";
 import {TaskModel} from "../../models/task.model";
 

@@ -5,7 +5,7 @@ import {LogService} from "../service/log.service";
 import {NgOptimizedImage} from "@angular/common";
 import {LogViewFilter} from "./log-view-filter/log-view-filter";
 import {SettingsDrawer} from "../settings-drawer/settings-drawer";
-import {LogEntry} from "../models/log-entry.model";
+import {LogModel} from "../models/log.model";
 
 @Component({
   selector: 'app-view-logs',
@@ -24,6 +24,10 @@ export class ViewLogs {
   logService = inject(LogService);
 
   logs = this.logService.logs;
+
+  constructor() {
+    console.log(this.logs());
+  }
 
   showModal = false;
   editingLog: number | null = null;
@@ -99,7 +103,7 @@ export class ViewLogs {
     }
   }
 
-  onLogsFiltered(logs: LogEntry[]) {
+  onLogsFiltered(logs: LogModel[]) {
     this.logs.set(logs);
   }
 

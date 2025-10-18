@@ -4,8 +4,8 @@ import { LogService } from '../service/log.service';
 import { Window } from '@tauri-apps/api/window';
 import { SettingsService } from '../service/settings.service';
 import { TaskService } from '../service/task.service';
-import { TaskEntry} from "../models/task-entry.model";
-import {Project} from "../models/project.model";
+import { TaskModel} from "../models/task.model";
+import {ProjectModel} from "../models/project.model";
 import {ProjectService} from "../service/project.service";
 import {listen} from "@tauri-apps/api/event";
 
@@ -23,8 +23,8 @@ export class QuickLog implements AfterViewInit {
   activeProjectId = computed(() => this.settingsService.userSettings()?.activeProjectId ?? null);
   activeTaskId = computed(() => this.settingsService.userSettings()?.activeTaskId ?? null);
 
-  activeProject = signal<Project | null>(null);
-  activeTask = signal<TaskEntry | null>(null);
+  activeProject = signal<ProjectModel | null>(null);
+  activeTask = signal<TaskModel | null>(null);
 
   newMessage = '';
 
@@ -41,7 +41,6 @@ export class QuickLog implements AfterViewInit {
 
       if (taskId && taskId > 0) {
         this.loadTask(taskId);
-      } else {
         this.activeTask.set(null);
       }
 

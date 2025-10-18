@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, inject} from '@angular/core';
+import { Component, inject} from '@angular/core';
 import {NgOptimizedImage} from "@angular/common";
 import {Router} from "@angular/router";
 import {LogViewFilter} from "./log-view-filter/log-view-filter";

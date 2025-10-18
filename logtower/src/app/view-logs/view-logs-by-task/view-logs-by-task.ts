@@ -6,10 +6,10 @@ import { TaskService } from "../../service/task.service";
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import {ProjectService} from "../../service/project.service";
-import {Project} from "../../models/project.model";
-import {TaskEntry} from "../../models/task-entry.model";
+import {ProjectModel} from "../../models/project.model";
+import {TaskModel} from "../../models/task.model";
 import {LogViewFilter} from "../log-view-filter/log-view-filter";
-import {LogEntry} from "../../models/log-entry.model";
+import {LogModel} from "../../models/log.model";
 
 @Component({
   selector: 'app-view-logs-by-task',
@@ -39,7 +39,7 @@ export class ViewLogsByTask {
   );
 
   // Writable signal for filtered logs
-  filteredLogs = signal<LogEntry[]>([]);
+  filteredLogs = signal<LogModel[]>([]);
 
   // Track if filters are active
   isFiltered = signal<boolean>(false);
@@ -60,9 +60,9 @@ export class ViewLogsByTask {
   );
 
   projectId = computed(() => this.routeParams().projectId);
-  project = signal<Project | null>(null);
+  project = signal<ProjectModel | null>(null);
   taskId = computed(() => this.routeParams().taskId);
-  task = signal<TaskEntry | null>(null);
+  task = signal<TaskModel | null>(null);
 
   constructor() {
     effect(() => {
@@ -72,6 +72,7 @@ export class ViewLogsByTask {
   }
 
   async getProject() {
+    console.log('viewlogsbytask' + this.projectId())
     const project = await this.projectService.getProjectById(this.projectId())
     this.project.set(project);
   }
@@ -117,7 +118,7 @@ export class ViewLogsByTask {
     this.logService.deleteLogById(id);
   }
 
-  onLogsFiltered(logs: LogEntry[]) {
+  onLogsFiltered(logs: LogModel[]) {
     this.filteredLogs.set(logs);
     this.isFiltered.set(true);
   }
