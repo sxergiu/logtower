@@ -1,4 +1,4 @@
-export interface LogEntry {
+export interface LogModel {
     id: number;
     timestamp: string;
     message: string;

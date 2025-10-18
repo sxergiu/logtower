@@ -1,7 +1,7 @@
 
 import { inject, Injectable, signal} from '@angular/core';
 import { invoke} from "@tauri-apps/api/core";
-import { LogEntry } from '../models/log-entry.model';
+import { LogModel } from '../models/log.model';
 import {TaskService} from "./task.service";
 import {ProjectService} from "./project.service";
 import {listen} from "@tauri-apps/api/event";
@@ -12,7 +12,7 @@ export class LogService {
     private taskService = inject(TaskService);
     private projectService = inject(ProjectService);
 
-    logs = signal<LogEntry[]>([]);
+    logs = signal<LogModel[]>([]);
 
     constructor() {
         this.fetchLogs();
@@ -31,24 +31,34 @@ export class LogService {
     }
 
     async addLog(message: string): Promise<void> {
-        const addedLog = await invoke<LogEntry>('add_log', { message });
+        const addedLog = await invoke<LogModel>('add_log', { message });
         this.logs.update(currentLogs => [...currentLogs, addedLog]);
         // Emit event to notify other windows
         await invoke('emit_logs_updated');
     }
 
-    async getLogs(): Promise<LogEntry[]> {
-        const logs = await invoke<LogEntry[]>('get_logs_with_project');
+    async getLogs(): Promise<LogModel[]> {
+        const logs = await invoke<LogModel[]>('get_logs_with_project');
 
+        console.log(logs);
         // Get unique IDs
         const projectIds = [...new Set(logs.map(l => l.project_id).filter(id => id !== null))];
         const taskIds = [...new Set(logs.map(l => l.task_id).filter(id => id !== null))];
 
+        console.log(projectIds)
         // Fetch all projects and tasks in parallel
+
         const [projects, tasks] = await Promise.all([
-            Promise.all(projectIds.map(id => this.projectService.getProjectById(id!))),
-            Promise.all(taskIds.map(id => this.taskService.getTaskById(id!)))
+            Promise.all(projectIds.map(id => {
+                console.log("Fetching project with ID:", id);
+                return this.projectService.getProjectById(id!);
+            })),
+            Promise.all(taskIds.map(id => {
+                console.log("Fetching task with ID:", id);
+                return this.taskService.getTaskById(id!);
+            }))
         ]);
+
 
         // Create lookup maps
         const projectMap = new Map(projects.filter(p => p !== null).map(p => [p!.id, p!.name]));
@@ -62,8 +72,8 @@ export class LogService {
         }));
     }
 
-    async getLogsByProjectId(projectId: number): Promise<LogEntry[]> {
-        const logs = await invoke<LogEntry[]>('get_logs_by_project_id', {
+    async getLogsByProjectId(projectId: number): Promise<LogModel[]> {
+        const logs = await invoke<LogModel[]>('get_logs_by_project_id', {
             projectId
         });
 
@@ -90,8 +100,8 @@ export class LogService {
         }));
     }
 
-    async getLogsByTaskId(taskId: number): Promise<LogEntry[]> {
-        const logs = await invoke<LogEntry[]>('get_logs_by_task_id', {
+    async getLogsByTaskId(taskId: number): Promise<LogModel[]> {
+        const logs = await invoke<LogModel[]>('get_logs_by_task_id', {
             taskId
         });
 

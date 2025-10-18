@@ -1,6 +1,6 @@
-export interface TaskEntry {
+export interface TaskModel {
     id: number;
-    projectId: number;
+    project_id: number;
     name: string;
     createdAt?: string; // ISO date, optional
     completed?: boolean;
