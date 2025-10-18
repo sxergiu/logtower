@@ -1,20 +1,36 @@
+.quick-log-window {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90vh;
+}
 
-
+.add-log-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    width: 100%;
+}
 .add-log-input {
     margin: 0 1rem;
     border: 1px solid #000000;
     box-shadow: #0f0f0f 2px 2px;
+    width: 85%;
 }
 
 .quick-log-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-content: center;
     margin-top: 1.5rem;
+    width: 100%;
 }
 
 .add-log-btn {
-    margin: 0 1rem;
+    width: 90%;
+    margin: 0.5rem 1rem;
     color: #000000;
     background-color: var(--logtower-wood);
     background: var(--logtower-gradient);
@@ -37,3 +53,36 @@
     box-shadow: none;
     cursor: auto;
 }
+
+.subtle-text {
+    font-size: 0.85rem;
+    color: #888;
+    text-align: left;
+}
+
+.subtle-text strong {
+    color: #555;
+}
+
+@media (min-width: 726px) {
+
+    .quick-log-window {
+        justify-content: space-around;
+    }
+
+    .add-log-btn {
+        width: 15%;
+        margin: 0;
+    }
+
+    .add-log-input {
+        margin: 0;
+        width: 70%;
+    }
+
+    .add-log-section {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+}
+

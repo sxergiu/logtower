@@ -1,6 +1,6 @@
 import {Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { SettingsService } from '../service/settings.service';
@@ -12,7 +12,7 @@ import {ProjectService} from "../service/project.service";
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgOptimizedImage],
+  imports: [CommonModule, FormsModule],
   templateUrl: './settings.html',
   styleUrl: './settings.css',
 })
@@ -46,6 +46,7 @@ export class Settings {
     this.settings.update(s => s ? { ...s, activeProjectId: projectId, activeTaskId: null } : s);
 
     await this.settingsService.setActiveProject(projectId ?? null);
+    await this.settingsService.reloadSettings();
     await this.settingsService.loadData();
   }
 
@@ -53,6 +54,8 @@ export class Settings {
 
     this.settings.update(s => s ? { ...s, activeTaskId: taskId } : s);
     await this.settingsService.setActiveTask(taskId ?? null);
+    await this.settingsService.reloadSettings();
+    await this.settingsService.loadData();
   }
 
   goToDashboard() {

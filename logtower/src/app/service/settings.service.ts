@@ -1,6 +1,7 @@
 import { Injectable, signal} from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { UserSettings } from '../models/user-settings.model';
+import {emit} from "@tauri-apps/api/event";
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
@@ -17,6 +18,11 @@ export class SettingsService {
 
     }
 
+    async reloadSettings() {
+        await this.loadData();
+    }
+
+
     async getCurrentSettings(): Promise<UserSettings> {
         const raw = await invoke<{ active_project_id: number | null, active_task_id: number | null }>(
             'get_current_settings'
@@ -30,9 +36,21 @@ export class SettingsService {
 
     async setActiveProject(projectId?: number | null): Promise<void> {
         await invoke('set_active_project', { projectId: projectId ?? null });
+        // ✅ update signal so subscribers see changes
+        this.userSettings.update((settings) => ({
+            ...(settings ?? { activeProjectId: null, activeTaskId: null }),
+            activeProjectId: projectId ?? null,
+        }));
+        await emit('settings-updated', { type: 'project', projectId });
     }
 
     async setActiveTask(taskId?: number | null): Promise<void> {
         await invoke('set_active_task', { taskId: taskId ?? null });
+        // ✅ update signal so subscribers see changes
+        this.userSettings.update((settings) => ({
+            ...(settings ?? { activeProjectId: null, activeTaskId: null }),
+            activeTaskId: taskId ?? null,
+        }));
+        await emit('settings-updated', { type: 'task', taskId });
     }
 }
