@@ -1,0 +1,86 @@
+
+<div class="log-container">
+    <div class="table-wrapper">
+
+        <div class="table-scroller">
+            <table class="log-table">
+                <thead>
+                <tr>
+                    <th>Time</th>
+                    @if( !isProjectView() ) {
+                        <th>Project</th>
+                    }
+                    @if( !isTaskView() ) {
+                        <th>Task</th>
+                    }
+                    <th>Message</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for (log of logs(); track log.id) {
+                        <tr class="log-row">
+                            <td class="timestamp">
+                                <div class="time-primary">{{ formatTime(log.timestamp) }}</div>
+                                <div class="time-secondary">{{ formatDate(log.timestamp) }}</div>
+                            </td>
+                            @if( !isProjectView() ) {
+                                <td class="project">
+                                    <span class="project-badge" (click)="onProjectBadgeClick(log.project_id)" >
+                                        {{ log.projectName }}
+                                    </span>
+                                </td>
+                            }
+                            @if( !isTaskView() ) {
+                                <td class="task">
+                                  <span class="task-badge" (click)="onTaskBadgeClick(log.task_id)">
+                                      {{ log.taskName }}
+                                  </span>
+                                </td>
+                            }
+
+                            @if(editingLog === log.id ) {
+                                <td class="message">
+                                    <input
+                                            class="edit-log"
+                                            [(ngModel)]="editLogValue"
+                                            placeholder="Log message.."
+                                    />
+                                </td>
+                                <td class="actions">
+                                    <button class="icon-btn svg-green" title="Edit log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/save.svg" alt="Edit" width="20" height="20">
+                                        </div>
+                                    </button>
+                                    <button (click)="cancelEditLog()" class="icon-btn svg-red" title="Delete log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/cancel.svg" alt="Delete" width="20" height="20">
+                                        </div>
+                                    </button>
+                                </td>
+                            } @else {
+                                <td class="message">
+                                    {{ log.message }}
+                                </td>
+                                <td class="actions">
+                                    <button (click)="startEditLog(log)" class="icon-btn svg-wood" title="Edit log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/edit.svg" alt="Edit" width="20" height="20">
+                                        </div>
+                                    </button>
+                                    <button class="icon-btn svg-red" title="Delete log">
+                                        <div class="svg-icon">
+                                            <img ngSrc="../../assets/trashcan.svg" alt="Delete" width="20" height="20">
+                                        </div>
+                                    </button>
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

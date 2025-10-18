@@ -6,6 +6,7 @@ import {QuickLog} from "./quick-log/quick-log";
 import {ManageProjects} from "./manage-projects/manage-projects";
 import {ViewLogsByProject} from "./view-logs/view-logs-by-project/view-logs-by-project";
 import {ViewLogsByTask} from "./view-logs/view-logs-by-task/view-logs-by-task";
+import {LogView} from "./feature-log-view/log-view";
 
 export const routes: Routes = [
 
@@ -22,6 +23,8 @@ export const routes: Routes = [
     { path: 'settings', component: Settings },
 
     { path: 'quick-log', component: QuickLog },
+
+    { path: 'log-view', component: LogView },
 
     { path: 'manage', component: ManageProjects },
 
