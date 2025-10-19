@@ -18,6 +18,7 @@
                     </tr>
                     </thead>
                     <tbody>
+                    @if( logs().length !== 0 ) {
                         @for (log of logs(); track log.id) {
                             <tr class="log-row">
                                 <td class="timestamp">
@@ -79,6 +80,31 @@
 
                             </tr>
                         }
+                    } @else {
+                        <tr class="empty-row">
+
+                            @if( isTaskView()) {
+                                <td colspan="3">
+                                    <div class="empty-message">
+                                        No logs found for this task :(
+                                    </div>
+                                </td>
+                            } @else if( isProjectView() ){
+                                <td colspan="4">
+                                    <div class="empty-message">
+                                        No logs found for this project :(
+                                    </div>
+                                </td>
+                            } @else {
+                                <td colspan="5">
+                                    <div class="empty-message">
+                                        No logs found :(
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+
                     </tbody>
                 </table>
             </div>
