@@ -26,12 +26,6 @@ export class Dashboard {
     });
   }
 
-  goToSettings() {
-    this.router.navigate(['settings']);
-  }
-  goToLogs() {
-    this.router.navigate(['logs']);
-  }
   goToManage() {
     this.router.navigate(['/manage']);
   }
