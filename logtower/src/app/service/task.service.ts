@@ -2,6 +2,7 @@ import {effect, inject, Injectable, signal} from '@angular/core';
 import {TaskModel} from "../models/task.model";
 import {invoke} from "@tauri-apps/api/core";
 import {ProjectService} from "./project.service";
+import {SettingsService} from "./settings.service";
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ import {ProjectService} from "./project.service";
 export class TaskService {
 
   projectService = inject(ProjectService);
+  settingsService = inject(SettingsService);
 
   projects = this.projectService.projects;
   tasksByProject = signal<{ [projectId: number]: TaskModel[] }>({});
@@ -46,6 +48,16 @@ export class TaskService {
     }));
   }
   async deleteTask(taskId: number): Promise<void> {
+
+    const currentSettings = this.settingsService.userSettings();
+
+    if (currentSettings?.activeTaskId === taskId) {
+      this.settingsService.userSettings.update(s => ({
+        ...(s ?? { activeProjectId: null, activeTaskId: null }),
+        activeTaskId: null,
+        activeProjectId: null
+      }));
+    }
     await invoke<void>('delete_task', { taskId });
     await invoke('emit_logs_updated');
   }

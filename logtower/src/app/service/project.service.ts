@@ -1,11 +1,14 @@
-import {Injectable, signal} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {invoke} from "@tauri-apps/api/core";
 import {ProjectModel} from "../models/project.model";
+import {SettingsService} from "./settings.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
+
+  settingsService = inject(SettingsService);
 
   projects = signal<ProjectModel[]>([]);
 
@@ -33,6 +36,16 @@ export class ProjectService {
   }
 
   async deleteProject(projectId: number) {
+
+    const currentSettings = this.settingsService.userSettings();
+
+    if (currentSettings?.activeProjectId === projectId) {
+      this.settingsService.userSettings.update(s => ({
+        ...(s ?? { activeProjectId: null, activeTaskId: null }),
+        activeProjectId: null,
+      }));
+    }
+
     await invoke('delete_project', { projectId });
     await invoke('emit_logs_updated');
   }

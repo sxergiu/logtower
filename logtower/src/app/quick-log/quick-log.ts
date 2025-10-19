@@ -19,7 +19,6 @@ import {listen} from "@tauri-apps/api/event";
 export class QuickLog implements AfterViewInit {
   @ViewChild('logInput') logInput!: ElementRef<HTMLInputElement>;
 
-
   activeProjectId = computed(() => this.settingsService.userSettings()?.activeProjectId ?? null);
   activeTaskId = computed(() => this.settingsService.userSettings()?.activeTaskId ?? null);
 
@@ -34,13 +33,14 @@ export class QuickLog implements AfterViewInit {
       private taskService: TaskService,
       private projectService: ProjectService
   ) {
-    // watch for changes to activeTaskId and load the task reactively
+    // Reactively load project/task
     effect(() => {
       const taskId = this.activeTaskId();
       const projectId = this.activeProjectId();
 
       if (taskId && taskId > 0) {
         this.loadTask(taskId);
+      } else {
         this.activeTask.set(null);
       }
 
@@ -60,6 +60,7 @@ export class QuickLog implements AfterViewInit {
     const project = await this.projectService.getProjectById(projectId);
     this.activeProject.set(project);
   }
+
   private async loadTask(taskId: number) {
     const task = await this.taskService.getTaskById(taskId);
     this.activeTask.set(task);

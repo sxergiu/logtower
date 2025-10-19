@@ -1,9 +1,4 @@
 <div style="display: flex; justify-content: center; width: 100%">
-<!--    <button (click)="goToDashboard()" class="logs-btn svg-white">-->
-<!--        <div class="svg-icon">-->
-<!--            <img ngSrc="assets/back-arrow.svg" alt="Go Back" width="20" height="20">-->
-<!--        </div>-->
-<!--    </button>-->
     <div class="page-header" >
         <h2> Logtower Context </h2>
         <span> What are you logging for? </span>
@@ -26,11 +21,13 @@
                 (ngModelChange)="setActiveProject($event)"
         >
             @for (project of projects(); track project.id) {
-                @if( tasksByProject()[project.id].length !== 0 ) {
+                @if ((tasksByProject()[project.id] || []).length !== 0) {
                     <option [ngValue]="project.id">{{ project.name }}</option>
                 }
+
             }
         </select>
+
 
         <select
                 [ngModel]="settings()?.activeTaskId"

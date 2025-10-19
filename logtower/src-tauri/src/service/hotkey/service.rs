@@ -1,7 +1,22 @@
 use tauri::{App, Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_global_shortcut::{Code, Modifiers, Shortcut, GlobalShortcutExt};
+use crate::service::settings;
 
 pub fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+
+    if let Ok(settings) = settings::service::get_current_settings() {
+        if settings.active_project_id.is_none() || settings.active_task_id.is_none() {
+            println!("⚠️ No active project/task — not opening quick-log");
+            if let Some(main) = app.get_webview_window("main") {
+                main.emit("open-settings", ());
+                let _ = main.unminimize();
+                let _ = main.show();
+                let _ = main.set_focus();
+            }
+            return Ok(());
+        }
+    }
+
 
     let hotkey_window_labels: Vec<String> = app.webview_windows()
         .keys()

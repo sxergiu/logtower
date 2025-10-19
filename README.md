@@ -5,15 +5,10 @@
 >The backend of the application is a rust-sourced binary with an API that the front-end can interact with.
 Tasks:
 
->#### [ISSUE] Handling no selected project/task -> probably disabling quicklog + prompt user to select setup
->#### [DECISION] Remove setup page and enable setup selection in quicklog?
+>#### [ISSUE] Handling no selected project/task
+> -> probably disabling quicklog + prompt user to select setup
 >#### Possible solutions:
-> - automatically selecting one / ce faci daca nu ai deloc?
-> 
 > - nu poti da log fara sa le ai selectate, quicklog change setup
->   - reactive form with validators for unselected setup
-> - lasi unknown task / implement change log msg/task/project 
->#### [FEATURE] log view/filter -> signal store
 >#### [ADDON] table scrollbar
 >#### [ADDON] responsiveness?
 > 
