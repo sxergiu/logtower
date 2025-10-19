@@ -1,3 +1,48 @@
+/* Centered overlay */
+.loading-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    color: #5c5c5c;
+    gap: 1rem;
+
+    /* Start hidden for smooth transition */
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in forwards;
+}
+
+/* Spinner styling */
+.loading-spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--logtower-wood); /* brown accent */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Fade-out animation when hiding */
+.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.97); }
+}
 
 .modal-backdrop {
     position: fixed;

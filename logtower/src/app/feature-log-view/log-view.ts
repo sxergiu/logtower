@@ -35,8 +35,8 @@ export class LogView {
 
     onProjectSelected(project: ProjectModel | null) {
         if( project ) {
-            this.store.fetchLogsByProject(project);
             this.store.resetTask();
+            this.store.fetchLogsByProject(project);
             this.isProjectView = true;
             this.isTaskView = false;
         }
@@ -106,4 +106,18 @@ export class LogView {
     cancelDelete() {
         this.showModal = false;
     }
+
+    showLoader = false;
+    isVisible = false;
+
+    showLoading() {
+        this.showLoader = true;
+        setTimeout(() => (this.isVisible = true), 10); // triggers fade-in
+    }
+
+    hideLoading() {
+        this.isVisible = false; // triggers fade-out
+        setTimeout(() => (this.showLoader = false), 300); // wait for fade-out
+    }
+
 }

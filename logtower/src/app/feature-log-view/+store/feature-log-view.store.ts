@@ -11,22 +11,19 @@ import { LogService } from '../../service/log.service';
 import { LogModel } from '../../models/log.model';
 import { ProjectModel } from '../../models/project.model';
 import { TaskModel } from '../../models/task.model';
-import {catchError, EMPTY, finalize, from, pipe, switchMap, tap} from "rxjs";
+import {catchError, delay, EMPTY, finalize, from, pipe, switchMap, tap} from "rxjs";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {ProjectService} from "../../service/project.service";
 import {TaskService} from "../../service/task.service";
-
-export type ViewContext = 'all' | 'project' | 'task';
 
 export interface LogFilterState {
     loading: number;
     logs: LogModel[];
     selectedProject: ProjectModel | null;
     selectedTask: TaskModel | null;
-    viewContext: ViewContext;
     showFilters: boolean;
 }
-
+const delayTime = 0;
 export const featureLogViewStore = signalStore(
 
     withState<LogFilterState>({
@@ -34,7 +31,6 @@ export const featureLogViewStore = signalStore(
         logs: [],
         selectedProject: null,
         selectedTask: null,
-        viewContext: 'all',
         showFilters: false
     }),
 
@@ -46,8 +42,9 @@ export const featureLogViewStore = signalStore(
             if (state.selectedProject()) return `Logs: ${state.selectedProject()!.name}`;
             return 'All Logs';
         }),
-        showProjectColumn: computed(() => state.viewContext() !== 'project'),
-        showTaskColumn: computed(() => state.viewContext() === 'all'),
+
+        hideProjectColumn: computed(() => !!state.selectedProject()),
+        hideTaskColumn: computed(() => !!state.selectedTask()),
 
         logsByProject: computed<LogModel[]>(() => {
             const project = state.selectedProject();
@@ -62,18 +59,16 @@ export const featureLogViewStore = signalStore(
         }),
 
         filteredLogs: computed<LogModel[]>(() => {
-            const context = state.viewContext();
             const project = state.selectedProject();
             const task = state.selectedTask();
 
-            if (context === 'project' && project) {
-                return state.logs().filter(log => log.project_id === project.id);
-            }
-
-            if (context === 'task' && task) {
+            if (task) {
                 return state.logs().filter(log => log.task_id === task.id);
             }
 
+            if (project) {
+                return state.logs().filter(log => log.project_id === project.id);
+            }
             return state.logs();
         })
 
@@ -86,6 +81,7 @@ export const featureLogViewStore = signalStore(
             pipe(
                 tap(() => patchState(state, { loading: state.loading() + 1 })),
                 switchMap(() => from(logService.getLogs()).pipe(
+                    delay(delayTime),
                     tap((logs) => patchState(state, { logs })),
                     catchError((error) => {
                         console.error('Error fetching logs:', error);
@@ -102,9 +98,9 @@ export const featureLogViewStore = signalStore(
                     loading: state.loading() + 1,
                     selectedProject: project,
                     selectedTask: null,
-                    viewContext: 'project'
                 })),
                 switchMap((project) => from(logService.getLogsByProjectId(project.id)).pipe(
+                    delay(delayTime),
                     tap((logs) => patchState(state, { logs })),
                     catchError((error) => {
                         console.error('Error fetching logs by project:', error);
@@ -121,7 +117,6 @@ export const featureLogViewStore = signalStore(
                     patchState(state, {
                         loading: state.loading() + 1,
                         selectedTask: null,
-                        viewContext: 'project'
                     })
                 ),
 
@@ -134,6 +129,7 @@ export const featureLogViewStore = signalStore(
 
                         switchMap(() =>
                             from(logService.getLogsByProjectId(projectId)).pipe(
+                                delay(delayTime),
                                 tap((logs) => patchState(state, { logs })),
                                 catchError((error) => {
                                     console.error('Error fetching logs by project ID:', error);
@@ -162,9 +158,9 @@ export const featureLogViewStore = signalStore(
                 tap((task) => patchState(state, {
                     loading: state.loading() + 1,
                     selectedTask: task,
-                    viewContext: 'task'
                 })),
                 switchMap((task) => from(logService.getLogsByTaskId(task.id)).pipe(
+                    delay(delayTime),
                     tap((logs) => patchState(state, { logs })),
                     catchError((error) => {
                         console.error('Error fetching logs by task:', error);
@@ -181,7 +177,6 @@ export const featureLogViewStore = signalStore(
                     patchState(state, {
                         loading: state.loading() + 1,
                         selectedProject: null,
-                        viewContext: 'task'
                     })
                 ),
 
@@ -215,6 +210,7 @@ export const featureLogViewStore = signalStore(
                                 // Step 4️⃣ – now fetch logs for this task
                                 switchMap(() =>
                                     from(logService.getLogsByTaskId(task.id)).pipe(
+                                        delay(delayTime),
                                         tap((logs) => patchState(state, { logs })),
                                         catchError((error) => {
                                             console.error('Error fetching logs by task ID:', error);
@@ -274,13 +270,12 @@ export const featureLogViewStore = signalStore(
                     from(logService.deleteLogById(logId)).pipe(
                         // After delete, refetch based on context
                         switchMap(() => {
-                            const context = state.viewContext();
                             const project = state.selectedProject();
                             const task = state.selectedTask();
 
-                            if (context === 'project' && project) {
+                            if (project) {
                                 return from(logService.getLogsByProjectId(project.id));
-                            } else if (context === 'task' && task) {
+                            } else if (task) {
                                 return from(logService.getLogsByTaskId(task.id));
                             } else {
                                 return from(logService.getLogs());
@@ -365,14 +360,12 @@ export const featureLogViewStore = signalStore(
             patchState(state, {
                 selectedProject: project,
                 selectedTask: null,
-                viewContext: project ? 'project' : 'all'
             });
         },
 
         setSelectedTask: (task: TaskModel | null) => {
             patchState(state, {
                 selectedTask: task,
-                viewContext: task ? 'task' : 'all'
             });
         },
 
@@ -390,24 +383,25 @@ export const featureLogViewStore = signalStore(
 
             store.fetchAllLogs();
 
+            // When the LogService signal changes (e.g., Tauri event), update based on filters
             effect(() => {
                 const allLogs = logService.logs();
                 const project = store.selectedProject();
                 const task = store.selectedTask();
 
                 if (task) {
-                    // Only update logs for the selected task
-                    const filtered = allLogs.filter(l => l.task_id === task.id);
-                    patchState(store, { logs: filtered });
+                    patchState(store, {
+                        logs: allLogs.filter((l) => l.task_id === task.id)
+                    });
                 } else if (project) {
-                    // Only update logs for the selected project
-                    const filtered = allLogs.filter(l => l.project_id === project.id);
-                    patchState(store, { logs: filtered });
+                    patchState(store, {
+                        logs: allLogs.filter((l) => l.project_id === project.id)
+                    });
                 } else {
-                    // Default: all logs view
                     patchState(store, { logs: allLogs });
                 }
             });
-        },
+        }
     })
+
 )
