@@ -25,17 +25,22 @@
 .menu {
     display: flex;
     flex-direction: column;
-    margin: 5rem;
+    margin: 2rem;
 }
 
 
 .menu-btn {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
     padding: 1rem;
-    margin: 1rem;
+    margin: 0.5rem;
     color: #000000;
     background: var(--logtower-gradient);
     border: 1px solid #000000;
     box-shadow: #0f0f0f 2px 2px;
+    height: 32px;
     width: 256px;
 }
 

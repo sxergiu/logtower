@@ -1,7 +1,8 @@
 import {effect, inject, Injectable, signal} from '@angular/core';
-import {TaskEntry} from "../models/task-entry.model";
+import {TaskModel} from "../models/task.model";
 import {invoke} from "@tauri-apps/api/core";
 import {ProjectService} from "./project.service";
+import {SettingsService} from "./settings.service";
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +10,10 @@ import {ProjectService} from "./project.service";
 export class TaskService {
 
   projectService = inject(ProjectService);
+  settingsService = inject(SettingsService);
 
   projects = this.projectService.projects;
-  tasksByProject = signal<{ [projectId: number]: TaskEntry[] }>({});
+  tasksByProject = signal<{ [projectId: number]: TaskModel[] }>({});
 
   constructor() {
     effect(() => {
@@ -22,21 +24,21 @@ export class TaskService {
     });
   }
   async fetchTasks() {
-    const tasksMap: { [projectId: number]: TaskEntry[] } = {};
+    const tasksMap: { [projectId: number]: TaskModel[] } = {};
     for (const project of this.projects()) {
       tasksMap[project.id] = await this.getTasksForProject(project.id);
     }
     this.tasksByProject.set(tasksMap);
   }
-  async getTasksForProject(projectId: number): Promise<TaskEntry[]> {
-    return await invoke<TaskEntry[]>('get_tasks_for_project', { projectId });
+  async getTasksForProject(projectId: number): Promise<TaskModel[]> {
+    return await invoke<TaskModel[]>('get_tasks_for_project', { projectId });
   }
-  async getTaskById(taskId: number): Promise<TaskEntry | null> {
-    return await invoke<TaskEntry | null>('get_task_by_id', { taskId });
+  async getTaskById(taskId: number): Promise<TaskModel | null> {
+    return await invoke<TaskModel | null>('get_task_by_id', { taskId });
   }
 
   async addTask(projectId: number, name: string): Promise<void> {
-    const newTask = await invoke<TaskEntry>('add_task', { projectId, name });
+    const newTask = await invoke<TaskModel>('add_task', { projectId, name });
     this.tasksByProject.update(prev => ({
       ...prev,
       [projectId]: [
@@ -46,6 +48,16 @@ export class TaskService {
     }));
   }
   async deleteTask(taskId: number): Promise<void> {
+
+    const currentSettings = this.settingsService.userSettings();
+
+    if (currentSettings?.activeTaskId === taskId) {
+      this.settingsService.userSettings.update(s => ({
+        ...(s ?? { activeProjectId: null, activeTaskId: null }),
+        activeTaskId: null,
+        activeProjectId: null
+      }));
+    }
     await invoke<void>('delete_task', { taskId });
     await invoke('emit_logs_updated');
   }

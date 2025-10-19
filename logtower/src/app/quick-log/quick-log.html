@@ -1,20 +1,33 @@
+<div class="quick-log-window">
+    <div class="quick-log-container">
+        <div class="add-log-section">
+            <input
+                    #logInput
+                    class="add-log-input"
+                    [(ngModel)]="newMessage"
+                    placeholder="Enter log message"
+                    (keyup.enter)="addLog()"
+                    (keyup.esc)="closeWindow()"
+            />
+            <button
+                    class="add-log-btn"
+                    (click)="addLog()"
+                    [disabled]="!newMessage.trim()"
+            >
+                Log
+            </button>
+        </div>
+    </div>
 
-<div class="quick-log-container">
-    <div class="row">
-        <input
-                #logInput
-                class="add-log-input"
-                [(ngModel)]="newMessage"
-                placeholder="Enter log message"
-                (keyup.enter)="addLog()"
-                (keyup.esc)="closeWindow()"
-        />
-        <button
-                class="add-log-btn"
-                (click)="addLog()"
-                [disabled]="!newMessage.trim()"
-        >
-            Add Log
-        </button>
+    <div class="row" style="margin-left: 1.5rem">
+        <div class="subtle-text">
+            @if(activeProject() && activeTask() ) {
+                Currently logging for:
+                <div>
+                    Project: <strong>{{ activeProject()?.name }}</strong>
+                    Task: <strong>{{ activeTask()?.name }}</strong>
+                </div>
+            }
+        </div>
     </div>
 </div>

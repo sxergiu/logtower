@@ -3,17 +3,13 @@
   "version": "0.1.0",
   "scripts": {
     "ng": "ng",
-
     "start": "ng serve --port 4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-
     "tauri": "tauri",
     "tauri:dev": "npx tauri dev",
-
     "tauri:build": "npx tauri build",
     "ng:build": "ng build --configuration production",
-
     "run logtower": "npm run tauri dev",
     "deploy logtower": "npm run tauri:build"
   },
@@ -25,6 +21,7 @@
     "@angular/forms": "^20.1.4",
     "@angular/platform-browser": "^20.1.4",
     "@angular/router": "^20.1.4",
+    "@ngrx/signals": "^20.0.1",
     "@tauri-apps/api": "^2.8.0",
     "@tauri-apps/plugin-opener": "^2",
     "rxjs": "~7.8.2",

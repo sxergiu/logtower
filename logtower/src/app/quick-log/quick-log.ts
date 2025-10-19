@@ -1,28 +1,75 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
-import {FormsModule} from "@angular/forms";
-import {LogService} from "../service/log.service";
+import {AfterViewInit, Component, computed, effect, ElementRef, signal, ViewChild} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { LogService } from '../service/log.service';
 import { Window } from '@tauri-apps/api/window';
+import { SettingsService } from '../service/settings.service';
+import { TaskService } from '../service/task.service';
+import { TaskModel} from "../models/task.model";
+import {ProjectModel} from "../models/project.model";
+import {ProjectService} from "../service/project.service";
+import {listen} from "@tauri-apps/api/event";
 
 @Component({
   selector: 'app-quick-log',
-  imports: [
-    FormsModule
-  ],
+  standalone: true,
+  imports: [FormsModule],
   templateUrl: './quick-log.html',
-  styleUrl: './quick-log.css'
+  styleUrls: ['./quick-log.css'],
 })
-export class QuickLog implements AfterViewInit{
-
-  newMessage = '';
-  constructor(private logService: LogService) {}
-
+export class QuickLog implements AfterViewInit {
   @ViewChild('logInput') logInput!: ElementRef<HTMLInputElement>;
 
-  ngAfterViewInit() {
-    // Give Angular a tick to render the input before focusing
-    setTimeout(() => this.logInput.nativeElement.focus(), 0);
+  activeProjectId = computed(() => this.settingsService.userSettings()?.activeProjectId ?? null);
+  activeTaskId = computed(() => this.settingsService.userSettings()?.activeTaskId ?? null);
+
+  activeProject = signal<ProjectModel | null>(null);
+  activeTask = signal<TaskModel | null>(null);
+
+  newMessage = '';
+
+  constructor(
+      private logService: LogService,
+      private settingsService: SettingsService,
+      private taskService: TaskService,
+      private projectService: ProjectService
+  ) {
+    // Reactively load project/task
+    effect(() => {
+      const taskId = this.activeTaskId();
+      const projectId = this.activeProjectId();
+
+      if (taskId && taskId > 0) {
+        this.loadTask(taskId);
+      } else {
+        this.activeTask.set(null);
+      }
+
+      if (projectId && projectId > 0) {
+        this.loadProject(projectId);
+      } else {
+        this.activeProject.set(null);
+      }
+    });
+
+    listen('settings-updated', async () => {
+      await this.settingsService.loadData();
+    });
   }
 
+  private async loadProject(projectId: number) {
+    const project = await this.projectService.getProjectById(projectId);
+    this.activeProject.set(project);
+  }
+
+  private async loadTask(taskId: number) {
+    const task = await this.taskService.getTaskById(taskId);
+    this.activeTask.set(task);
+  }
+
+  ngAfterViewInit() {
+    // Focus input after view init
+    setTimeout(() => this.logInput.nativeElement.focus(), 0);
+  }
 
   async addLog() {
     if (!this.newMessage.trim()) return;
@@ -33,7 +80,7 @@ export class QuickLog implements AfterViewInit{
 
   async closeWindow() {
     try {
-      const appWindow = await Window.getByLabel("quick-log");
+      const appWindow = await Window.getByLabel('quick-log');
       if (appWindow) {
         await appWindow.close();
       } else {

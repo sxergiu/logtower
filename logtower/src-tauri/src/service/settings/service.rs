@@ -1,26 +1,56 @@
 use crate::domain::projects::repository::get_projects_with_tasks;
 use crate::domain::settings::models::{Settings};
 use crate::domain::settings::repository::{get_settings, update_active_project, update_active_task};
-
+use crate::service::projects::service::get_project_by_id;
+use crate::service::tasks::service::get_task_by_id;
 
 pub fn get_current_settings() -> Result<Settings, String> {
     println!("get_current_settings() called");
+
     match get_settings() {
-        Ok(settings) => {
+        Ok(mut settings) => {
             println!("get_settings() succeeded: {:?}", settings);
+
+            // Validate project
+            if let Some(project_id) = settings.active_project_id {
+                match get_project_by_id(project_id) {
+                    Ok(Some(_)) => {
+                        // project exists, keep it
+                    }
+                    _ => {
+                        println!("Active project_id {} no longer exists, resetting", project_id);
+                        settings.active_project_id = None;
+                        settings.active_task_id = None; // also clear task since it depends on project
+                    }
+                }
+            }
+
+            // Validate task
+            if let Some(task_id) = settings.active_task_id {
+                match get_task_by_id(task_id) {
+                    Ok(Some(_)) => {
+                        // task exists, keep it
+                    }
+                    _ => {
+                        println!("Active task_id {} no longer exists, resetting", task_id);
+                        settings.active_task_id = None;
+                    }
+                }
+            }
+
             Ok(Settings {
                 active_project_id: settings.active_project_id,
                 active_task_id: settings.active_task_id,
             })
-        },
+        }
+
         Err(e) => {
             println!("get_settings() failed with error: {}", e);
-            // You might want to return the error instead of swallowing it
             Ok(Settings {
                 active_project_id: None,
                 active_task_id: None,
             })
-        },
+        }
     }
 }
 

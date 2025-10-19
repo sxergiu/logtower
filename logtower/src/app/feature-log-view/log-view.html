@@ -1,0 +1,90 @@
+<div class="row">
+    <button (click)="goToDashboard()" class="icon-btn svg-wood">
+        <div class="svg-icon">
+            <img ngSrc="../../assets/back-arrow.svg" alt="Go Back" width="20" height="20">
+        </div>
+    </button>
+    <div class="page-header">
+        <h2>Log View</h2>
+        @if (store.selectedProject() && store.selectedTask()) {
+            <span>
+    Displaying logs for
+    <b>{{ store.selectedProject()!.name }}: {{ store.selectedTask()!.name }}</b>
+  </span>
+        } @else if (store.selectedProject()) {
+            <span>
+    Displaying logs for
+    <b>{{ store.selectedProject()!.name }}</b>
+  </span>
+        } @else {
+            <span>All logs eventually end up here!</span>
+        }
+
+    </div>
+    <app-settings-drawer>
+    </app-settings-drawer>
+</div>
+
+<app-log-view-filter
+        [project]="store.selectedProject()"
+        [task]="store.selectedTask()"
+        (projectChange)="store.setSelectedProject($event); onProjectSelected($event)"
+        (taskChange)="store.setSelectedTask($event); onTaskSelected($event)">
+</app-log-view-filter>
+
+@if( !store.loading() ) {
+
+    <div class="log-table-container">
+        <app-log-view-table
+                [logs]="store.filteredLogs()"  [isProjectView]="this.store.hideProjectColumn()" [isTaskView]="this.store.hideTaskColumn()"
+                (editLog)="onEditLog($event)"
+                (deleteLog)="onDeleteLog($event)"
+                (selectedProjectId)="onProjectBadgeSelected($event)"
+                (selectedTaskId)="onTaskBadgeSelected($event)">
+        </app-log-view-table>
+
+        <div class="row" style="padding-left: 2rem">
+
+            @if( store.logs().length !== 0 ) {
+                <button
+                        (click)="openDeleteModal()"
+                        class="delete-logs-btn"
+                >
+                    Delete
+                </button>
+            }
+        </div>
+
+        @if(showModal) {
+            <div class="modal-backdrop" (click)="cancelDelete()">
+                <div class="modal-card" (click)="$event.stopPropagation()">
+                    <h2>Delete Logs</h2>
+                    <p>This is a destructive action and cannot be undone. Proceeding will
+                        delete all logs
+                        @if(isTaskView){
+                            for <b>{{ this.store.selectedProject()!.name }}: {{this.store.selectedTask()!.name}}</b>.
+                        } @else if(isProjectView) {
+                            for <b>{{ this.store.selectedProject()!.name }}</b>.
+                        } @else {
+                            for all projects.
+                        }
+                    </p>
+
+                    <div class="modal-actions">
+                        <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>
+                        <button (click)="deleteLogs()" class="btn-delete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+} @else {
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Loading logs...</p>
+    </div>
+}
+
+

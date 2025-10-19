@@ -1,7 +1,22 @@
-use tauri::{App, AppHandle, Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{App, Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_global_shortcut::{Code, Modifiers, Shortcut, GlobalShortcutExt};
+use crate::service::settings;
 
 pub fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+
+    if let Ok(settings) = settings::service::get_current_settings() {
+        if settings.active_project_id.is_none() || settings.active_task_id.is_none() {
+            println!("⚠️ No active project/task — not opening quick-log");
+            if let Some(main) = app.get_webview_window("main") {
+                main.emit("open-settings", ());
+                let _ = main.unminimize();
+                let _ = main.show();
+                let _ = main.set_focus();
+            }
+            return Ok(());
+        }
+    }
+
 
     let hotkey_window_labels: Vec<String> = app.webview_windows()
         .keys()
@@ -37,7 +52,9 @@ pub fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::e
         WebviewUrl::App("index.html?route=quick-log".into()) // This will load your Angular app
     )
         .title("Quick Log")
-        .inner_size(500.0, 100.0)
+        .inner_size(1000.0, 150.0)
+        .min_inner_size(450.0, 150.0)
+        .max_inner_size(1500.0,200.0)
         .center()
         .resizable(true)
         .minimizable(true)
