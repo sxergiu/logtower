@@ -19,7 +19,7 @@
             <div class="filter-dropdowns">
                 <span>Project</span>
                 <select
-                        [ngModel]="defaultProject()()"
+                        [ngModel]="project()"
                         [compareWith]="projectCompare"
                         (ngModelChange)="onProjectSelected($event)"
                 >
@@ -32,29 +32,29 @@
                 </select>
 
                 <div class="filter-space"></div>
-                @if( selectedProjectValue ) {
+                @if( project() ) {
                     <span>Task</span>
                     <select
-                            [ngModel]="defaultTask()()"
+                            [ngModel]="task()"
                             [compareWith]="taskCompare"
                             (ngModelChange)="onTaskSelected($event)"
 
                     >
-                            @for (task of tasks()[selectedProjectValue.id]; track task.id) {
+                            @for (task of tasks()[project()!.id]; track task.id) {
                                 <option [ngValue]="task">{{ task.name }}</option>
                             }
                     </select>
                 }
 
-<!--                @if( selectedProjectValue ) {-->
-<!--                    <button (click)="clearFilters()" class="icon-btn svg-red"-->
-<!--                            [title]="'Clear filters'">-->
-<!--                        <div class="svg-icon">-->
-<!--                            <img [ngSrc]="'../../assets/cancel.svg'"-->
-<!--                                 alt="Toggle actions" width="24" height="24">-->
-<!--                        </div>-->
-<!--                    </button>-->
-<!--                }-->
+                @if( project() ) {
+                    <button (click)="clearFilters()" class="icon-btn svg-red"
+                            [title]="'Clear filters'">
+                        <div class="svg-icon">
+                            <img [ngSrc]="'../../assets/cancel.svg'"
+                                 alt="Toggle actions" width="24" height="24">
+                        </div>
+                    </button>
+                }
 
             </div>
         </div>

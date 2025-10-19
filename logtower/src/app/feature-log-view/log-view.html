@@ -39,10 +39,10 @@
 </div>
 
 <app-log-view-filter
-        [defaultProject]="store.selectedProject"
-        [defaultTask]="store.selectedTask"
-        (selectedProject)="onProjectSelected($event)"
-        (selectedTask)="onTaskSelected($event)" >
+        [project]="store.selectedProject()"
+        [task]="store.selectedTask()"
+        (projectChange)="store.setSelectedProject($event); onProjectSelected($event)"
+        (taskChange)="store.setSelectedTask($event); onTaskSelected($event)">
 </app-log-view-filter>
 
 <div class="log-table-container">
@@ -51,4 +51,29 @@
         (selectedProjectId)="onProjectBadgeSelected($event)"
         (selectedTaskId)="onTaskBadgeSelected($event)">
     </app-log-view-table>
+</div>
+
+<div class="row">
+
+<!--    @if( store.logs().length !== 0 ) {-->
+<!--        <button-->
+<!--                (click)="deleteLogs()"-->
+<!--                class="delete-logs-btn"-->
+<!--        >-->
+<!--            Delete-->
+<!--        </button>-->
+<!--    }-->
+
+<!--    @if(showModal) {-->
+<!--        <div class="modal-backdrop" (click)="cancelDelete()">-->
+<!--            <div class="modal-card" (click)="$event.stopPropagation()">-->
+<!--                <h2>Delete Logs</h2>-->
+<!--                <p>Are you sure you want to delete all logs? This action cannot be undone.</p>-->
+<!--                <div class="modal-actions">-->
+<!--                    <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>-->
+<!--                    <button (click)="confirmDelete()" class="btn-delete">Delete</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    }-->
 </div>

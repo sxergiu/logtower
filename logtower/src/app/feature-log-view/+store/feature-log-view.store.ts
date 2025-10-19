@@ -116,13 +116,6 @@ export const featureLogViewStore = signalStore(
             )
         ),
 
-        updateSelectedProject: (project: ProjectModel) => {
-            patchState(state, {
-                selectedProject: project
-            })
-        },
-
-
         fetchLogsByProjectId: rxMethod<number>(
             pipe(
                 tap(() =>
@@ -247,12 +240,21 @@ export const featureLogViewStore = signalStore(
         ),
 
 
-        updateSelectedTask: (task: TaskModel) => {
+        setSelectedProject: (project: ProjectModel | null) => {
             patchState(state, {
-                selectedTask: task
-            })
-
+                selectedProject: project,
+                selectedTask: null,
+                viewContext: project ? 'project' : 'all'
+            });
         },
+
+        setSelectedTask: (task: TaskModel | null) => {
+            patchState(state, {
+                selectedTask: task,
+                viewContext: task ? 'task' : 'all'
+            });
+        },
+
 
         resetTask: () => {
             patchState(state, {

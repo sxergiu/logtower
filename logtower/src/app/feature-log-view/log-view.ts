@@ -32,16 +32,30 @@ export class LogView {
         this.store.fetchAllLogs();
     }
 
-    onProjectSelected(project: ProjectModel) {
-        this.store.fetchLogsByProject(project);
-        this.store.resetTask();
-        this.isProjectView = true;
-        this.isTaskView = false;
+    onProjectSelected(project: ProjectModel | null) {
+        if( project ) {
+            this.store.fetchLogsByProject(project);
+            this.store.resetTask();
+            this.isProjectView = true;
+            this.isTaskView = false;
+        }
+        else {
+            this.store.fetchAllLogs();
+            this.isProjectView = false;
+            this.isTaskView = false;
+        }
     }
 
-    onTaskSelected($event: TaskModel) {
-        this.store.fetchLogsByTask($event);
-        this.isTaskView = true;
+    onTaskSelected(task: TaskModel | null) {
+        if( task ) {
+            this.store.fetchLogsByTask(task);
+            this.isTaskView = true;
+        }
+        else {
+            this.store.fetchAllLogs();
+            this.isTaskView = false;
+            this.isProjectView = false;
+        }
     }
 
     goToDashboard() {
