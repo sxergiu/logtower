@@ -51,18 +51,20 @@
         (selectedProjectId)="onProjectBadgeSelected($event)"
         (selectedTaskId)="onTaskBadgeSelected($event)">
     </app-log-view-table>
+
+    <div class="row" style="padding-left: 2rem">
+
+        @if( store.logs().length !== 0 ) {
+            <button
+                    (click)="deleteLogs()"
+                    class="delete-logs-btn"
+            >
+                Delete
+            </button>
+        }
+    </div>
 </div>
 
-<div class="row">
-
-<!--    @if( store.logs().length !== 0 ) {-->
-<!--        <button-->
-<!--                (click)="deleteLogs()"-->
-<!--                class="delete-logs-btn"-->
-<!--        >-->
-<!--            Delete-->
-<!--        </button>-->
-<!--    }-->
 
 <!--    @if(showModal) {-->
 <!--        <div class="modal-backdrop" (click)="cancelDelete()">-->
@@ -76,4 +78,3 @@
 <!--            </div>-->
 <!--        </div>-->
 <!--    }-->
-</div>

@@ -6,7 +6,7 @@ import {
     withHooks,
     withMethods
 } from '@ngrx/signals';
-import { computed, inject } from '@angular/core';
+import {computed, effect, inject} from '@angular/core';
 import { LogService } from '../../service/log.service';
 import { LogModel } from '../../models/log.model';
 import { ProjectModel } from '../../models/project.model';
@@ -15,6 +15,7 @@ import {catchError, EMPTY, finalize, from, pipe, switchMap, tap} from "rxjs";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {ProjectService} from "../../service/project.service";
 import {TaskService} from "../../service/task.service";
+import {listen} from "@tauri-apps/api/event";
 
 
 export type ViewContext = 'all' | 'project' | 'task';
@@ -239,6 +240,68 @@ export const featureLogViewStore = signalStore(
             )
         ),
 
+        deleteAllLogs: rxMethod<void>(
+            pipe(
+                tap(() => patchState(state, { loading: state.loading() + 1 })),
+                switchMap(() =>
+                    from(logService.deleteAllLogs()).pipe(
+                        switchMap(() => from(logService.getLogs())), // reload all logs
+                        tap((logs) => patchState(state, { logs })),
+                        catchError((error) => {
+                            console.error('Error deleting all logs:', error);
+                            return EMPTY;
+                        }),
+                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
+                    )
+                )
+            )
+        ),
+
+        deleteLogsByProject: rxMethod<ProjectModel>(
+            pipe(
+                tap(() => patchState(state, { loading: state.loading() + 1 })),
+                switchMap((project) =>
+                    from(logService.deleteLogsByProjectId(project.id)).pipe(
+                        switchMap(() => from(logService.getLogsByProjectId(project.id))), // reload filtered logs
+                        tap((logs) =>
+                            patchState(state, {
+                                logs,
+                                selectedProject: project,
+                                selectedTask: null,
+                            })
+                        ),
+                        catchError((error) => {
+                            console.error('Error deleting logs by project:', error);
+                            return EMPTY;
+                        }),
+                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
+                    )
+                )
+            )
+        ),
+
+        deleteLogsByTask: rxMethod<TaskModel>(
+            pipe(
+                tap(() => patchState(state, { loading: state.loading() + 1 })),
+                switchMap((task) =>
+                    from(logService.deleteLogsByTaskId(task.id)).pipe(
+                        switchMap(() => from(logService.getLogsByTaskId(task.id))), // reload filtered logs
+                        tap((logs) =>
+                            patchState(state, {
+                                logs,
+                                selectedTask: task,
+                            })
+                        ),
+                        catchError((error) => {
+                            console.error('Error deleting logs by task:', error);
+                            return EMPTY;
+                        }),
+                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
+                    )
+                )
+            )
+        ),
+
 
         setSelectedProject: (project: ProjectModel | null) => {
             patchState(state, {
@@ -263,11 +326,30 @@ export const featureLogViewStore = signalStore(
         }
     })),
 
-    // 🔹 Lifecycle Hooks
     withHooks({
-        // Automatically load logs on store initialization
-        onInit({ fetchAllLogs }) {
-            fetchAllLogs();
-        }
+        onInit(store) {
+            const logService = inject(LogService);
+
+            store.fetchAllLogs();
+
+            effect(() => {
+                const allLogs = logService.logs();
+                const project = store.selectedProject();
+                const task = store.selectedTask();
+
+                if (task) {
+                    // Only update logs for the selected task
+                    const filtered = allLogs.filter(l => l.task_id === task.id);
+                    patchState(store, { logs: filtered });
+                } else if (project) {
+                    // Only update logs for the selected project
+                    const filtered = allLogs.filter(l => l.project_id === project.id);
+                    patchState(store, { logs: filtered });
+                } else {
+                    // Default: all logs view
+                    patchState(store, { logs: allLogs });
+                }
+            });
+        },
     })
-);
+)

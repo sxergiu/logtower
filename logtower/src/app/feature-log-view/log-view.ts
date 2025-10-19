@@ -73,4 +73,19 @@ export class LogView {
         this.isProjectView = true;
         this.isTaskView = true;
     }
+
+    deleteLogs() {
+
+        if( this.isTaskView ) {
+            const task = this.store.selectedTask();
+            if (task) this.store.deleteLogsByTask(task);
+        }
+        else if( this.isProjectView ) {
+            const project = this.store.selectedProject();
+            if (project) this.store.deleteLogsByProject(project);
+        }
+        else {
+            this.store.deleteAllLogs();
+        }
+    }
 }
