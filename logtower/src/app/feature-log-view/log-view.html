@@ -48,6 +48,8 @@
 <div class="log-table-container">
     <app-log-view-table
         [logs]="store.logs()"  [isProjectView]="this.isProjectView" [isTaskView]="this.isTaskView"
+        (editLog)="onEditLog($event)"
+        (deleteLog)="onDeleteLog($event)"
         (selectedProjectId)="onProjectBadgeSelected($event)"
         (selectedTaskId)="onTaskBadgeSelected($event)">
     </app-log-view-table>

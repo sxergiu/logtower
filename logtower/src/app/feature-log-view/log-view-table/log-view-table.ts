@@ -21,6 +21,9 @@ export class LogViewTable {
   selectedProjectId = output<number>();
   selectedTaskId = output<number>();
 
+  editLog = output<{ id: number; newMessage: string }>();
+  deleteLog = output<number>();
+
   showModal = false;
   editingLog: number | null = null;
   editLogValue = '';
@@ -46,6 +49,16 @@ export class LogViewTable {
   startEditLog(log: any) {
     this.editingLog = log.id;
     this.editLogValue = log.message;
+  }
+
+  saveEditLog(logId: number) {
+    if (this.editLogValue.trim().length === 0) return;
+    this.editLog.emit({ id: logId, newMessage: this.editLogValue });
+    this.cancelEditLog();
+  }
+
+  onDeleteLog(logId: number) {
+    this.deleteLog.emit(logId);
   }
 
   cancelEditLog() {

@@ -74,6 +74,14 @@ export class LogView {
         this.isTaskView = true;
     }
 
+    onEditLog(event: { id: number; newMessage: string }) {
+        this.store.editLog(event);
+    }
+
+    onDeleteLog(logId: number) {
+        this.store.deleteLog(logId);
+    }
+
     deleteLogs() {
 
         if( this.isTaskView ) {

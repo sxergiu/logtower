@@ -15,8 +15,6 @@ import {catchError, EMPTY, finalize, from, pipe, switchMap, tap} from "rxjs";
 import {rxMethod} from "@ngrx/signals/rxjs-interop";
 import {ProjectService} from "../../service/project.service";
 import {TaskService} from "../../service/task.service";
-import {listen} from "@tauri-apps/api/event";
-
 
 export type ViewContext = 'all' | 'project' | 'task';
 
@@ -239,6 +237,66 @@ export const featureLogViewStore = signalStore(
                 )
             )
         ),
+
+        editLog: rxMethod<{ id: number; newMessage: string }>(
+            pipe(
+                tap(() => patchState(state, { loading: state.loading() + 1 })),
+
+                // ⚡ OPTIMISTIC UI UPDATE
+                tap(({ id, newMessage }) => {
+                    const current = state.logs();
+                    const updated = current.map(l =>
+                        l.id === id ? { ...l, message: newMessage } : l
+                    );
+                    patchState(state, { logs: updated });
+                }),
+
+                // 🔧 BACKEND UPDATE
+                switchMap(({ id, newMessage }) =>
+                    from(logService.editLog(id, newMessage)).pipe(
+                        catchError(err => {
+                            console.error('Error editing log:', err);
+                            return EMPTY;
+                        }),
+                        finalize(() =>
+                            patchState(state, { loading: state.loading() - 1 })
+                        )
+                    )
+                )
+            )
+        ),
+
+
+        deleteLog: rxMethod<number>(
+            pipe(
+                tap(() => patchState(state, { loading: state.loading() + 1 })),
+                switchMap((logId) =>
+                    from(logService.deleteLogById(logId)).pipe(
+                        // After delete, refetch based on context
+                        switchMap(() => {
+                            const context = state.viewContext();
+                            const project = state.selectedProject();
+                            const task = state.selectedTask();
+
+                            if (context === 'project' && project) {
+                                return from(logService.getLogsByProjectId(project.id));
+                            } else if (context === 'task' && task) {
+                                return from(logService.getLogsByTaskId(task.id));
+                            } else {
+                                return from(logService.getLogs());
+                            }
+                        }),
+                        tap((logs) => patchState(state, { logs })),
+                        catchError((error) => {
+                            console.error('Error deleting log:', error);
+                            return EMPTY;
+                        }),
+                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
+                    )
+                )
+            )
+        ),
+
 
         deleteAllLogs: rxMethod<void>(
             pipe(
