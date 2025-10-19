@@ -27,6 +27,7 @@ export class LogView {
 
     isProjectView = false;
     isTaskView = false;
+    showModal = false;
 
     constructor() {
         this.store.fetchAllLogs();
@@ -95,5 +96,14 @@ export class LogView {
         else {
             this.store.deleteAllLogs();
         }
+        this.cancelDelete();
+    }
+
+    openDeleteModal() {
+        this.showModal = true;
+    }
+
+    cancelDelete() {
+        this.showModal = false;
     }
 }

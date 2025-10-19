@@ -58,25 +58,35 @@
 
         @if( store.logs().length !== 0 ) {
             <button
-                    (click)="deleteLogs()"
+                    (click)="openDeleteModal()"
                     class="delete-logs-btn"
             >
                 Delete
             </button>
         }
     </div>
+
+    @if(showModal) {
+        <div class="modal-backdrop" (click)="cancelDelete()">
+            <div class="modal-card" (click)="$event.stopPropagation()">
+                <h2>Delete Logs</h2>
+                <p>This is a destructive action and cannot be undone. Proceeding will
+                    delete all logs
+                @if(isTaskView){
+                    for <b>{{ this.store.selectedProject()!.name }}: {{this.store.selectedTask()!.name}}</b>.
+                } @else if(isProjectView) {
+                    for <b>{{ this.store.selectedProject()!.name }}</b>.
+                } @else {
+                    for all projects.
+                }
+                </p>
+
+                <div class="modal-actions">
+                    <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>
+                    <button (click)="deleteLogs()" class="btn-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-
-<!--    @if(showModal) {-->
-<!--        <div class="modal-backdrop" (click)="cancelDelete()">-->
-<!--            <div class="modal-card" (click)="$event.stopPropagation()">-->
-<!--                <h2>Delete Logs</h2>-->
-<!--                <p>Are you sure you want to delete all logs? This action cannot be undone.</p>-->
-<!--                <div class="modal-actions">-->
-<!--                    <button (click)="cancelDelete()" class="btn-cancel">Cancel</button>-->
-<!--                    <button (click)="confirmDelete()" class="btn-delete">Delete</button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    }-->

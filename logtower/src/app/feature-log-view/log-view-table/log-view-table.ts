@@ -24,17 +24,9 @@ export class LogViewTable {
   editLog = output<{ id: number; newMessage: string }>();
   deleteLog = output<number>();
 
-  showModal = false;
+
   editingLog: number | null = null;
   editLogValue = '';
-
-  deleteLogs() {
-    this.showModal = true;
-  }
-
-  cancelDelete() {
-    this.showModal = false;
-  }
 
   formatTime(dateString: string): string {
     const timePart = dateString.split(' ')[1];
