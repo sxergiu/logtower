@@ -1,5 +1,23 @@
+
+.create-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.link-text {
+    color: var(--logtower-wood);;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.link-text:hover {
+    color: var(--logtower-gradient, var(--logtower-hover));
+}
+
 /* Ensure warning container is completely independent of layout */
 .warning-container {
+    font-size: 0.8rem;
     position: fixed;
     top: 1rem;
     left: 1rem;
@@ -7,7 +25,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    max-width: 512px;
+    max-width: 220px;
     pointer-events: none; /* prevent it from catching clicks if near the toggle */
 }
 
@@ -123,5 +141,11 @@
         width: 1000px;
         height: auto;
         border-bottom-left-radius: 12px;
+    }
+}
+
+@media (min-width: 500px) {
+    .warning-container {
+        max-width: 512px;
     }
 }

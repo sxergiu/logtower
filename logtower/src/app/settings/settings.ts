@@ -1,5 +1,4 @@
-import {Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, effect, inject, output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,7 +18,6 @@ import {ProjectService} from "../service/project.service";
 
 export class Settings {
 
-  router = inject(Router);
   private settingsService = inject(SettingsService);
   private taskService = inject(TaskService);
   private projectService = inject(ProjectService);
@@ -27,6 +25,21 @@ export class Settings {
   settings = this.settingsService.userSettings;
   projects = this.projectService.projects;
   tasksByProject = this.taskService.tasksByProject;
+
+  noProjects = output<boolean>();
+  noTasksProject = output<boolean>();
+
+  constructor() {
+    effect(() => {
+      const list = this.projects();
+      this.noProjects.emit(list.length === 0);
+    });
+    effect(() => {
+      const map = this.tasksByProject() as Record<number, TaskModel[]>;
+      const anyEmpty = this.projects().some(p => (map[p.id] ?? []).length === 0);
+      this.noTasksProject.emit(anyEmpty.valueOf());
+    })
+  }
 
   get activeProject(): ProjectModel | null {
     const settings = this.settings();
@@ -56,10 +69,6 @@ export class Settings {
     await this.settingsService.setActiveTask(taskId ?? null);
     await this.settingsService.reloadSettings();
     await this.settingsService.loadData();
-  }
-
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
   }
 
 }

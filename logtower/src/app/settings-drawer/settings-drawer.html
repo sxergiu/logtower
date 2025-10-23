@@ -11,22 +11,33 @@
         <div class="modal-backdrop"></div>
 
         <div class="warning-container">
-            @if (showWarning()) {
+            @if (showNoProjectsWarning()) {
+                <div class="warning-banner">
+                    <div class="svg-icon svg-wood" style="align-self: center;">
+                            <img [ngSrc]="'../../assets/warning.svg'"
+                                 alt="Toggle" width="22" height="22" style="margin-right: 0.5rem">
+                            <a (click)="goToManage()" class="create-link">
+                                No projects or tasks? Create some <span class="link-text">here</span>!
+                            </a>
+                    </div>
+                </div>
+            }
+            @if (showProjectsWithNoTasksWarning()) {
                 <div class="warning-banner">
                     <div class="svg-icon svg-wood" style="align-self: center">
                         <img [ngSrc]="'../../assets/warning.svg'"
-                             alt="Toggle" width="22" height="22">
+                             alt="Toggle" width="22" height="22" style="margin-right: 0.5rem">
                     </div>
-                    Invalid active setup. Logging is disabled
+                    Having a project with no tasks is kind of pointless, isn't it?
                 </div>
             }
             @if (showWarning()) {
                 <div class="warning-banner">
                     <div class="svg-icon svg-wood" style="align-self: center">
                         <img [ngSrc]="'../../assets/warning.svg'"
-                             alt="Toggle" width="22" height="22">
+                             alt="Toggle" width="22" height="22" style="margin-right: 0.5rem">
                     </div>
-                    <a> No projects or tasks? Create some here! </a>
+                    Please select a valid setup to enable logging.
                 </div>
             }
         </div>
@@ -35,7 +46,8 @@
     <!-- Drawer -->
     <div class="drawer" [class.open]="drawerOpen">
         <div class="drawer-content">
-            <app-settings></app-settings>
+            <app-settings (noProjects)="onNoProjectsAvailable($event)"
+                          (noTasksProject)="onProjectsWithNoTask($event)"></app-settings>
         </div>
     </div>
 </div>
