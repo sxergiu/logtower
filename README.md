@@ -5,14 +5,12 @@
 >The backend of the application is a rust-sourced binary with an API that the front-end can interact with.
 Tasks:
 
->#### [ISSUE] Handling no selected project/task
-> -> probably disabling quicklog + prompt user to select setup
->#### Possible solutions:
-> - nu poti da log fara sa le ai selectate, quicklog change setup
+>#### [FEATURE] log view pagination -> get logs optimization
 >#### [ADDON] table scrollbar
 >#### [ADDON] responsiveness?
-> 
->#### [DEPLOYMENT]? cross-platform issues
+>#### [ADDON] add in tray as icon with menu
+>#### [CROSS-PLATFORM] fix icons, sizes, fonts
 >#### [ADDON] handling startup cases/empty cases
 >#### [ADDON] codebase cleanup
 
+>#### [REVIEW]
