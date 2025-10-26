@@ -15,7 +15,7 @@ don't brainstorm, but let their brains storm. Stack up your genius all the way t
  - **Work Tower**: *order creates outcomes*. Create your Projects and assign Tasks to them, let them grow with you.
  - **Log View**: *reflect on your actions*. Filter and process your thoughts, mistakes make for fun memories.
 
-##Tech Stack
+## Tech Stack
  - Frontend - Angular 20 with signals
  - Backend - Rust [Tauri v2]
  - Database - SQLite (local for user)
