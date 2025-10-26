@@ -10,7 +10,7 @@ your train of thought in structured boxes that you control. A local tool for har
 don't brainstorm, but let their brains storm. Stack up your genius all the way to the top!
 
 ## Features
- - **Global Setup**: *focus on one thing at a time*. Select what you are working on once & give all your logs a destination.
+ - **Global Setup**: *focus on one thing at a time*. Select what you are working on once & give your logs a destination.
  - **Quick Log**: *no time to lose, only one way to log*. *Ctrl+Space* and free up your mind, make bold decisions.
  - **Work Tower**: *order creates outcomes*. Create your Projects and assign Tasks to them, let them grow with you.
  - **Log View**: *reflect on your actions*. Filter and process your thoughts, mistakes make for fun memories.
