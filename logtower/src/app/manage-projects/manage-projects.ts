@@ -27,7 +27,7 @@ export class ManageProjects {
   tasksByProject = this.taskService.tasksByProject;
 
   newProjectName = signal<string>('');
-  searchQuery = signal<string>(''); // New signal for search
+  searchQuery = signal<string>('');
   newTaskNames: { [key: number]: string } = {};
 
   editingProject: number | null = null;
@@ -38,7 +38,6 @@ export class ManageProjects {
   showEditButtons: number | null = null;
   expandedProject: number | null = null;
 
-  // Computed signal for filtered projects
   filteredProjects = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
     if (!query) {

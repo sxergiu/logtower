@@ -35,29 +35,9 @@ export const featureLogViewStore = signalStore(
     }),
 
     withComputed((state) => ({
-        isLoading: computed(() => state.loading() > 0),
         logs: computed(() => state.logs()),
-        pageTitle: computed(() => {
-            if (state.selectedTask()) return `Logs: ${state.selectedTask()!.name}`;
-            if (state.selectedProject()) return `Logs: ${state.selectedProject()!.name}`;
-            return 'All Logs';
-        }),
-
         hideProjectColumn: computed(() => !!state.selectedProject()),
         hideTaskColumn: computed(() => !!state.selectedTask()),
-
-        logsByProject: computed<LogModel[]>(() => {
-            const project = state.selectedProject();
-            if (!project) return state.logs();
-            return state.logs().filter((log) => log.project_id === project.id);
-        }),
-
-        logsByTask: computed<LogModel[]>(() => {
-            const task = state.selectedTask();
-            if (!task) return state.logs();
-            return state.logs().filter((log) => log.task_id === task.id);
-        }),
-
         filteredLogs: computed<LogModel[]>(() => {
             const project = state.selectedProject();
             const task = state.selectedTask();
@@ -122,7 +102,6 @@ export const featureLogViewStore = signalStore(
 
                 switchMap((projectId) =>
                     from(projectService.getProjectById(projectId)).pipe(
-                        // ✅ Directly update selectedProject here
                         tap((project) =>
                             patchState(state, { selectedProject: project })
                         ),
@@ -150,8 +129,6 @@ export const featureLogViewStore = signalStore(
                 )
             )
         ),
-
-
 
         fetchLogsByTask: rxMethod<TaskModel>(
             pipe(
@@ -181,7 +158,6 @@ export const featureLogViewStore = signalStore(
                 ),
 
                 switchMap((taskId) =>
-                    // Step 1️⃣ – fetch the task
                     from(taskService.getTaskById(taskId)).
                         pipe(
                         tap((task) => console.log('Fetched task: ', task)),
@@ -192,7 +168,6 @@ export const featureLogViewStore = signalStore(
                                 return EMPTY;
                             }
 
-                            // Step 2️⃣ – fetch the task’s project (if it has one)
                             const project$ = task.project_id
                                 ? from(projectService.getProjectById(task.project_id))
                                 : from(Promise.resolve(null));
@@ -206,8 +181,6 @@ export const featureLogViewStore = signalStore(
                                     });
                                 }),
 
-
-                                // Step 4️⃣ – now fetch logs for this task
                                 switchMap(() =>
                                     from(logService.getLogsByTaskId(task.id)).pipe(
                                         delay(delayTime),
@@ -238,7 +211,6 @@ export const featureLogViewStore = signalStore(
             pipe(
                 tap(() => patchState(state, { loading: state.loading() + 1 })),
 
-                // ⚡ OPTIMISTIC UI UPDATE
                 tap(({ id, newMessage }) => {
                     const current = state.logs();
                     const updated = current.map(l =>
@@ -247,7 +219,6 @@ export const featureLogViewStore = signalStore(
                     patchState(state, { logs: updated });
                 }),
 
-                // 🔧 BACKEND UPDATE
                 switchMap(({ id, newMessage }) =>
                     from(logService.editLog(id, newMessage)).pipe(
                         catchError(err => {
@@ -268,7 +239,6 @@ export const featureLogViewStore = signalStore(
                 tap(() => patchState(state, { loading: state.loading() + 1 })),
                 switchMap((logId) =>
                     from(logService.deleteLogById(logId)).pipe(
-                        // After delete, refetch based on context
                         switchMap(() => {
                             const project = state.selectedProject();
                             const task = state.selectedTask();
@@ -315,7 +285,7 @@ export const featureLogViewStore = signalStore(
                 tap(() => patchState(state, { loading: state.loading() + 1 })),
                 switchMap((project) =>
                     from(logService.deleteLogsByProjectId(project.id)).pipe(
-                        switchMap(() => from(logService.getLogsByProjectId(project.id))), // reload filtered logs
+                        switchMap(() => from(logService.getLogsByProjectId(project.id))),
                         tap((logs) =>
                             patchState(state, {
                                 logs,
@@ -338,7 +308,7 @@ export const featureLogViewStore = signalStore(
                 tap(() => patchState(state, { loading: state.loading() + 1 })),
                 switchMap((task) =>
                     from(logService.deleteLogsByTaskId(task.id)).pipe(
-                        switchMap(() => from(logService.getLogsByTaskId(task.id))), // reload filtered logs
+                        switchMap(() => from(logService.getLogsByTaskId(task.id))),
                         tap((logs) =>
                             patchState(state, {
                                 logs,
@@ -383,7 +353,6 @@ export const featureLogViewStore = signalStore(
 
             store.fetchAllLogs();
 
-            // When the LogService signal changes (e.g., Tauri event), update based on filters
             effect(() => {
                 const allLogs = logService.logs();
                 const project = store.selectedProject();

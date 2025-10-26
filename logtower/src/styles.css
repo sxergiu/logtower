@@ -217,6 +217,20 @@ button {
     justify-content: center;
 }
 
-@media (prefers-color-scheme: dark) {
-
+.drawer-toggle {
+    position: fixed;
+    right: -8px;
+    transform: translateY(-50%);
+    background: var(--logtower-gradient);
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    cursor: pointer;
+    box-shadow: -2px 0 4px rgba(0,0,0,0.2);
+    z-index: 5000;
 }

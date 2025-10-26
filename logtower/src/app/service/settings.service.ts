@@ -36,7 +36,6 @@ export class SettingsService {
 
     async setActiveProject(projectId?: number | null): Promise<void> {
         await invoke('set_active_project', { projectId: projectId ?? null });
-        // ✅ update signal so subscribers see changes
         this.userSettings.update((settings) => ({
             ...(settings ?? { activeProjectId: null, activeTaskId: null }),
             activeProjectId: projectId ?? null,
@@ -46,7 +45,6 @@ export class SettingsService {
 
     async setActiveTask(taskId?: number | null): Promise<void> {
         await invoke('set_active_task', { taskId: taskId ?? null });
-        // ✅ update signal so subscribers see changes
         this.userSettings.update((settings) => ({
             ...(settings ?? { activeProjectId: null, activeTaskId: null }),
             activeTaskId: taskId ?? null,

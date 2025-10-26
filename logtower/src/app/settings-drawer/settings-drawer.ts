@@ -18,7 +18,7 @@ export class SettingsDrawer {
   showWarning = signal(false);
   showNoProjectsWarning = signal(false);
   showProjectsWithNoTasksWarning = signal(false);
-  // signals to watch project/task state
+
   activeProjectId = computed(() => this.settingsService.userSettings()?.activeProjectId ?? null);
   activeTaskId = computed(() => this.settingsService.userSettings()?.activeTaskId ?? null);
   private router = inject(Router);
@@ -31,7 +31,6 @@ export class SettingsDrawer {
       });
     });
 
-    // reactively monitor missing project/task
     effect(() => {
       if (!this.activeProjectId() || !this.activeTaskId()) {
         this.showWarning.set(true);

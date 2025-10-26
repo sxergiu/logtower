@@ -107,17 +107,4 @@ export class LogView {
         this.showModal = false;
     }
 
-    showLoader = false;
-    isVisible = false;
-
-    showLoading() {
-        this.showLoader = true;
-        setTimeout(() => (this.isVisible = true), 10); // triggers fade-in
-    }
-
-    hideLoading() {
-        this.isVisible = false; // triggers fade-out
-        setTimeout(() => (this.showLoader = false), 300); // wait for fade-out
-    }
-
 }

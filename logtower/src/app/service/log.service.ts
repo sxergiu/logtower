@@ -20,7 +20,6 @@ export class LogService {
     }
 
     private async setupEventListeners() {
-        // Listen for log updates from other windows
         await listen('logs-updated', async () => {
             await this.fetchLogs();
         });
@@ -40,13 +39,8 @@ export class LogService {
     async getLogs(): Promise<LogModel[]> {
         const logs = await invoke<LogModel[]>('get_logs_with_project');
 
-        console.log(logs);
-        // Get unique IDs
         const projectIds = [...new Set(logs.map(l => l.project_id).filter(id => id !== null))];
         const taskIds = [...new Set(logs.map(l => l.task_id).filter(id => id !== null))];
-
-        console.log(projectIds)
-        // Fetch all projects and tasks in parallel
 
         const [projects, tasks] = await Promise.all([
             Promise.all(projectIds.map(id => {
@@ -59,12 +53,9 @@ export class LogService {
             }))
         ]);
 
-
-        // Create lookup maps
         const projectMap = new Map(projects.filter(p => p !== null).map(p => [p!.id, p!.name]));
         const taskMap = new Map(tasks.filter(t => t !== null).map(t => [t!.id, t!.name]));
 
-        // Enrich logs
         return logs.map(log => ({
             ...log,
             projectName: projectMap.get(log.project_id) ?? 'Unknown Project',
@@ -77,22 +68,17 @@ export class LogService {
             projectId
         });
 
-        // Get unique task IDs
         const taskIds = [...new Set(logs.map(l => l.task_id).filter(id => id !== null))];
 
-        // Fetch all tasks in parallel
         const tasks = await Promise.all(
             taskIds.map(id => this.taskService.getTaskById(id!))
         );
 
-        // Create lookup map
         const taskMap = new Map(tasks.filter(t => t !== null).map(t => [t!.id, t!.name]));
 
-        // Get project name once (since all logs are from the same project)
         const project = await this.projectService.getProjectById(projectId);
         const projectName = project?.name ?? 'Unknown Project';
 
-        // Enrich logs
         return logs.map(log => ({
             ...log,
             projectName,
@@ -105,22 +91,17 @@ export class LogService {
             taskId
         });
 
-        // Get unique project IDs
         const projectIds = [...new Set(logs.map(l => l.project_id).filter(id => id !== null))];
 
-        // Fetch all projects in parallel
         const projects = await Promise.all(
             projectIds.map(id => this.projectService.getProjectById(id!))
         );
 
-        // Create lookup map
         const projectMap = new Map(projects.filter(p => p !== null).map(p => [p!.id, p!.name]));
 
-        // Get task name once (since all logs are from the same task)
         const task = await this.taskService.getTaskById(taskId);
         const taskName = task?.name ?? 'Unknown Task';
 
-        // Enrich logs
         return logs.map(log => ({
             ...log,
             projectName: projectMap.get(log.project_id) ?? 'Unknown Project',
