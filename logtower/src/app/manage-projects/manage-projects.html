@@ -18,7 +18,7 @@
 <div class="log-manager-container">
 
     <div class="search-section">
-        <input
+        <input class="manage-input"
                 [(ngModel)]="searchQuery"
                 placeholder="Find project..."
         />
@@ -203,7 +203,7 @@
                         @if( expandedProject === project.id ) {
                             <!-- Add Task Section -->
                             <div class="add-section">
-                                <input
+                                <input class="manage-input"
                                         [(ngModel)]="newTaskNames[project.id]"
                                         placeholder="New task name"
                                         (keyup.enter)="addTask(project.id)"

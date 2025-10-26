@@ -28,9 +28,9 @@
     "active": true,
     "targets": "all",
     "icon": [
-      "icons/logtower.png",
-      "icons/logtower.png",
-      "icons/logtower.png",
+      "icons/logtower.rgba",
+      "icons/logtower.rgba",
+      "icons/logtower.rgba",
       "icons/icon.icns",
       "icons/logtower.ico"
     ]
