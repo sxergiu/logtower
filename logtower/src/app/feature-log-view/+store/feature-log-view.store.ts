@@ -6,15 +6,15 @@ import {
     withHooks,
     withMethods
 } from '@ngrx/signals';
-import {computed, effect, inject} from '@angular/core';
+import { computed, effect, inject } from '@angular/core';
 import { LogService } from '../../service/log.service';
 import { LogModel } from '../../models/log.model';
 import { ProjectModel } from '../../models/project.model';
 import { TaskModel } from '../../models/task.model';
-import {catchError, delay, EMPTY, finalize, from, pipe, switchMap, tap} from "rxjs";
-import {rxMethod} from "@ngrx/signals/rxjs-interop";
-import {ProjectService} from "../../service/project.service";
-import {TaskService} from "../../service/task.service";
+import { catchError, delay, EMPTY, finalize, from, pipe, switchMap, tap, Observable } from 'rxjs';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { ProjectService } from '../../service/project.service';
+import { TaskService } from '../../service/task.service';
 
 export interface LogFilterState {
     loading: number;
@@ -23,9 +23,10 @@ export interface LogFilterState {
     selectedTask: TaskModel | null;
     showFilters: boolean;
 }
-const delayTime = 0;
-export const featureLogViewStore = signalStore(
 
+const delayTime = 0;
+
+export const featureLogViewStore = signalStore(
     withState<LogFilterState>({
         loading: 0,
         logs: [],
@@ -35,347 +36,254 @@ export const featureLogViewStore = signalStore(
     }),
 
     withComputed((state) => ({
-        isLoading: computed(() => state.loading() > 0),
         logs: computed(() => state.logs()),
-        pageTitle: computed(() => {
-            if (state.selectedTask()) return `Logs: ${state.selectedTask()!.name}`;
-            if (state.selectedProject()) return `Logs: ${state.selectedProject()!.name}`;
-            return 'All Logs';
-        }),
-
         hideProjectColumn: computed(() => !!state.selectedProject()),
         hideTaskColumn: computed(() => !!state.selectedTask()),
-
-        logsByProject: computed<LogModel[]>(() => {
-            const project = state.selectedProject();
-            if (!project) return state.logs();
-            return state.logs().filter((log) => log.project_id === project.id);
-        }),
-
-        logsByTask: computed<LogModel[]>(() => {
-            const task = state.selectedTask();
-            if (!task) return state.logs();
-            return state.logs().filter((log) => log.task_id === task.id);
-        }),
-
         filteredLogs: computed<LogModel[]>(() => {
             const project = state.selectedProject();
             const task = state.selectedTask();
+            const all = state.logs();
 
-            if (task) {
-                return state.logs().filter(log => log.task_id === task.id);
-            }
-
-            if (project) {
-                return state.logs().filter(log => log.project_id === project.id);
-            }
-            return state.logs();
+            if (task) return all.filter((l) => l.task_id === task.id);
+            if (project) return all.filter((l) => l.project_id === project.id);
+            return all;
         })
-
     })),
 
-    withMethods((state, logService = inject(LogService),
-                 projectService = inject(ProjectService), taskService = inject(TaskService)) => ({
+    withMethods((state,
+                 logService = inject(LogService),
+                 projectService = inject(ProjectService),
+                 taskService = inject(TaskService)) => {
 
-        fetchAllLogs: rxMethod<void>(
-            pipe(
-                tap(() => patchState(state, { loading: state.loading() + 1 })),
-                switchMap(() => from(logService.getLogs()).pipe(
-                    delay(delayTime),
-                    tap((logs) => patchState(state, { logs })),
-                    catchError((error) => {
-                        console.error('Error fetching logs:', error);
-                        return EMPTY;
-                    }),
-                    finalize(() => patchState(state, { loading: state.loading() - 1 }))
-                ))
-            )
-        ),
+        const inc = () => patchState(state, { loading: state.loading() + 1 });
+        const dec = () => patchState(state, { loading: state.loading() - 1 });
 
-        fetchLogsByProject: rxMethod<ProjectModel>(
-            pipe(
-                tap((project) => patchState(state, {
-                    loading: state.loading() + 1,
-                    selectedProject: project,
-                    selectedTask: null,
-                })),
-                switchMap((project) => from(logService.getLogsByProjectId(project.id)).pipe(
-                    delay(delayTime),
-                    tap((logs) => patchState(state, { logs })),
-                    catchError((error) => {
-                        console.error('Error fetching logs by project:', error);
-                        return EMPTY;
-                    }),
-                    finalize(() => patchState(state, { loading: state.loading() - 1 }))
-                ))
-            )
-        ),
-
-        fetchLogsByProjectId: rxMethod<number>(
-            pipe(
-                tap(() =>
-                    patchState(state, {
-                        loading: state.loading() + 1,
-                        selectedTask: null,
-                    })
-                ),
-
-                switchMap((projectId) =>
-                    from(projectService.getProjectById(projectId)).pipe(
-                        // ✅ Directly update selectedProject here
-                        tap((project) =>
-                            patchState(state, { selectedProject: project })
-                        ),
-
-                        switchMap(() =>
-                            from(logService.getLogsByProjectId(projectId)).pipe(
-                                delay(delayTime),
-                                tap((logs) => patchState(state, { logs })),
-                                catchError((error) => {
-                                    console.error('Error fetching logs by project ID:', error);
-                                    return EMPTY;
-                                }),
-                                finalize(() =>
-                                    patchState(state, { loading: state.loading() - 1 })
-                                )
-                            )
-                        ),
-
-                        catchError((error) => {
-                            console.error('Error fetching project by ID:', error);
-                            patchState(state, { loading: state.loading() - 1 });
-                            return EMPTY;
-                        })
-                    )
-                )
-            )
-        ),
-
-
-
-        fetchLogsByTask: rxMethod<TaskModel>(
-            pipe(
-                tap((task) => patchState(state, {
-                    loading: state.loading() + 1,
-                    selectedTask: task,
-                })),
-                switchMap((task) => from(logService.getLogsByTaskId(task.id)).pipe(
-                    delay(delayTime),
-                    tap((logs) => patchState(state, { logs })),
-                    catchError((error) => {
-                        console.error('Error fetching logs by task:', error);
-                        return EMPTY;
-                    }),
-                    finalize(() => patchState(state, { loading: state.loading() - 1 }))
-                ))
-            )
-        ),
-
-        fetchLogsByTaskId: rxMethod<number>(
-            pipe(
-                tap(() =>
-                    patchState(state, {
-                        loading: state.loading() + 1,
-                        selectedProject: null,
-                    })
-                ),
-
-                switchMap((taskId) =>
-                    // Step 1️⃣ – fetch the task
-                    from(taskService.getTaskById(taskId)).
-                        pipe(
-                        tap((task) => console.log('Fetched task: ', task)),
-                        switchMap((task) => {
-                            if (!task) {
-                                console.error('Task not found');
-                                patchState(state, { loading: state.loading() - 1 });
-                                return EMPTY;
-                            }
-
-                            // Step 2️⃣ – fetch the task’s project (if it has one)
-                            const project$ = task.project_id
-                                ? from(projectService.getProjectById(task.project_id))
-                                : from(Promise.resolve(null));
-
-                            return project$.pipe(
-                                tap((project) => {
-                                    console.log('Fetched project:', project);
-                                    patchState(state, {
-                                        selectedTask: task,
-                                        selectedProject: project
-                                    });
-                                }),
-
-
-                                // Step 4️⃣ – now fetch logs for this task
-                                switchMap(() =>
-                                    from(logService.getLogsByTaskId(task.id)).pipe(
-                                        delay(delayTime),
-                                        tap((logs) => patchState(state, { logs })),
-                                        catchError((error) => {
-                                            console.error('Error fetching logs by task ID:', error);
-                                            return EMPTY;
-                                        }),
-                                        finalize(() =>
-                                            patchState(state, { loading: state.loading() - 1 })
-                                        )
-                                    )
-                                )
-                            );
-                        }),
-
-                        catchError((error) => {
-                            console.error('Error fetching task by ID:', error);
-                            patchState(state, { loading: state.loading() - 1 });
-                            return EMPTY;
-                        })
-                    )
-                )
-            )
-        ),
-
-        editLog: rxMethod<{ id: number; newMessage: string }>(
-            pipe(
-                tap(() => patchState(state, { loading: state.loading() + 1 })),
-
-                // ⚡ OPTIMISTIC UI UPDATE
-                tap(({ id, newMessage }) => {
-                    const current = state.logs();
-                    const updated = current.map(l =>
-                        l.id === id ? { ...l, message: newMessage } : l
-                    );
-                    patchState(state, { logs: updated });
+        const wrap = <T>(obs$: Observable<T>, label: string) =>
+            obs$.pipe(
+                delay(delayTime),
+                catchError((err) => {
+                    console.error(label, err);
+                    return EMPTY;
                 }),
+                finalize(dec)
+            );
 
-                // 🔧 BACKEND UPDATE
-                switchMap(({ id, newMessage }) =>
-                    from(logService.editLog(id, newMessage)).pipe(
-                        catchError(err => {
-                            console.error('Error editing log:', err);
-                            return EMPTY;
-                        }),
-                        finalize(() =>
-                            patchState(state, { loading: state.loading() - 1 })
+        const setProject = (project: ProjectModel | null) =>
+            patchState(state, { selectedProject: project, selectedTask: null });
+
+        const setTask = (task: TaskModel | null) =>
+            patchState(state, { selectedTask: task });
+
+        const reloadBySelection = () => {
+            const p = state.selectedProject();
+            const t = state.selectedTask();
+            if (p) return from(logService.getLogsByProjectId(p.id));
+            if (t) return from(logService.getLogsByTaskId(t.id));
+            return from(logService.getLogs());
+        };
+
+        const loadLogs = (src$: Observable<LogModel[]>, label: string) =>
+            wrap(
+                src$.pipe(tap((logs) => patchState(state, { logs }))),
+                label
+            );
+
+        return {
+            fetchAllLogs: rxMethod<void>(
+                pipe(
+                    tap(inc),
+                    switchMap(() => loadLogs(from(logService.getLogs()), 'Error fetching logs'))
+                )
+            ),
+
+            fetchLogsByProject: rxMethod<ProjectModel>(
+                pipe(
+                    tap((project) => {
+                        inc();
+                        setProject(project);
+                    }),
+                    switchMap((project) =>
+                        loadLogs(
+                            from(logService.getLogsByProjectId(project.id)),
+                            'Error fetching logs by project'
                         )
                     )
                 )
-            )
-        ),
+            ),
 
-
-        deleteLog: rxMethod<number>(
-            pipe(
-                tap(() => patchState(state, { loading: state.loading() + 1 })),
-                switchMap((logId) =>
-                    from(logService.deleteLogById(logId)).pipe(
-                        // After delete, refetch based on context
-                        switchMap(() => {
-                            const project = state.selectedProject();
-                            const task = state.selectedTask();
-
-                            if (project) {
-                                return from(logService.getLogsByProjectId(project.id));
-                            } else if (task) {
-                                return from(logService.getLogsByTaskId(task.id));
-                            } else {
-                                return from(logService.getLogs());
-                            }
-                        }),
-                        tap((logs) => patchState(state, { logs })),
-                        catchError((error) => {
-                            console.error('Error deleting log:', error);
-                            return EMPTY;
-                        }),
-                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
-                    )
-                )
-            )
-        ),
-
-
-        deleteAllLogs: rxMethod<void>(
-            pipe(
-                tap(() => patchState(state, { loading: state.loading() + 1 })),
-                switchMap(() =>
-                    from(logService.deleteAllLogs()).pipe(
-                        switchMap(() => from(logService.getLogs())), // reload all logs
-                        tap((logs) => patchState(state, { logs })),
-                        catchError((error) => {
-                            console.error('Error deleting all logs:', error);
-                            return EMPTY;
-                        }),
-                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
-                    )
-                )
-            )
-        ),
-
-        deleteLogsByProject: rxMethod<ProjectModel>(
-            pipe(
-                tap(() => patchState(state, { loading: state.loading() + 1 })),
-                switchMap((project) =>
-                    from(logService.deleteLogsByProjectId(project.id)).pipe(
-                        switchMap(() => from(logService.getLogsByProjectId(project.id))), // reload filtered logs
-                        tap((logs) =>
-                            patchState(state, {
-                                logs,
-                                selectedProject: project,
-                                selectedTask: null,
+            fetchLogsByProjectId: rxMethod<number>(
+                pipe(
+                    tap(() => {
+                        inc();
+                        patchState(state, { selectedTask: null });
+                    }),
+                    switchMap((projectId) =>
+                        from(projectService.getProjectById(projectId)).pipe(
+                            tap((project) => setProject(project)),
+                            switchMap(() =>
+                                loadLogs(
+                                    from(logService.getLogsByProjectId(projectId)),
+                                    'Error fetching logs by project ID'
+                                )
+                            ),
+                            catchError((err) => {
+                                console.error('Error fetching project by ID:', err);
+                                dec();
+                                return EMPTY;
                             })
-                        ),
-                        catchError((error) => {
-                            console.error('Error deleting logs by project:', error);
-                            return EMPTY;
-                        }),
-                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
+                        )
                     )
                 )
-            )
-        ),
+            ),
 
-        deleteLogsByTask: rxMethod<TaskModel>(
-            pipe(
-                tap(() => patchState(state, { loading: state.loading() + 1 })),
-                switchMap((task) =>
-                    from(logService.deleteLogsByTaskId(task.id)).pipe(
-                        switchMap(() => from(logService.getLogsByTaskId(task.id))), // reload filtered logs
-                        tap((logs) =>
-                            patchState(state, {
-                                logs,
-                                selectedTask: task,
+            fetchLogsByTask: rxMethod<TaskModel>(
+                pipe(
+                    tap((task) => {
+                        inc();
+                        setTask(task);
+                    }),
+                    switchMap((task) =>
+                        loadLogs(
+                            from(logService.getLogsByTaskId(task.id)),
+                            'Error fetching logs by task'
+                        )
+                    )
+                )
+            ),
+
+            fetchLogsByTaskId: rxMethod<number>(
+                pipe(
+                    tap(() => {
+                        inc();
+                        patchState(state, { selectedProject: null });
+                    }),
+                    switchMap((taskId) =>
+                        from(taskService.getTaskById(taskId)).pipe(
+                            switchMap((task) => {
+                                if (!task) {
+                                    console.error('Task not found');
+                                    dec();
+                                    return EMPTY;
+                                }
+
+                                const project$ = task.project_id
+                                    ? from(projectService.getProjectById(task.project_id))
+                                    : from(Promise.resolve(null));
+
+                                return project$.pipe(
+                                    tap((project) => {
+                                        setTask(task);
+                                        patchState(state, { selectedProject: project });
+                                    }),
+                                    switchMap(() =>
+                                        loadLogs(
+                                            from(logService.getLogsByTaskId(task.id)),
+                                            'Error fetching logs by task ID'
+                                        )
+                                    )
+                                );
+                            }),
+                            catchError((err) => {
+                                console.error('Error fetching task by ID:', err);
+                                dec();
+                                return EMPTY;
                             })
-                        ),
-                        catchError((error) => {
-                            console.error('Error deleting logs by task:', error);
-                            return EMPTY;
-                        }),
-                        finalize(() => patchState(state, { loading: state.loading() - 1 }))
+                        )
                     )
                 )
-            )
-        ),
+            ),
 
+            editLog: rxMethod<{ id: number; newMessage: string }>(
+                pipe(
+                    tap(() => {
+                        inc();
+                    }),
+                    tap(({ id, newMessage }) => {
+                        patchState(state, {
+                            logs: state.logs().map((l) => (l.id === id ? { ...l, message: newMessage } : l))
+                        });
+                    }),
+                    switchMap(({ id, newMessage }) =>
+                        wrap(from(logService.editLog(id, newMessage)), 'Error editing log')
+                    )
+                )
+            ),
 
-        setSelectedProject: (project: ProjectModel | null) => {
-            patchState(state, {
-                selectedProject: project,
-                selectedTask: null,
-            });
-        },
+            deleteLog: rxMethod<number>(
+                pipe(
+                    tap(inc),
+                    switchMap((logId) =>
+                        from(logService.deleteLogById(logId)).pipe(
+                            switchMap(reloadBySelection),
+                            tap((logs) => patchState(state, { logs })),
+                            catchError((err) => {
+                                console.error('Error deleting log:', err);
+                                return EMPTY;
+                            }),
+                            finalize(dec)
+                        )
+                    )
+                )
+            ),
 
-        setSelectedTask: (task: TaskModel | null) => {
-            patchState(state, {
-                selectedTask: task,
-            });
-        },
+            deleteAllLogs: rxMethod<void>(
+                pipe(
+                    tap(inc),
+                    switchMap(() =>
+                        from(logService.deleteAllLogs()).pipe(
+                            switchMap(() => from(logService.getLogs())),
+                            tap((logs) => patchState(state, { logs })),
+                            catchError((err) => {
+                                console.error('Error deleting all logs:', err);
+                                return EMPTY;
+                            }),
+                            finalize(dec)
+                        )
+                    )
+                )
+            ),
 
+            deleteLogsByProject: rxMethod<ProjectModel>(
+                pipe(
+                    tap(inc),
+                    switchMap((project) =>
+                        from(logService.deleteLogsByProjectId(project.id)).pipe(
+                            switchMap(() => from(logService.getLogsByProjectId(project.id))),
+                            tap((logs) =>
+                                patchState(state, { logs, selectedProject: project, selectedTask: null })
+                            ),
+                            catchError((err) => {
+                                console.error('Error deleting logs by project:', err);
+                                return EMPTY;
+                            }),
+                            finalize(dec)
+                        )
+                    )
+                )
+            ),
 
-        resetTask: () => {
-            patchState(state, {
-                selectedTask: null,
-            })
-        }
-    })),
+            deleteLogsByTask: rxMethod<TaskModel>(
+                pipe(
+                    tap(inc),
+                    switchMap((task) =>
+                        from(logService.deleteLogsByTaskId(task.id)).pipe(
+                            switchMap(() => from(logService.getLogsByTaskId(task.id))),
+                            tap((logs) => patchState(state, { logs, selectedTask: task })),
+                            catchError((err) => {
+                                console.error('Error deleting logs by task:', err);
+                                return EMPTY;
+                            }),
+                            finalize(dec)
+                        )
+                    )
+                )
+            ),
+
+            setSelectedProject: (project: ProjectModel | null) => setProject(project),
+            setSelectedTask: (task: TaskModel | null) => setTask(task),
+            resetTask: () => setTask(null)
+        };
+    }),
 
     withHooks({
         onInit(store) {
@@ -383,25 +291,19 @@ export const featureLogViewStore = signalStore(
 
             store.fetchAllLogs();
 
-            // When the LogService signal changes (e.g., Tauri event), update based on filters
             effect(() => {
                 const allLogs = logService.logs();
                 const project = store.selectedProject();
                 const task = store.selectedTask();
 
                 if (task) {
-                    patchState(store, {
-                        logs: allLogs.filter((l) => l.task_id === task.id)
-                    });
+                    patchState(store, { logs: allLogs.filter((l) => l.task_id === task.id) });
                 } else if (project) {
-                    patchState(store, {
-                        logs: allLogs.filter((l) => l.project_id === project.id)
-                    });
+                    patchState(store, { logs: allLogs.filter((l) => l.project_id === project.id) });
                 } else {
                     patchState(store, { logs: allLogs });
                 }
             });
         }
     })
-
-)
+);

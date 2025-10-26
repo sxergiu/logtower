@@ -1,5 +1,4 @@
 import {Component, inject} from '@angular/core';
-import { invoke } from '@tauri-apps/api/core';
 import {Router} from "@angular/router";
 import {SettingsDrawer} from "../settings-drawer/settings-drawer";
 import {Window} from "@tauri-apps/api/window";
@@ -15,16 +14,6 @@ import {Window} from "@tauri-apps/api/window";
 export class Dashboard {
 
   router = inject(Router);
-  greetingMessage = "";
-
-  greet(event: SubmitEvent, name: string): void {
-    event.preventDefault();
-
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    invoke<string>("greet", { name }).then((text) => {
-      this.greetingMessage = text;
-    });
-  }
 
   goToManage() {
     this.router.navigate(['/manage']);
@@ -34,16 +23,11 @@ export class Dashboard {
     this.router.navigate(['/log-view']);
   }
 
-  async quitApp()  {
-    try {
-      const appWindow = await Window.getByLabel('main');
-      if (appWindow) {
-        await appWindow.close();
-      } else {
-        console.error('Window with label "main" not found');
-      }
-    } catch (error) {
-      console.error('Error closing window:', error);
+  async quitApp() {
+    const appWindow = await Window.getByLabel('main');
+    if (appWindow) {
+      await appWindow.close();
     }
   }
+
 }

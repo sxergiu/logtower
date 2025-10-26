@@ -28,7 +28,7 @@
 }
 
 .no-filter-bar:hover {
-    background: var(--logtower-hover);
+    background: #ededed;
     cursor: pointer;
 }
 
@@ -47,13 +47,23 @@
 
 .filter-dropdowns select {
     display: block;
-    width: 25%;
+    width: 30%;
     padding: 0.3rem 0.8rem;
     font: var(--logtower-font), 'monospace';
     border-radius: 6px;
     border: 1px solid #ccc;
     background-color: var(--logtower-white);
     transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:active {
+        border: 2px solid var(--logtower-wood);
+    }
+
+    &:focus {
+        outline: none;
+        border: 2px solid var(--logtower-wood);
+    }
+
 }
 
 .filter-dropdowns select:hover {

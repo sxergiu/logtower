@@ -2,9 +2,8 @@
 
 html, body {
     height: 100%;
-    overflow: hidden; /* Prevent page scrolling */
+    overflow: hidden;
 }
-
 
 html {
     --logtower-white: #f8faf8;
@@ -16,7 +15,10 @@ html {
     --logtower-hover: rgba(0, 0, 0, 0.04);
     --logtower-gradient: linear-gradient(135deg, var(--logtower-wood) 0%, var(--logtower-wood-dark) 100%);
     --logtower-green-gradient: linear-gradient(135deg, var(--logtower-green) 0%, var(--logtower-green-dark) 100%);
-    --logtower-font: 'SF Mono', 'Monaco', 'Cascadia Code';
+    --logtower-font: SFMono-Regular, "SF Mono", Menlo, Monaco,
+    ui-monospace, Consolas, "Cascadia Code",
+    "Liberation Mono", "DejaVu Sans Mono",
+    "Noto Sans Mono", "Courier New", monospace;
 
     background-color: var(--logtower-white) !important;
 }
@@ -85,6 +87,10 @@ html {
 .svg-wood:hover img {
     filter: brightness(0) saturate(100%) invert(53%) sepia(85%) saturate(900%) hue-rotate(357deg) brightness(90%) contrast(95%);
     transform: scale(1.1);
+}
+
+.svg-wood-no-hover img {
+    filter: brightness(0) saturate(100%) invert(53%) sepia(85%) saturate(900%) hue-rotate(357deg) brightness(90%) contrast(95%);
 }
 
 .svg-red:hover img {
@@ -217,6 +223,20 @@ button {
     justify-content: center;
 }
 
-@media (prefers-color-scheme: dark) {
-
+.drawer-toggle {
+    position: fixed;
+    right: -8px;
+    transform: translateY(-50%);
+    background: var(--logtower-gradient);
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    cursor: pointer;
+    box-shadow: -2px 0 4px rgba(0,0,0,0.2);
+    z-index: 5000;
 }

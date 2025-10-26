@@ -16,11 +16,9 @@
 }
 
 .settings h2 {
-    /*margin-bottom: 1rem;*/
     font-size: 1.2rem;
     color: #333;
     border-bottom: 2px solid #eee;
-    /*padding-bottom: 0.5rem;*/
 }
 
 .settings p {
@@ -60,8 +58,3 @@
     cursor: not-allowed;
 }
 
-@media(min-width: 1032px) {
-    .settings p {
-        margin: 1.8rem 0;
-    }
-}

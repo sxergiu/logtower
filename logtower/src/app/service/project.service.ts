@@ -26,7 +26,6 @@ export class ProjectService {
   }
 
   async getProjectById(projectId: number): Promise<ProjectModel | null> {
-    console.log(projectId + ' ')
     return await invoke<ProjectModel | null>('get_project_by_id', { projectId });
   }
 
