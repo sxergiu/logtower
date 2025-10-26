@@ -31,7 +31,15 @@ pub fn get_db_path() -> PathBuf {
 /// Get a connection to the database
 pub fn get_connection() -> Result<Connection> {
     let db_path = get_db_path();
-    Connection::open(db_path)
+    let conn = Connection::open(db_path)?;
+    // Correctness
+    conn.execute("PRAGMA foreign_keys = ON;", [])?;
+    // Throughput for desktop apps
+    // conn.execute("PRAGMA journal_mode = WAL;", [])?;
+    conn.execute("PRAGMA synchronous = NORMAL;", [])?;
+    // Fewer temp file hits during sorts/joins
+    conn.execute("PRAGMA temp_store = MEMORY;", [])?;
+    Ok(conn)
 }
 
 /// Initialize the database - creates tables and seeds data if needed
@@ -40,15 +48,40 @@ pub fn initialize_database() -> Result<()> {
     let db_path = get_db_path();
     println!("DB path: {:?}", db_path);
 
-    let conn = Connection::open(db_path)?;
+    let conn = get_connection()?;           // <- use the PRAGMA-enabled connection
+    let tx = conn.unchecked_transaction()?; // faster for init; use `transaction()` if you prefer FK checks during seeding
 
-    // Create tables
-    create_tables(&conn)?;
+    create_tables(&tx)?;
+    create_indexes(&tx)?;
+    seed_database(&tx)?;
 
-    // Seed with initial data
-    seed_database(&conn)?;
-
+    tx.commit()?;
+    conn.execute("ANALYZE;", [])?;
     Ok(())
+}
+
+
+fn create_indexes(conn: &Connection) -> Result<()> {
+    // Covers: WHERE l.task_id = ? ORDER BY l.timestamp DESC
+    // Also improves deletes by task_id and tie-break pagination
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_logs_task_ts_id_desc
+         ON logs(task_id, timestamp DESC, id DESC);",
+        [],
+    )?;
+
+    // Helps project queries via JOIN:
+    //   FROM logs l JOIN tasks t ON t.id = l.task_id
+    //   WHERE t.project_id = ? ORDER BY l.timestamp DESC
+    // This gets tasks for a project quickly and in id order.
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_tasks_project_id_id
+         ON tasks(project_id, id);",
+        [],
+    )?;
+    
+    Ok(())
+
 }
 
 fn create_tables(conn: &Connection) -> Result<()> {

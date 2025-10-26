@@ -13,9 +13,9 @@
         <div class="warning-container">
             @if (showNoProjectsWarning()) {
                 <div class="warning-banner">
-                    <div class="svg-icon svg-wood" style="align-self: center;">
+                    <div class="svg-icon svg-wood-no-hover" style="align-self: center;">
                             <img [ngSrc]="'../../assets/warning.svg'"
-                                 alt="Toggle" width="22" height="22" style="margin-right: 0.5rem">
+                                 alt="Toggle" width="22" height="22" style="margin-right: 0.5rem; align-self: center;">
                             <a (click)="goToManage()" class="create-link">
                                 No projects or tasks? Create some <span class="link-text">here</span>!
                             </a>
@@ -24,18 +24,18 @@
             }
             @if (showProjectsWithNoTasksWarning()) {
                 <div class="warning-banner">
-                    <div class="svg-icon svg-wood" style="align-self: center">
+                    <div class="svg-icon svg-wood-no-hover" style="align-self: center">
                         <img [ngSrc]="'../../assets/warning.svg'"
-                             alt="Toggle" width="22" height="22" style="margin-right: 0.5rem">
+                             alt="Toggle" width="22" height="22" style="margin-right: 0.5rem; align-self: center;">
                     Having a project with no tasks is kind of pointless, isn't it?
                     </div>
                 </div>
             }
             @if (showWarning()) {
                 <div class="warning-banner">
-                    <div class="svg-icon svg-wood" style="align-self: center">
+                    <div class="svg-icon svg-wood-no-hover" style="align-self: center">
                         <img [ngSrc]="'../../assets/warning.svg'"
-                             alt="Toggle" width="22" height="22" style="margin-right: 0.5rem">
+                             alt="Toggle" width="22" height="22" style="margin-right: 0.5rem; align-self: center;">
                     Please select a valid setup to enable logging.
                     </div>
                 </div>

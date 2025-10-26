@@ -44,11 +44,9 @@ export class LogService {
 
         const [projects, tasks] = await Promise.all([
             Promise.all(projectIds.map(id => {
-                console.log("Fetching project with ID:", id);
                 return this.projectService.getProjectById(id!);
             })),
             Promise.all(taskIds.map(id => {
-                console.log("Fetching task with ID:", id);
                 return this.taskService.getTaskById(id!);
             }))
         ]);

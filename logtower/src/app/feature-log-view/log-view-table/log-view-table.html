@@ -42,11 +42,15 @@
 
                                 @if(editingLog === log.id ) {
                                     <td class="message">
-                                        <input
-                                                class="edit-log"
-                                                [(ngModel)]="editLogValue"
-                                                placeholder="Log message.."
-                                        />
+                                       <textarea
+                                               [attr.wrap]="'soft'"
+                                               rows="0"
+                                               class="edit-log"
+                                               [(ngModel)]="editLogValue"
+                                               placeholder="Log message.."
+                                               (keydown.enter)="onEditEnter($event, log.id)"
+                                               (keyup.esc)="cancelEditLog()"
+                                       ></textarea>
                                     </td>
                                     <td class="actions">
                                         <button (keyup.enter)="saveEditLog(log.id)" (click)="saveEditLog(log.id)" class="icon-btn svg-green" title="Edit log">
@@ -54,7 +58,7 @@
                                                 <img ngSrc="../../../assets/save.svg" alt="Edit" width="20" height="20">
                                             </div>
                                         </button>
-                                        <button (keyup.esc)="cancelEditLog()" (click)="cancelEditLog()" class="icon-btn svg-red" title="Delete log">
+                                        <button (click)="cancelEditLog()" class="icon-btn svg-red" title="Delete log">
                                             <div class="svg-icon">
                                                 <img ngSrc="../../../assets/cancel.svg" alt="Delete" width="20" height="20">
                                             </div>

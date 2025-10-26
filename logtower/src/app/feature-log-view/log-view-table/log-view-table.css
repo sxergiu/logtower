@@ -241,7 +241,27 @@ td {
 
 
 .edit-log {
-    width: 70%;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    background: #fff;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 9rem;
+    resize: none;
+    field-sizing: content;
+}
+
+.edit-log:focus {
+    outline: none;
+    border: 1px solid var(--logtower-wood);
 }
 
 .empty-row {

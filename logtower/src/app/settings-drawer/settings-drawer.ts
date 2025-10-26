@@ -26,7 +26,6 @@ export class SettingsDrawer {
   constructor(private ngZone: NgZone, private settingsService: SettingsService) {
     listen('open-settings', () => {
       this.ngZone.run(() => {
-        console.log('open-settings event received');
         this.openDrawer();
       });
     });

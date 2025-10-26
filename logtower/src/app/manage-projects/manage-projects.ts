@@ -1,52 +1,58 @@
-import {Component, computed, inject, signal} from '@angular/core';
-import {Router} from "@angular/router";
-import {FormsModule} from "@angular/forms";
-import {NgOptimizedImage} from "@angular/common";
-import {ProjectService} from "../service/project.service";
-import {TaskService} from "../service/task.service";
-import {SettingsDrawer} from "../settings-drawer/settings-drawer";
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NgOptimizedImage } from '@angular/common';
+import { ProjectService } from '../service/project.service';
+import { TaskService } from '../service/task.service';
+import { SettingsDrawer } from '../settings-drawer/settings-drawer';
 
 @Component({
   selector: 'app-manage-projects',
-  imports: [
-    FormsModule,
-    NgOptimizedImage,
-    SettingsDrawer,
-  ],
+  imports: [FormsModule, NgOptimizedImage, SettingsDrawer],
   templateUrl: './manage-projects.html',
   styleUrl: './manage-projects.css'
 })
 export class ManageProjects {
-
   router = inject(Router);
-
   projectService = inject(ProjectService);
   taskService = inject(TaskService);
 
   projects = this.projectService.projects;
   tasksByProject = this.taskService.tasksByProject;
 
-  newProjectName = signal<string>('');
-  searchQuery = signal<string>('');
+  newProjectName = signal('');
+  searchQuery = signal('');
   newTaskNames: { [key: number]: string } = {};
 
   editingProject: number | null = null;
   editingTask: { projectId: number; taskId: number } | null = null;
-  editProjectValue: string = '';
-  editTaskValue: string = '';
+  editProjectValue = '';
+  editTaskValue = '';
 
   showEditButtons: number | null = null;
   expandedProject: number | null = null;
 
   filteredProjects = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    if (!query) {
-      return this.projects();
-    }
-    return this.projects().filter(project =>
-        project.name.toLowerCase().includes(query)
-    );
+    const q = this.searchQuery().toLowerCase().trim();
+    return q ? this.projects().filter(p => p.name.toLowerCase().includes(q)) : this.projects();
   });
+
+  isAddProjectToggled = false;
+  toggleAddProject() {
+    this.isAddProjectToggled = !this.isAddProjectToggled;
+  }
+
+  private clearProjectEdit() {
+    this.editingProject = null;
+    this.editProjectValue = '';
+  }
+  private clearTaskEdit() {
+    this.editingTask = null;
+    this.editTaskValue = '';
+  }
+  private toggleId(current: number | null, id: number) {
+    return current === id ? null : id;
+  }
 
   async addProject() {
     const name = this.newProjectName().trim();
@@ -62,71 +68,16 @@ export class ManageProjects {
   }
 
   saveProjectEdit(projectId: number): void {
-    if (this.editProjectValue.trim()) {
-      this.projects.set(
-          this.projects().map(project =>
-              project.id === projectId
-                  ? { ...project, name: this.editProjectValue.trim() }
-                  : project
-          )
-      );
+    const name = this.editProjectValue.trim();
+    if (name) {
+      this.projects.set(this.projects().map(p => (p.id === projectId ? { ...p, name } : p)));
     }
     this.projectService.renameProject(projectId, this.editProjectValue);
-    this.editingProject = null;
-    this.editProjectValue = '';
+    this.clearProjectEdit();
   }
 
   cancelProjectEdit(): void {
-    this.editingProject = null;
-    this.editProjectValue = '';
-  }
-
-  addTask(projectId: number): void {
-    const taskName = this.newTaskNames[projectId];
-    if (taskName && taskName.trim()) {
-      this.taskService.addTask(projectId, taskName);
-      this.newTaskNames[projectId] = '';
-    }
-  }
-
-  deleteTask(projectId: number, taskId: number): void {
-    this.taskService.deleteTask(taskId);
-    const tasks = this.tasksByProject();
-    this.tasksByProject.set({
-      ...tasks,
-      [projectId]: tasks[projectId].filter(t => t.id !== taskId)
-    });
-  }
-
-  startEditTask(projectId: number, task: any): void {
-    this.editingTask = { projectId, taskId: task.id };
-    this.editTaskValue = task.name;
-  }
-
-  saveTaskEdit(projectId: number, taskId: number): void {
-    if (this.editTaskValue.trim()) {
-      const tasks = this.tasksByProject();
-      this.tasksByProject.set({
-        ...tasks,
-        [projectId]: tasks[projectId].map(task =>
-            task.id === taskId
-                ? { ...task, name: this.editTaskValue.trim() }
-                : task
-        )
-      });
-    }
-    this.taskService.renameTask(taskId, this.editTaskValue);
-    this.editingTask = null;
-    this.editTaskValue = '';
-  }
-
-  cancelTaskEdit(): void {
-    this.editingTask = null;
-    this.editTaskValue = '';
-  }
-
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
+    this.clearProjectEdit();
   }
 
   startEditProject(project: any): void {
@@ -138,29 +89,53 @@ export class ManageProjects {
   toggleEditButtons(projectId: number): void {
     this.editingProject = null;
     this.editingTask = null;
-
-    if (this.showEditButtons === projectId) {
-      this.showEditButtons = null;
-    } else {
-      this.showEditButtons = projectId;
-    }
+    this.showEditButtons = this.toggleId(this.showEditButtons, projectId);
   }
 
   toggleProject(projectId: number): void {
     this.editingProject = null;
     this.editingTask = null;
-
-    if (this.expandedProject === projectId) {
-      this.expandedProject = null;
-      this.showEditButtons = null;
-    } else {
-      this.expandedProject = projectId;
-      this.showEditButtons = null;
-    }
+    const willCollapse = this.expandedProject === projectId;
+    this.expandedProject = willCollapse ? null : projectId;
+    this.showEditButtons = null;
   }
 
-  isAddProjectToggled = false;
-    toggleAddProject() {
-        this.isAddProjectToggled = !this.isAddProjectToggled;
+  addTask(projectId: number): void {
+    const name = this.newTaskNames[projectId]?.trim();
+    if (!name) return;
+    this.taskService.addTask(projectId, name);
+    this.newTaskNames[projectId] = '';
+  }
+
+  deleteTask(projectId: number, taskId: number): void {
+    this.taskService.deleteTask(taskId);
+    const tasks = this.tasksByProject();
+    this.tasksByProject.set({ ...tasks, [projectId]: tasks[projectId].filter(t => t.id !== taskId) });
+  }
+
+  startEditTask(projectId: number, task: any): void {
+    this.editingTask = { projectId, taskId: task.id };
+    this.editTaskValue = task.name;
+  }
+
+  saveTaskEdit(projectId: number, taskId: number): void {
+    const name = this.editTaskValue.trim();
+    if (name) {
+      const tasks = this.tasksByProject();
+      this.tasksByProject.set({
+        ...tasks,
+        [projectId]: tasks[projectId].map(t => (t.id === taskId ? { ...t, name } : t))
+      });
     }
+    this.taskService.renameTask(taskId, this.editTaskValue);
+    this.clearTaskEdit();
+  }
+
+  cancelTaskEdit(): void {
+    this.clearTaskEdit();
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
 }

@@ -64,4 +64,13 @@ export class LogViewTable {
   onTaskBadgeClick($event: number) {
     this.selectedTaskId.emit($event);
   }
+
+  onEditEnter(event: Event, id: number) {
+    const kbEvent = event as KeyboardEvent;
+    if (kbEvent.isComposing) return;
+    if (kbEvent.shiftKey) return;
+    event.preventDefault();
+    this.saveEditLog(id);
+  }
+
 }
