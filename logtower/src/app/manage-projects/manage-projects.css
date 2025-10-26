@@ -29,9 +29,6 @@
 .my-projects-container {
     display: flex;
     flex-direction: column;
-    /*!*width: 100%;*!*/
-    /*border: 2px solid #ddd;*/
-    /*padding: 0 1rem;*/
 }
 
 .my-projects-header {
@@ -123,8 +120,6 @@
        align-items: center;
        justify-content: space-between;
        margin-bottom: 1rem;
-       /*max-height: 0.5rem;*/
-
        h3 {
            margin: 0 0 0 1rem;
            flex: 1;
