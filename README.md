@@ -22,6 +22,7 @@ don't brainstorm, but let their brains storm. Stack up your genius all the way t
 
 ## Installation & Usage
 Check latest release and download installer for macOS/Windows.
+
 [WARNING] v0.0.1-alpha may suffer from overhead in the case of large number of logs.
 
 ## License
