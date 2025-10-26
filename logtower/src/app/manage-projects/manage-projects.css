@@ -106,7 +106,7 @@
     justify-content: space-between;
     align-content: center;
     align-items: center;
-    background: var(--logtower-white);
+    background-color: #ededed;
     border: 1px solid #ddd;
     border-radius: 10px;
     padding: 0.5rem;
@@ -118,13 +118,14 @@
     }
 
     &:hover {
-        background-color: var(--logtower-hover);
+        background-color: var(--logtower-white);
     }
 
     &:last-child {
         margin-bottom: 0;
     }
 }
+
 
 .project-header {
        display: flex;

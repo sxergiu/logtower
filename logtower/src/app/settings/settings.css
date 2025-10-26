@@ -58,8 +58,3 @@
     cursor: not-allowed;
 }
 
-@media(min-width: 1032px) {
-    .settings p {
-        margin: 1.8rem 0;
-    }
-}

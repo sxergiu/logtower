@@ -233,7 +233,6 @@ export const featureLogViewStore = signalStore(
             )
         ),
 
-
         deleteLog: rxMethod<number>(
             pipe(
                 tap(() => patchState(state, { loading: state.loading() + 1 })),

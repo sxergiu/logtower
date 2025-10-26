@@ -2,14 +2,15 @@
 .table-scroller {
     max-height: calc(100vh - 330px);
     width: 100%;
-    overflow-y: auto; /* enable vertical scrolling */
+    overflow-y: auto;
     overflow-x: hidden;
-    padding-right: 1.5rem;
-    scroll-behavior: smooth; /* nice smooth scroll */
+    padding-right: 0.2rem;
+    scroll-behavior: smooth;
 }
 
 .log-container {
-    padding: 16px 24px 24px 24px;
+    display: flex;
+    padding: 24px 24px 24px 24px;
     background: var(--logtower-white);
     font-family: var(--logtower-font), monospace;
     color: #e4e4e7;
@@ -21,19 +22,17 @@
     align-items: center;
     margin-bottom: 24px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #27272a;
+    border: 2px solid #27272a;
 }
 
 
 .table-wrapper {
-    max-height: 80vh;
+    padding-bottom: 8px;
     position: relative;
-    background: #fff;
-    border-radius: 12px;
+    background: linear-gradient(to bottom, #ededed, #fff);
     margin-bottom: 1rem;
-    /*overflow: auto;*/
-    border: 1px solid #27272a;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ededed;
 }
 
 .log-table {
@@ -42,16 +41,16 @@
     table-layout: fixed;
 }
 
-/* First column (Time) */
 .log-table th:first-child,
 .log-table td:first-child {
-    width: 15%;
+    width: 51px;
+    text-align: center;
 }
 
 .log-table th:last-child,
 .log-table td:last-child {
-    width: 80px;
-    padding-right: 0;
+    width: 51px;
+    text-align: center;
 
     .icon-btn {
         padding: 0 6px;
@@ -59,27 +58,26 @@
 }
 
 thead {
-    background: #fafafa;
+    background: #ededed;
     position: sticky;
     top: 0;
 }
 
 th {
     padding: 16px 20px;
-    text-align: left;
-    font-weight: 600;
+    text-align: center;
+    font-weight: bold;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #3c3c3c;
-    border-bottom: 1px solid #27272a;
+    color: black;
 }
 
 .log-row {
-
+    width: 100%;
     transition: all 0.2s ease;
-    border-bottom: 1px solid #27272a;
-    border-left: 3px solid transparent;
+    border-bottom: 1px solid #ededed;
+    background-color: #fff;
 }
 
 .log-row td {
@@ -87,7 +85,7 @@ th {
 }
 
 .log-row:hover {
-    background: var(--logtower-hover);
+    background: #fbfbfb;
 }
 
 .log-row:last-child {
@@ -95,8 +93,9 @@ th {
 }
 
 td {
-    padding: 16px 20px;
+    padding: 16px 8px;
     vertical-align: top;
+    text-align: center;
 }
 
 .timestamp {
@@ -116,7 +115,7 @@ td {
 }
 
 .project {
-    min-width: 150px;
+    width: 20%;
 }
 
 .project-badge {
@@ -138,10 +137,7 @@ td {
 }
 
 .task {
-    color: black;
-    font-weight: 500;
-    font-size: 13px;
-    min-width: 128px;
+    width: 21%;
 }
 
 .task-badge {
@@ -170,13 +166,14 @@ td {
 }
 
 .message {
+    padding-left: 2rem;
+    text-align: left;
     color: black;
     line-height: 1.5;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
 }
-
 
 
 @keyframes pulse {
@@ -201,43 +198,17 @@ td {
 }
 
 .project-card {
-    padding: 2rem;
-    padding-top: 0;
+    padding: 0 2rem 2rem;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.task-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-    align-items: center;
-    background: var(--logtower-white);
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-
-    span {
-        margin-left: 1rem;
-    }
-
-    &:hover {
-        background-color: var(--logtower-hover);
-    }
-
-    &:last-child {
-        margin-bottom: 0;
-    }
-}
-
 .drawer {
     position: fixed;
     top: 0;
-    right: -500px; /* hidden off-screen */
+    right: -500px;
     width: 300px;
     height: 100%;
     background-color: #ffffff;
@@ -254,25 +225,6 @@ td {
     right: 0;
 }
 
-/* toggle button */
-.drawer-toggle {
-    position: fixed;
-    top: 50%;
-    right: -1%;
-    transform: translateY(-50%);
-    background:var(--logtower-gradient);
-    color: white;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    cursor: pointer;
-    box-shadow: -2px 0 4px rgba(0,0,0,0.2);
-    z-index: 1100;
-}
 
 .drawer-toggle:hover {
     transform: translateY(-50%) translateX(-10%);
@@ -287,17 +239,6 @@ td {
     transform: rotate(180deg);
 }
 
-/* optional styling for list items */
-.task-list-item {
-    padding: 0.5rem;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.task-list-item:hover {
-    background-color: #f5f5f5;
-}
 
 .edit-log {
     width: 70%;
@@ -317,7 +258,6 @@ td {
     opacity: 0.85;
 }
 
-/* Optional: subtle fade-in animation for better UX */
 .empty-message {
     animation: fadeIn 0.4s ease-in;
 }

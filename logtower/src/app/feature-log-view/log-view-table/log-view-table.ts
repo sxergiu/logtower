@@ -24,7 +24,6 @@ export class LogViewTable {
   editLog = output<{ id: number; newMessage: string }>();
   deleteLog = output<number>();
 
-
   editingLog: number | null = null;
   editLogValue = '';
 

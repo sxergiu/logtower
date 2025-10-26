@@ -1,13 +1,13 @@
 import {AfterViewInit, Component, computed, effect, ElementRef, signal, ViewChild} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LogService } from '../service/log.service';
-import { Window } from '@tauri-apps/api/window';
 import { SettingsService } from '../service/settings.service';
 import { TaskService } from '../service/task.service';
 import { TaskModel} from "../models/task.model";
 import {ProjectModel} from "../models/project.model";
 import {ProjectService} from "../service/project.service";
 import {listen} from "@tauri-apps/api/event";
+import {getCurrentWebviewWindow} from "@tauri-apps/api/webviewWindow";
 
 @Component({
   selector: 'app-quick-log',
@@ -33,7 +33,6 @@ export class QuickLog implements AfterViewInit {
       private taskService: TaskService,
       private projectService: ProjectService
   ) {
-    // Reactively load project/task
     effect(() => {
       const taskId = this.activeTaskId();
       const projectId = this.activeProjectId();
@@ -67,7 +66,6 @@ export class QuickLog implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Focus input after view init
     setTimeout(() => this.logInput.nativeElement.focus(), 0);
   }
 
@@ -79,17 +77,6 @@ export class QuickLog implements AfterViewInit {
   }
 
   async closeWindow() {
-    try {
-      const appWindow = await Window.getByLabel('quick-log');
-      if (appWindow) {
-        await appWindow.close();
-      } else {
-        console.error('Window with label "quick-log" not found');
-      }
-    } catch (error) {
-      console.error('Error closing window:', error);
-    }
+    await getCurrentWebviewWindow().close();
   }
-
-  protected readonly close = close;
 }

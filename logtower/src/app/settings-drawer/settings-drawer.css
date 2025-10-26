@@ -24,7 +24,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    max-width: 220px;
+    max-width: calc(100vw - 564px);
     pointer-events: none;
 }
 
@@ -110,18 +110,4 @@
         height: 100%;
     }
 
-}
-
-@media(min-width: 1032px) {
-    .drawer {
-        width: 1000px;
-        height: auto;
-        border-bottom-left-radius: 12px;
-    }
-}
-
-@media (min-width: 500px) {
-    .warning-container {
-        max-width: 512px;
-    }
 }

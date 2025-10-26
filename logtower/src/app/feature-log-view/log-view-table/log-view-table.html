@@ -1,21 +1,21 @@
 
     <div class="log-container">
-        <div class="table-wrapper">
 
-            <div class="table-scroller">
+        <div class="table-scroller">
+            <div class="table-wrapper">
                 <table class="log-table">
                     <thead>
-                    <tr>
-                        <th>Time</th>
-                        @if( !isProjectView() ) {
-                            <th>Project</th>
-                        }
-                        @if( !isTaskView() ) {
-                            <th>Task</th>
-                        }
-                        <th>Message</th>
-                        <th>Actions</th>
-                    </tr>
+                        <tr>
+                            <th>Time</th>
+                            @if( !isProjectView() ) {
+                                <th class="project" >Project</th>
+                            }
+                            @if( !isTaskView() ) {
+                                <th class="task">Task</th>
+                            }
+                            <th>Message</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
                     @if( logs().length !== 0 ) {
@@ -49,12 +49,12 @@
                                         />
                                     </td>
                                     <td class="actions">
-                                        <button (click)="saveEditLog(log.id)" class="icon-btn svg-green" title="Edit log">
+                                        <button (keyup.enter)="saveEditLog(log.id)" (click)="saveEditLog(log.id)" class="icon-btn svg-green" title="Edit log">
                                             <div class="svg-icon">
                                                 <img ngSrc="../../../assets/save.svg" alt="Edit" width="20" height="20">
                                             </div>
                                         </button>
-                                        <button (click)="cancelEditLog()" class="icon-btn svg-red" title="Delete log">
+                                        <button (keyup.esc)="cancelEditLog()" (click)="cancelEditLog()" class="icon-btn svg-red" title="Delete log">
                                             <div class="svg-icon">
                                                 <img ngSrc="../../../assets/cancel.svg" alt="Delete" width="20" height="20">
                                             </div>
@@ -107,6 +107,7 @@
 
                     </tbody>
                 </table>
-            </div>
+
+         </div>
         </div>
     </div>
