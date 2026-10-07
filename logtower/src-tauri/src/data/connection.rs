@@ -1,10 +1,13 @@
 use rusqlite::{Connection, Result};
+#[cfg(debug_assertions)]
 use rusqlite::params;
 
 use std::path::PathBuf;
 use std::fs;
 use dirs::data_dir;
+#[cfg(debug_assertions)]
 use crate::domain::settings::repository::get_settings;
+#[cfg(debug_assertions)]
 use crate::domain::projects::repository::get_projects_with_tasks;
 
 pub fn get_db_path() -> PathBuf {
@@ -49,7 +52,7 @@ const MIGRATIONS: &[&str] = &[
     include_str!("migrations/001_init.sql"),
 ];
 
-/// Initialize the database - migrates the schema and seeds data if needed
+/// Initialize the database - migrates the schema and, in dev builds, seeds sample data
 /// This should be called once at application startup
 pub fn initialize_database() -> Result<()> {
     let db_path = get_db_path();
@@ -58,9 +61,12 @@ pub fn initialize_database() -> Result<()> {
     let mut conn = get_connection()?;
     run_migrations(&mut conn)?;
 
-    let tx = conn.transaction()?;
-    seed_database(&tx)?;
-    tx.commit()?;
+    #[cfg(debug_assertions)]
+    {
+        let tx = conn.transaction()?;
+        seed_database(&tx)?;
+        tx.commit()?;
+    }
 
     conn.execute("ANALYZE;", [])?;
     Ok(())
@@ -114,6 +120,7 @@ pub fn test_connection() {
     }
 }
 
+#[cfg(debug_assertions)]
 fn seed_database(conn: &Connection) -> rusqlite::Result<()> {
     let project_count: i32 = conn.query_row(
         "SELECT COUNT(*) FROM projects",
