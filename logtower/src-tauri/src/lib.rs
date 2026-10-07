@@ -41,10 +41,10 @@ pub fn run() {
         .setup(|app| {
             println!("App setup started...");
 
-            match crate::data::connection::initialize_database() {
-                Ok(_) => println!("Database initialized successfully"),
-                Err(e) => eprintln!("❌ Database initialization failed: {:?}", e),
-            }
+            // Fail startup rather than open a window that accepts logs it cannot save,
+            // or run against a schema older than this code expects
+            crate::data::connection::initialize_database()?;
+            println!("Database initialized successfully");
 
             hotkey::register_shortcuts(app);
             println!("Setup completed. Press shortcut to open quick entry window...");
