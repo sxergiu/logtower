@@ -184,3 +184,49 @@ fn seed_database(conn: &Connection) -> rusqlite::Result<()> {
 
     Ok(())
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn user_version(conn: &Connection) -> usize {
+        conn.pragma_query_value(None, "user_version", |row| row.get(0)).unwrap()
+    }
+
+    #[test]
+    fn migrates_fresh_database_to_latest() {
+        let mut conn = Connection::open_in_memory().unwrap();
+        run_migrations(&mut conn).unwrap();
+
+        assert_eq!(user_version(&conn), MIGRATIONS.len());
+        conn.execute("INSERT INTO projects (name) VALUES ('p')", []).unwrap();
+    }
+
+    #[test]
+    fn rerunning_migrations_is_a_no_op() {
+        let mut conn = Connection::open_in_memory().unwrap();
+        run_migrations(&mut conn).unwrap();
+        run_migrations(&mut conn).unwrap();
+
+        assert_eq!(user_version(&conn), MIGRATIONS.len());
+    }
+
+    #[test]
+    fn adopts_database_created_before_migrations() {
+        let mut conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch(
+            "CREATE TABLE projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);
+             CREATE TABLE logs (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp TEXT NOT NULL,
+                                message TEXT NOT NULL, project_id INTEGER, task_id INTEGER);
+             INSERT INTO logs (timestamp, message) VALUES ('t', 'kept');",
+        )
+        .unwrap();
+
+        run_migrations(&mut conn).unwrap();
+
+        assert_eq!(user_version(&conn), MIGRATIONS.len());
+        let message: String = conn
+            .query_row("SELECT message FROM logs", [], |row| row.get(0))
+            .unwrap();
+        assert_eq!(message, "kept");
+    }
+}
