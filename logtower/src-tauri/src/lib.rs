@@ -26,7 +26,14 @@ pub fn run() {
     tauri::Builder::default()
         // First, so a second launch exits before it registers the hotkey, adds a
         // tray icon or opens the database
-        .plugin(tauri_plugin_single_instance::init(|_app, _args, _cwd| {}))
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            // The window is usually hidden in the tray, which is why it was launched again
+            if let Some(main) = app.get_webview_window("main") {
+                let _ = main.unminimize();
+                let _ = main.show();
+                let _ = main.set_focus();
+            }
+        }))
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(|app, _shortcut, event| {
