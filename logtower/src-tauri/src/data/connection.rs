@@ -42,96 +42,51 @@ pub fn get_connection() -> Result<Connection> {
     Ok(conn)
 }
 
-/// Initialize the database - creates tables and seeds data if needed
+/// Schema migrations, applied in order. A database's `user_version` is the number
+/// of migrations it has applied, so entries must never be edited or reordered once
+/// released — change the schema by appending a new file.
+const MIGRATIONS: &[&str] = &[
+    include_str!("migrations/001_init.sql"),
+];
+
+/// Initialize the database - migrates the schema and seeds data if needed
 /// This should be called once at application startup
 pub fn initialize_database() -> Result<()> {
     let db_path = get_db_path();
     println!("DB path: {:?}", db_path);
 
-    let conn = get_connection()?;           // <- use the PRAGMA-enabled connection
-    let tx = conn.unchecked_transaction()?; // faster for init; use `transaction()` if you prefer FK checks during seeding
+    let mut conn = get_connection()?;
+    run_migrations(&mut conn)?;
 
-    create_tables(&tx)?;
-    create_indexes(&tx)?;
+    let tx = conn.transaction()?;
     seed_database(&tx)?;
-
     tx.commit()?;
+
     conn.execute("ANALYZE;", [])?;
     Ok(())
 }
 
+/// Applies every migration past the database's `user_version`, each in its own
+/// transaction together with the version bump, so a failed migration leaves the
+/// database at the last good version.
+///
+/// `PRAGMA foreign_keys` is ignored inside a transaction, so a future migration that
+/// rebuilds a referenced table cannot switch it off from its own SQL.
+fn run_migrations(conn: &mut Connection) -> Result<()> {
+    let applied: usize = conn.pragma_query_value(None, "user_version", |row| row.get(0))?;
 
-fn create_indexes(conn: &Connection) -> Result<()> {
-    // Covers: WHERE l.task_id = ? ORDER BY l.timestamp DESC
-    // Also improves deletes by task_id and tie-break pagination
-    conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_logs_task_ts_id_desc
-         ON logs(task_id, timestamp DESC, id DESC);",
-        [],
-    )?;
-
-    // Helps project queries via JOIN:
-    //   FROM logs l JOIN tasks t ON t.id = l.task_id
-    //   WHERE t.project_id = ? ORDER BY l.timestamp DESC
-    // This gets tasks for a project quickly and in id order.
-    conn.execute(
-        "CREATE INDEX IF NOT EXISTS idx_tasks_project_id_id
-         ON tasks(project_id, id);",
-        [],
-    )?;
-    
-    Ok(())
-
-}
-
-fn create_tables(conn: &Connection) -> Result<()> {
-    conn.execute(
-        "
-            CREATE TABLE IF NOT EXISTS projects (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
-            );
-            ",
-        [],
-    )?;
-
-    conn.execute(
-        "
-            CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            project_id INTEGER NOT NULL,
-            name TEXT NOT NULL,
-            FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
-            );
-            ",
-        [],
-    )?;
-
-    conn.execute(
-        "
-            CREATE TABLE IF NOT EXISTS logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp TEXT NOT NULL,
-            message TEXT NOT NULL,
-            task_id INTEGER,
-            FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE
-            )
-            ",
-        [],
-    )?;
-
-    conn.execute(
-        "
-            CREATE TABLE IF NOT EXISTS settings (
-            key TEXT PRIMARY KEY,
-            value TEXT
-            );
-            ",
-        [],
-    )?;
+    for (index, sql) in MIGRATIONS.iter().enumerate().skip(applied) {
+        let version = index + 1;
+        let tx = conn.transaction()?;
+        tx.execute_batch(sql)?;
+        tx.pragma_update(None, "user_version", version)?;
+        tx.commit()?;
+        println!("Applied migration {:03}", version);
+    }
 
     Ok(())
 }
+
 
 #[cfg(debug_assertions)]
 pub fn test_connection() {
