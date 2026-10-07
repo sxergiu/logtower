@@ -104,3 +104,34 @@ fn register_each(
     }
     failed
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn shortcuts() -> Vec<(&'static str, Shortcut)> {
+        vec![
+            ("Ctrl+Space", Shortcut::new(Some(Modifiers::CONTROL), Code::Space)),
+            ("Ctrl+K", Shortcut::new(Some(Modifiers::CONTROL), Code::KeyK)),
+            ("Ctrl+L", Shortcut::new(Some(Modifiers::CONTROL), Code::KeyL)),
+        ]
+    }
+
+    #[test]
+    fn reports_nothing_when_every_shortcut_registers() {
+        assert!(register_each(shortcuts(), |_| Ok(())).is_empty());
+    }
+
+    #[test]
+    fn reports_only_the_shortcuts_that_failed_in_order() {
+        let taken = [
+            Shortcut::new(Some(Modifiers::CONTROL), Code::Space),
+            Shortcut::new(Some(Modifiers::CONTROL), Code::KeyL),
+        ];
+        let failed = register_each(shortcuts(), |shortcut| {
+            if taken.contains(&shortcut) { Err("already registered".into()) } else { Ok(()) }
+        });
+
+        assert_eq!(failed, vec!["Ctrl+Space", "Ctrl+L"]);
+    }
+}
