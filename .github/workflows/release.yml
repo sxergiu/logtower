@@ -1,6 +1,10 @@
 name: release
 
 on:
+  # The GitHub release is created from releases/<version>.md by hand (see the
+  # release process); publishing it is what builds and attaches the installers.
+  release:
+    types: [published]
   # Only when this file changes: builds every installer without publishing
   # anything, so a change to the release build is tested before a release needs it.
   pull_request:
@@ -8,6 +12,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -43,11 +49,18 @@ jobs:
       - run: npm ci
         working-directory: logtower
       # beforeBuildCommand in tauri.conf.json runs the frontend build.
+      # On a pull request there is no release, so both are empty and the action
+      # only builds.
       - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectPath: logtower
+          releaseId: ${{ github.event.release.id }}
+          tagName: ${{ github.event.release.tag_name }}
           args: ${{ matrix.args }}
-      - uses: actions/upload-artifact@v4
+      - if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
         with:
           name: installers-${{ matrix.platform }}-${{ strategy.job-index }}
           path: logtower/src-tauri/target/**/release/bundle/
