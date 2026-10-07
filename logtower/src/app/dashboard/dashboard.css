@@ -21,6 +21,17 @@
         }
 }
 
+.menu-container p.hotkey-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    background: #fff3cd;
+    color: #856404;
+    text-align: left;
+}
+
 
 .menu {
     display: flex;
