@@ -72,15 +72,35 @@ pub fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::e
     Ok(())
 }
 
-pub fn register_shortcuts(app: &mut App) {
+/// Names of the global shortcuts that failed to register at startup, kept so the
+/// frontend can ask for them once it has loaded — an event emitted from setup
+/// would fire before anything is listening.
+pub struct FailedShortcuts(pub Vec<String>);
+
+/// Registers the global shortcuts and returns the names of those that failed.
+pub fn register_shortcuts(app: &mut App) -> Vec<String> {
     let shortcuts = vec![
         ("Ctrl+Space", Shortcut::new(Some(Modifiers::CONTROL), Code::Space)),
     ];
 
+    register_each(shortcuts, |shortcut| {
+        app.global_shortcut().register(shortcut).map_err(|e| e.to_string())
+    })
+}
+
+fn register_each(
+    shortcuts: Vec<(&str, Shortcut)>,
+    mut register: impl FnMut(Shortcut) -> Result<(), String>,
+) -> Vec<String> {
+    let mut failed = Vec::new();
     for (name, shortcut) in shortcuts {
-        match app.global_shortcut().register(shortcut) {
+        match register(shortcut) {
             Ok(_) => println!("✓ Successfully registered {} shortcut", name),
-            Err(e) => eprintln!("✗ Failed to register {} shortcut: {:?}", name, e),
+            Err(e) => {
+                eprintln!("✗ Failed to register {} shortcut: {}", name, e);
+                failed.push(name.to_string());
+            }
         }
     }
+    failed
 }
