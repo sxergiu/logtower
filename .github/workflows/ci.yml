@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    # Logtower ships as a desktop app for all three, and nothing else exercises
+    # the other two between releases.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Every platform's result is wanted, especially when one fails.
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: logtower
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: logtower/package-lock.json
+      - run: npm ci
+      - run: npm run build
