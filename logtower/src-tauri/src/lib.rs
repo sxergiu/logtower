@@ -1,5 +1,5 @@
 use tauri::{Emitter, Manager};
-use tauri_plugin_global_shortcut::GlobalShortcutExt;
+use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 
 mod data;
 mod domain;
@@ -27,19 +27,12 @@ pub fn run() {
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
                 .with_handler(|app, _shortcut, event| {
-
-                    println!("🔥 GLOBAL SHORTCUT TRIGGERED! Event: {:?}", event);
-
-                    // Convert event to string and check if it contains "Pressed"
-
-                    let event_str = format!("{:?}", event);
-                    if event_str.contains("Pressed") {
-                        println!("🔥 Processing PRESSED event");
+                    // Every press also fires a Released event; acting on both would open twice
+                    if event.state() == ShortcutState::Pressed {
                         match create_hotkey_window(app) {
                             Ok(_) => println!("✓ Hotkey window created successfully"),
                             Err(e) => println!("✗ Failed to create hotkey window: {:?}", e),
                         }
-
                     }
                 })
                 .build()
