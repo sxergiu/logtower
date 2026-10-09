@@ -34,7 +34,7 @@ pub fn get_settings() -> Result<Settings, String> {
 
 pub fn update_active_project(project_id: Option<i32>) -> Result<(), String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
-    println!("UPDATING ACTIVE PROJECT id:{}", project_id.unwrap().to_string());
+    println!("UPDATING ACTIVE PROJECT id:{:?}", project_id);
 
     match project_id {
         Some(id) => {
@@ -62,7 +62,7 @@ pub fn update_active_project(project_id: Option<i32>) -> Result<(), String> {
 
 pub fn update_active_task(task_id: Option<i32>) -> Result<(), String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
-    println!("UPDATING ACTIVE TASK id:{}", task_id.unwrap().to_string());
+    println!("UPDATING ACTIVE TASK id:{:?}", task_id);
 
     match task_id {
         Some(id) => {
