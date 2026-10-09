@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    # Logtower ships as a desktop app for all three, and nothing else exercises
+    # the other two between releases.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Every platform's result is wanted, especially when one fails.
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: logtower
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: logtower/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      # Tauri's prerequisites for Linux; macOS and Windows runners ship theirs.
+      - if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: logtower/src-tauri
+      # After the frontend build, not before: generate_context! embeds
+      # dist/logtower/browser at compile time and fails if it is missing.
+      - run: cargo test --locked
+        working-directory: logtower/src-tauri
+      # Seeding and its imports exist only under debug_assertions, so a debug
+      # build cannot see what a release build is missing.
+      - run: cargo check --release --locked
+        working-directory: logtower/src-tauri
