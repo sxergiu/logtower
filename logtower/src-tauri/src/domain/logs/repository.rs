@@ -85,7 +85,12 @@ pub fn fetch_logs_by_project_id(project_id: i32) -> Result<Vec<LogEntry>, String
 pub fn fetch_logs() -> Result<Vec<LogEntry>, String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
     let mut stmt = conn
-        .prepare("SELECT id, timestamp, message, project_id, task_id FROM logs ORDER BY timestamp DESC")
+        .prepare(
+            "SELECT l.id, l.timestamp, l.message, t.project_id, l.task_id
+             FROM logs l
+             LEFT JOIN tasks t ON l.task_id = t.id
+             ORDER BY l.timestamp DESC"
+        )
         .map_err(|e| e.to_string())?;
 
     let logs_iter = stmt
