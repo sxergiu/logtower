@@ -14,7 +14,14 @@
 
             <div class="column">
                 <h1 style="margin-bottom: 0.4rem">Welcome to Logtower!</h1>
-                <p>Press <i><b>Ctrl+Space</b></i> and log your logs!</p>
+                @if (failedShortcuts().length) {
+                    <p class="hotkey-warning">
+                        <img src="../../assets/warning.svg" alt="Warning" width="22" height="22" />
+                        <span><b>{{ failedShortcuts().join(', ') }}</b> couldn't be registered — another app may be using it. Close it and restart Logtower.</span>
+                    </p>
+                } @else {
+                    <p>Press <i><b>Ctrl+Space</b></i> and log your logs!</p>
+                }
             </div>
 
         </div>

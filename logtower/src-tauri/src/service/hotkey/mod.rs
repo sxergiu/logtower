@@ -1,4 +1,4 @@
 
 pub mod service;
 
-pub(crate) use service::register_shortcuts;
+pub(crate) use service::{register_shortcuts, FailedShortcuts};
