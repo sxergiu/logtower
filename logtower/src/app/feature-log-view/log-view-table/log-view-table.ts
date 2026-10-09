@@ -1,6 +1,6 @@
-import {Component, input, output} from '@angular/core';
+import {Component, inject, input, LOCALE_ID, output} from '@angular/core';
 import {FormsModule} from "@angular/forms";
-import {NgOptimizedImage} from "@angular/common";
+import {formatDate, NgOptimizedImage} from "@angular/common";
 import {LogModel} from "../../models/log.model";
 
 @Component({
@@ -27,14 +27,21 @@ export class LogViewTable {
   editingLog: number | null = null;
   editLogValue = '';
 
+  private readonly locale = inject(LOCALE_ID);
+
   formatTime(dateString: string): string {
-    const timePart = dateString.split(' ')[1];
-    return timePart || dateString;
+    return this.formatLocal(dateString, 'HH:mm:ss');
   }
 
   formatDate(dateString: string): string {
-    const timePart = dateString.split(' ')[0];
-    return timePart || dateString;
+    return this.formatLocal(dateString, 'yyyy-MM-dd');
+  }
+
+  // Timestamps are SQLite datetime('now'): UTC, but written without a zone,
+  // which Date would otherwise read as local time
+  private formatLocal(dateString: string, format: string): string {
+    const date = new Date(dateString.replace(' ', 'T') + 'Z');
+    return isNaN(date.getTime()) ? dateString : formatDate(date, format, this.locale);
   }
 
   startEditLog(log: any) {
