@@ -72,15 +72,66 @@ pub fn create_hotkey_window(app: &tauri::AppHandle) -> Result<(), Box<dyn std::e
     Ok(())
 }
 
-pub fn register_shortcuts(app: &mut App) {
+/// Names of the global shortcuts that failed to register at startup, kept so the
+/// frontend can ask for them once it has loaded — an event emitted from setup
+/// would fire before anything is listening.
+pub struct FailedShortcuts(pub Vec<String>);
+
+/// Registers the global shortcuts and returns the names of those that failed.
+pub fn register_shortcuts(app: &mut App) -> Vec<String> {
     let shortcuts = vec![
         ("Ctrl+Space", Shortcut::new(Some(Modifiers::CONTROL), Code::Space)),
     ];
 
+    register_each(shortcuts, |shortcut| {
+        app.global_shortcut().register(shortcut).map_err(|e| e.to_string())
+    })
+}
+
+fn register_each(
+    shortcuts: Vec<(&str, Shortcut)>,
+    mut register: impl FnMut(Shortcut) -> Result<(), String>,
+) -> Vec<String> {
+    let mut failed = Vec::new();
     for (name, shortcut) in shortcuts {
-        match app.global_shortcut().register(shortcut) {
+        match register(shortcut) {
             Ok(_) => println!("✓ Successfully registered {} shortcut", name),
-            Err(e) => eprintln!("✗ Failed to register {} shortcut: {:?}", name, e),
+            Err(e) => {
+                eprintln!("✗ Failed to register {} shortcut: {}", name, e);
+                failed.push(name.to_string());
+            }
         }
+    }
+    failed
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn shortcuts() -> Vec<(&'static str, Shortcut)> {
+        vec![
+            ("Ctrl+Space", Shortcut::new(Some(Modifiers::CONTROL), Code::Space)),
+            ("Ctrl+K", Shortcut::new(Some(Modifiers::CONTROL), Code::KeyK)),
+            ("Ctrl+L", Shortcut::new(Some(Modifiers::CONTROL), Code::KeyL)),
+        ]
+    }
+
+    #[test]
+    fn reports_nothing_when_every_shortcut_registers() {
+        assert!(register_each(shortcuts(), |_| Ok(())).is_empty());
+    }
+
+    #[test]
+    fn reports_only_the_shortcuts_that_failed_in_order() {
+        let taken = [
+            Shortcut::new(Some(Modifiers::CONTROL), Code::Space),
+            Shortcut::new(Some(Modifiers::CONTROL), Code::KeyL),
+        ];
+        let failed = register_each(shortcuts(), |shortcut| {
+            if taken.contains(&shortcut) { Err("already registered".into()) } else { Ok(()) }
+        });
+
+        assert_eq!(failed, vec!["Ctrl+Space", "Ctrl+L"]);
     }
 }

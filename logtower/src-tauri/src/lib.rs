@@ -14,7 +14,7 @@ use tauri_commands::logs::{add_log, delete_all_logs,
                            delete_log_by_id, delete_logs_by_project_id, delete_logs_by_task_id, emit_logs_updated,
                            get_logs, get_logs_by_project_id, get_logs_by_task_id, get_logs_with_project
 };
-use tauri_commands::hotkey::{hide_window, test_hotkey_event};
+use tauri_commands::hotkey::{get_failed_shortcuts, hide_window, test_hotkey_event};
 use tauri_commands::settings::{get_current_settings, set_active_project, set_active_task};
 use tauri_commands::projects::{add_project, delete_project, edit_project, get_all_projects, get_project_by_id};
 use tauri_commands::tasks::{add_task, delete_task, edit_task, get_task_by_id, get_tasks_for_project};
@@ -56,7 +56,9 @@ pub fn run() {
             crate::data::connection::initialize_database()?;
             println!("Database initialized successfully");
 
-            hotkey::register_shortcuts(app);
+            // Managed even when empty: the command fails on state that was never managed
+            let failed = hotkey::register_shortcuts(app);
+            app.manage(hotkey::FailedShortcuts(failed));
             println!("Setup completed. Press shortcut to open quick entry window...");
             Ok(())
         })
@@ -64,7 +66,7 @@ pub fn run() {
             get_logs_by_task_id, get_logs_by_project_id,
             add_log, get_logs, delete_all_logs, emit_logs_updated, get_logs_with_project, edit_log,
             delete_log_by_id, delete_logs_by_project_id, delete_logs_by_task_id,
-            test_hotkey_event, hide_window,
+            test_hotkey_event, hide_window, get_failed_shortcuts,
             add_project, add_task,
             get_all_projects, get_tasks_for_project,
             delete_project, edit_project,
