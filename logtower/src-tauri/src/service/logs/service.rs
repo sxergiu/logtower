@@ -32,7 +32,7 @@ pub fn edit_log(log_id: i32, new_message: String) -> Result<LogEntry, String> {
     let new_log = get_logs()?
         .into_iter()
         .find(|l| l.id == log_id)
-        .ok_or(format!("Project with id {} not found", log_id))?;
+        .ok_or(format!("Log with id {} not found", log_id))?;
 
     Ok(new_log)
 }
