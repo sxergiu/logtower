@@ -2,6 +2,7 @@ import {Component, inject, signal} from '@angular/core';
 import {Router} from "@angular/router";
 import {SettingsDrawer} from "../settings-drawer/settings-drawer";
 import {Window} from "@tauri-apps/api/window";
+import {getVersion} from "@tauri-apps/api/app";
 import {HotkeyService} from "../service/hotkey.service";
 
 @Component({
@@ -18,9 +19,11 @@ export class Dashboard {
   hotkeyService = inject(HotkeyService);
 
   failedShortcuts = signal<string[]>([]);
+  version = signal<string>('');
 
   constructor() {
     this.hotkeyService.getFailedShortcuts().then(failed => this.failedShortcuts.set(failed));
+    getVersion().then(version => this.version.set(version));
   }
 
   goToManage() {

@@ -61,3 +61,12 @@
     border: 1px solid white;
     box-shadow: none;
 }
+
+.app-version {
+    position: fixed;
+    right: 0.8rem;
+    bottom: 0.5rem;
+    font-size: 0.75rem;
+    color: #8a8a8a;
+    user-select: none;
+}
