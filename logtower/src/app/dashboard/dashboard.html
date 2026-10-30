@@ -34,4 +34,27 @@
 
 </main>
 
+<div class="app-version">
+    @switch (updater.status()) {
+        @case ('available') {
+            <span>v{{ updater.availableVersion() }} available</span>
+            <button class="update-btn" (click)="updater.install()">Update</button>
+        }
+        @case ('downloading') {
+            <span>Downloading v{{ updater.availableVersion() }}@if (updater.progress() !== null) { — {{ updater.progress() }}%}…</span>
+        }
+        @case ('ready') {
+            <span>Update installed, restart required</span>
+            <button class="update-btn" (click)="updater.restart()">Restart</button>
+        }
+        @case ('failed') {
+            <span>Couldn't update in place —</span>
+            <button class="update-link" (click)="updater.openReleasePage()">download v{{ updater.availableVersion() }}</button>
+        }
+    }
+    @if (version()) {
+        <span>v{{ version() }}</span>
+    }
+</div>
+
 
