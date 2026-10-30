@@ -4,6 +4,7 @@ import {SettingsDrawer} from "../settings-drawer/settings-drawer";
 import {Window} from "@tauri-apps/api/window";
 import {getVersion} from "@tauri-apps/api/app";
 import {HotkeyService} from "../service/hotkey.service";
+import {UpdaterService} from "../service/updater.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -17,6 +18,7 @@ export class Dashboard {
 
   router = inject(Router);
   hotkeyService = inject(HotkeyService);
+  updater = inject(UpdaterService);
 
   failedShortcuts = signal<string[]>([]);
   version = signal<string>('');

@@ -3,6 +3,7 @@
   "windows": ["main", "quick-log"],
   "permissions": [
     "core:default",
-    "core:window:allow-close"
+    "core:window:allow-close",
+    "opener:default"
   ]
 }
