@@ -1,4 +1,4 @@
-use rusqlite::{Connection, Result};
+use rusqlite::{ffi, Connection, Error, Result};
 #[cfg(debug_assertions)]
 use rusqlite::params;
 
@@ -59,7 +59,7 @@ pub fn initialize_database() -> Result<()> {
     println!("DB path: {:?}", db_path);
 
     let mut conn = get_connection()?;
-    run_migrations(&mut conn)?;
+    run_migrations(&mut conn, MIGRATIONS)?;
 
     #[cfg(debug_assertions)]
     {
@@ -76,15 +76,31 @@ pub fn initialize_database() -> Result<()> {
 /// transaction together with the version bump, so a failed migration leaves the
 /// database at the last good version.
 ///
-/// `PRAGMA foreign_keys` is ignored inside a transaction, so a future migration that
-/// rebuilds a referenced table cannot switch it off from its own SQL.
-fn run_migrations(conn: &mut Connection) -> Result<()> {
+/// Foreign keys are off while migrations run. With them on, dropping a table to
+/// rebuild it first deletes its rows, and `ON DELETE CASCADE` carries that into every
+/// table that references it; a migration cannot switch them off from its own SQL,
+/// because the pragma is ignored inside a transaction. Instead, a migration that
+/// leaves a dangling reference is rolled back.
+fn run_migrations(conn: &mut Connection, migrations: &[&str]) -> Result<()> {
     let applied: usize = conn.pragma_query_value(None, "user_version", |row| row.get(0))?;
 
-    for (index, sql) in MIGRATIONS.iter().enumerate().skip(applied) {
+    conn.pragma_update(None, "foreign_keys", false)?;
+    let result = apply_migrations(conn, migrations, applied);
+    conn.pragma_update(None, "foreign_keys", true)?;
+    result
+}
+
+fn apply_migrations(conn: &mut Connection, migrations: &[&str], applied: usize) -> Result<()> {
+    for (index, sql) in migrations.iter().enumerate().skip(applied) {
         let version = index + 1;
         let tx = conn.transaction()?;
         tx.execute_batch(sql)?;
+        if tx.prepare("PRAGMA foreign_key_check")?.exists([])? {
+            return Err(Error::SqliteFailure(
+                ffi::Error::new(ffi::SQLITE_CONSTRAINT),
+                Some(format!("Migration {:03} left rows pointing at rows that do not exist", version)),
+            ));
+        }
         tx.pragma_update(None, "user_version", version)?;
         tx.commit()?;
         println!("Applied migration {:03}", version);
@@ -188,14 +204,47 @@ fn seed_database(conn: &Connection) -> rusqlite::Result<()> {
 mod tests {
     use super::*;
 
+    /// The rebuild SQLite documents for changing a column, on a table that others reference
+    const REBUILD_TASKS: &str =
+        "CREATE TABLE tasks_new (id INTEGER PRIMARY KEY AUTOINCREMENT, project_id INTEGER NOT NULL,
+                                 name TEXT NOT NULL,
+                                 FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE);
+         INSERT INTO tasks_new SELECT id, project_id, name FROM tasks;
+         DROP TABLE tasks;
+         ALTER TABLE tasks_new RENAME TO tasks;";
+
     fn user_version(conn: &Connection) -> usize {
         conn.pragma_query_value(None, "user_version", |row| row.get(0)).unwrap()
+    }
+
+    fn count(conn: &Connection, table: &str) -> i64 {
+        conn.query_row(&format!("SELECT COUNT(*) FROM {table}"), [], |row| row.get(0)).unwrap()
+    }
+
+    fn released_then(next: &'static str) -> Vec<&'static str> {
+        let mut migrations = MIGRATIONS.to_vec();
+        migrations.push(next);
+        migrations
+    }
+
+    fn migrated_with_one_log() -> Connection {
+        let mut conn = Connection::open_in_memory().unwrap();
+        // As get_connection leaves it: the cascade only fires with enforcement on
+        conn.pragma_update(None, "foreign_keys", true).unwrap();
+        run_migrations(&mut conn, MIGRATIONS).unwrap();
+        conn.execute_batch(
+            "INSERT INTO projects (name) VALUES ('p');
+             INSERT INTO tasks (project_id, name) VALUES (1, 't');
+             INSERT INTO logs (timestamp, message, task_id) VALUES ('t', 'kept', 1);",
+        )
+        .unwrap();
+        conn
     }
 
     #[test]
     fn migrates_fresh_database_to_latest() {
         let mut conn = Connection::open_in_memory().unwrap();
-        run_migrations(&mut conn).unwrap();
+        run_migrations(&mut conn, MIGRATIONS).unwrap();
 
         assert_eq!(user_version(&conn), MIGRATIONS.len());
         conn.execute("INSERT INTO projects (name) VALUES ('p')", []).unwrap();
@@ -204,8 +253,8 @@ mod tests {
     #[test]
     fn rerunning_migrations_is_a_no_op() {
         let mut conn = Connection::open_in_memory().unwrap();
-        run_migrations(&mut conn).unwrap();
-        run_migrations(&mut conn).unwrap();
+        run_migrations(&mut conn, MIGRATIONS).unwrap();
+        run_migrations(&mut conn, MIGRATIONS).unwrap();
 
         assert_eq!(user_version(&conn), MIGRATIONS.len());
     }
@@ -221,12 +270,33 @@ mod tests {
         )
         .unwrap();
 
-        run_migrations(&mut conn).unwrap();
+        run_migrations(&mut conn, MIGRATIONS).unwrap();
 
         assert_eq!(user_version(&conn), MIGRATIONS.len());
         let message: String = conn
             .query_row("SELECT message FROM logs", [], |row| row.get(0))
             .unwrap();
         assert_eq!(message, "kept");
+    }
+
+    #[test]
+    fn rebuilding_a_referenced_table_keeps_the_rows_that_reference_it() {
+        let mut conn = migrated_with_one_log();
+        run_migrations(&mut conn, &released_then(REBUILD_TASKS)).unwrap();
+
+        assert_eq!(user_version(&conn), MIGRATIONS.len() + 1);
+        assert_eq!(count(&conn, "logs"), 1);
+        let enforced: bool = conn.pragma_query_value(None, "foreign_keys", |row| row.get(0)).unwrap();
+        assert!(enforced);
+    }
+
+    #[test]
+    fn migration_leaving_a_dangling_reference_is_rolled_back() {
+        let mut conn = migrated_with_one_log();
+        let result = run_migrations(&mut conn, &released_then("DELETE FROM tasks;"));
+
+        assert!(result.is_err());
+        assert_eq!(user_version(&conn), MIGRATIONS.len());
+        assert_eq!(count(&conn, "tasks"), 1);
     }
 }
