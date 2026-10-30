@@ -20,8 +20,12 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = ["tray-icon"] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
+# Not used by our code: generate_context! expands the "plugins" config into serde_json values
+serde_json = "1"
 tauri-plugin-global-shortcut = "2.3.0"
 tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2.14"
+tauri-plugin-process = "2.4"
 
 
 rusqlite = { version = "0.30", features = ["bundled"] }
