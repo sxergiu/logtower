@@ -12,22 +12,29 @@
             <button
                     class="add-log-btn"
                     (click)="addLog()"
-                    [disabled]="!newMessage.trim()"
+                    [disabled]="!newMessage.trim() || pickedTaskId() === null"
             >
                 Log
             </button>
         </div>
     </div>
 
-    <div class="row" style="margin-left: 1.5rem">
-        <div class="subtle-text">
-            @if(activeProject() && activeTask() ) {
-                Currently logging for:
-                <div>
-                    Project: <strong>{{ activeProject()?.name }}</strong>
-                    Task: <strong>{{ activeTask()?.name }}</strong>
-                </div>
+    <div class="log-target subtle-text">
+        <select [ngModel]="pickedProjectId()" (ngModelChange)="onProjectChange($event)" title="Project">
+            @for (project of projectsWithTasks(); track project.id) {
+                <option [ngValue]="project.id">{{ project.name }}</option>
             }
-        </div>
+        </select>
+        <select [ngModel]="pickedTaskId()" (ngModelChange)="onTaskChange($event)"
+                [disabled]="!pickedTasks().length" title="Task">
+            @for (task of pickedTasks(); track task.id) {
+                <option [ngValue]="task.id">{{ task.name }}</option>
+            }
+        </select>
+        @if (savedAsDefault()) {
+            <span class="default-saved">&#10003; default</span>
+        } @else if (differsFromDefault()) {
+            <button type="button" class="set-default-btn" (click)="setAsDefault()">set as default</button>
+        }
     </div>
 </div>
