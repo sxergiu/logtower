@@ -3,8 +3,8 @@ use crate::domain::logs::models::LogEntry;
 use crate::service::logs::service;
 
 #[tauri::command]
-pub fn add_log(message: String) -> Result<(), String> {
-    service::add_log(message)
+pub fn add_log(message: String, task_id: i32) -> Result<(), String> {
+    service::add_log(message, task_id)
 }
 
 #[tauri::command]

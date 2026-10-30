@@ -29,8 +29,8 @@ export class LogService {
         this.logs.set(logs);
     }
 
-    async addLog(message: string): Promise<void> {
-        const addedLog = await invoke<LogModel>('add_log', { message });
+    async addLog(message: string, taskId: number): Promise<void> {
+        const addedLog = await invoke<LogModel>('add_log', { message, taskId });
         this.logs.update(currentLogs => [...currentLogs, addedLog]);
         // Emit event to notify other windows
         await invoke('emit_logs_updated');
