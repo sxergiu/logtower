@@ -1,7 +1,7 @@
 import { Injectable, signal} from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { UserSettings } from '../models/user-settings.model';
-import {emit} from "@tauri-apps/api/event";
+import {emit, listen} from "@tauri-apps/api/event";
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
@@ -10,6 +10,9 @@ export class SettingsService {
 
     constructor() {
         this.loadData();
+        // Every window has its own copy of this service, so the setup a window
+        // saves only reaches the others through this event.
+        listen('settings-updated', () => this.loadData());
     }
 
     async loadData() {
