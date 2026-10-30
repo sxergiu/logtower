@@ -1,17 +1,14 @@
 use rusqlite::params;
 use crate::data::connection::get_connection;
 use crate::domain::logs::models::LogEntry;
-use crate::domain::settings::repository::get_settings;
 
-pub fn insert_log(message: String) -> Result<(),String> {
+pub fn insert_log(message: String, task_id: i32) -> Result<(),String> {
     let conn = get_connection().map_err(|e| e.to_string())?;
-
-    let settings = get_settings()?;
 
     // Only insert task_id, not project_id
     conn.execute(
         "INSERT INTO logs (timestamp, message, task_id) VALUES (datetime('now'), ?1, ?2)",
-        params![message, settings.active_task_id],
+        params![message, task_id],
     )
         .map_err(|e| e.to_string())?;
 

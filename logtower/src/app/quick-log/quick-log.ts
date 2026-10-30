@@ -70,8 +70,9 @@ export class QuickLog implements AfterViewInit {
   }
 
   async addLog() {
-    if (!this.newMessage.trim()) return;
-    await this.logService.addLog(this.newMessage);
+    const taskId = this.activeTaskId();
+    if (!this.newMessage.trim() || taskId === null) return;
+    await this.logService.addLog(this.newMessage, taskId);
     this.newMessage = '';
     await this.closeWindow();
   }
