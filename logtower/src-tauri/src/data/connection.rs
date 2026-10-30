@@ -84,6 +84,19 @@ pub fn initialize_database() -> Result<()> {
 fn run_migrations(conn: &mut Connection, migrations: &[&str]) -> Result<()> {
     let applied: usize = conn.pragma_query_value(None, "user_version", |row| row.get(0))?;
 
+    // A newer Logtower migrated this database, and this code would run against a
+    // schema it has never seen
+    if applied > migrations.len() {
+        return Err(Error::SqliteFailure(
+            ffi::Error::new(ffi::SQLITE_ERROR),
+            Some(format!(
+                "The database is at schema version {}, but this version of Logtower knows only {}. Install the newer version again.",
+                applied,
+                migrations.len()
+            )),
+        ));
+    }
+
     conn.pragma_update(None, "foreign_keys", false)?;
     let result = apply_migrations(conn, migrations, applied);
     conn.pragma_update(None, "foreign_keys", true)?;
@@ -298,5 +311,14 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(user_version(&conn), MIGRATIONS.len());
         assert_eq!(count(&conn, "tasks"), 1);
+    }
+
+    #[test]
+    fn refuses_database_migrated_by_a_newer_version() {
+        let mut conn = Connection::open_in_memory().unwrap();
+        run_migrations(&mut conn, &released_then(REBUILD_TASKS)).unwrap();
+
+        assert!(run_migrations(&mut conn, MIGRATIONS).is_err());
+        assert_eq!(user_version(&conn), MIGRATIONS.len() + 1);
     }
 }
