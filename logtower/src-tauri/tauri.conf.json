@@ -27,6 +27,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/logtower.rgba",
       "icons/logtower.rgba",
@@ -35,5 +36,13 @@
       "icons/logtower.icns",
       "icons/logtower.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE5RkQ4MzFGRDNCQUMwQzEKUldUQndMclRINFA5cVF0bEdPOGozTFBuR1FycVZIK1NwREhCcGJvYnRvNHg4QkRvMS9zQ01oZTcK",
+      "endpoints": [
+        "https://github.com/sxergiu/logtower/releases/latest/download/latest.json"
+      ]
+    }
   }
 }
