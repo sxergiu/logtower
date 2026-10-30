@@ -7,7 +7,8 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 // The app lives in the tray for days, so checking only at launch would rarely see a release
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
-export type UpdateStatus = 'idle' | 'available' | 'downloading' | 'ready' | 'failed';
+export type UpdateStatus = 'idle' | 'checking' | 'up-to-date' | 'check-failed'
+    | 'available' | 'downloading' | 'ready' | 'failed';
 
 @Injectable({ providedIn: 'root' })
 export class UpdaterService {
@@ -28,10 +29,16 @@ export class UpdaterService {
         this.timer = setInterval(() => this.check(), CHECK_INTERVAL_MS);
     }
 
-    async check() {
+    // Only a check the user asked for reports its outcome; the background ones stay
+    // silent so the title screen doesn't flash "checking" or "failed" at every launch
+    async check(manual = false) {
+        if (manual) this.status.set('checking');
         try {
             const update = await check();
-            if (!update) return;
+            if (!update) {
+                if (manual) this.status.set('up-to-date');
+                return;
+            }
             this.update = update;
             this.availableVersion.set(update.version);
             this.status.set('available');
@@ -39,6 +46,7 @@ export class UpdaterService {
         } catch (e) {
             // Offline, or no release with a latest.json published yet; the next interval tries again
             console.warn('Update check failed', e);
+            if (manual) this.status.set('check-failed');
         }
     }
 

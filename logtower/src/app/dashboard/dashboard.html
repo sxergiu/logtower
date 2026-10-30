@@ -36,6 +36,20 @@
 
 <div class="app-version">
     @switch (updater.status()) {
+        @case ('idle') {
+            <button class="update-link" (click)="updater.check(true)">check for updates</button>
+        }
+        @case ('checking') {
+            <span>Checking for updates…</span>
+        }
+        @case ('up-to-date') {
+            <span>Up to date —</span>
+            <button class="update-link" (click)="updater.check(true)">check again</button>
+        }
+        @case ('check-failed') {
+            <span>Couldn't check for updates —</span>
+            <button class="update-link" (click)="updater.check(true)">try again</button>
+        }
         @case ('available') {
             <span>v{{ updater.availableVersion() }} available</span>
             <button class="update-btn" (click)="updater.install()">Update</button>
