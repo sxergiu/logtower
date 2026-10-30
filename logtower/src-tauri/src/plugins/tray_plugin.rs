@@ -29,8 +29,10 @@ fn build_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Arc<TrayIc
         TrayIconBuilder::with_id("main-tray")
             .icon(icon)
             .menu(&menu)
-            .show_menu_on_left_click(true) // replaces old `menu_on_left_click`
-            .tooltip("My App")
+            // macOS opens a menu-bar item's menu on click; Windows keeps the menu on
+            // right-click so left-click can show the window. Linux ignores this.
+            .show_menu_on_left_click(cfg!(target_os = "macos"))
+            .tooltip("Logtower")
             .on_menu_event(|app, e| {
                 println!("[tray] menu clicked: {}", e.id.as_ref()); // MenuId is not Display; use as_ref()
                 match e.id.as_ref() {
@@ -41,7 +43,7 @@ fn build_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Arc<TrayIc
                             let _ = w.set_focus();
                         } else {
                             let _ = tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::default())
-                                .title("My App")
+                                .title("Logtower")
                                 .build();
                         }
                     }
@@ -56,6 +58,10 @@ fn build_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Arc<TrayIc
             })
             .on_tray_icon_event(|tray, event| {
                 println!("[tray] icon event: {:?}", event);
+                // On macOS the same click already opened the menu
+                if cfg!(target_os = "macos") {
+                    return;
+                }
                 if let TrayIconEvent::Click {
                     button: MouseButton::Left,
                     button_state: MouseButtonState::Up,
@@ -80,7 +86,9 @@ fn build_tray<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Arc<TrayIc
 }
 
 pub fn tray_plugin<R: Runtime>() -> tauri::plugin::TauriPlugin<R> {
-    tauri::plugin::Builder::new("tray")
+    // Not "tray": Tauri registers its own core plugin under that name after the
+    // app's plugins, and a later plugin replaces an earlier one of the same name.
+    tauri::plugin::Builder::new("logtower-tray")
         .setup(|app, _| {
             println!("[tray] setup: building tray…");
             let tray = build_tray(app)?;
@@ -90,12 +98,27 @@ pub fn tray_plugin<R: Runtime>() -> tauri::plugin::TauriPlugin<R> {
         })
         .on_event(|app, event| {
             if let tauri::RunEvent::WindowEvent { label, event, .. } = event {
+                // Only main lives in the tray. Quick-log closes for real, so the hotkey
+                // always builds it fresh instead of showing a stale hidden one.
+                if label != "main" {
+                    return;
+                }
                 if let tauri::WindowEvent::CloseRequested { api, .. } = event {
                     println!("[tray] Window `{}` requested close -> hiding instead", label);
                     if let Some(w) = app.get_webview_window(label) {
                         let _ = w.hide();
                     }
                     api.prevent_close();
+                }
+            }
+            // macOS answers a Dock click or a second launch by reopening the running app,
+            // so the single-instance callback never sees it and nothing else shows main.
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Reopen { has_visible_windows: false, .. } = event {
+                if let Some(w) = app.get_webview_window("main") {
+                    let _ = w.unminimize();
+                    let _ = w.show();
+                    let _ = w.set_focus();
                 }
             }
         })

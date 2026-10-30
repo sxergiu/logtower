@@ -14,6 +14,7 @@ use tauri_commands::logs::{add_log, delete_all_logs,
                            delete_log_by_id, delete_logs_by_project_id, delete_logs_by_task_id, emit_logs_updated,
                            get_logs, get_logs_by_project_id, get_logs_by_task_id, get_logs_with_project
 };
+use tauri_commands::app::quit_app;
 use tauri_commands::hotkey::{get_failed_shortcuts, hide_window, test_hotkey_event};
 use tauri_commands::settings::{get_current_settings, set_active_project, set_active_task};
 use tauri_commands::projects::{add_project, delete_project, edit_project, get_all_projects, get_project_by_id};
@@ -75,7 +76,8 @@ pub fn run() {
             delete_project, edit_project,
             get_project_by_id,  get_task_by_id,
             delete_task, edit_task,
-            get_current_settings, set_active_project, set_active_task
+            get_current_settings, set_active_project, set_active_task,
+            quit_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
