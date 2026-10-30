@@ -1,8 +1,8 @@
 import {Component, inject, signal} from '@angular/core';
 import {Router} from "@angular/router";
 import {SettingsDrawer} from "../settings-drawer/settings-drawer";
-import {Window} from "@tauri-apps/api/window";
 import {HotkeyService} from "../service/hotkey.service";
+import {AppService} from "../service/app.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +16,7 @@ export class Dashboard {
 
   router = inject(Router);
   hotkeyService = inject(HotkeyService);
+  appService = inject(AppService);
 
   failedShortcuts = signal<string[]>([]);
 
@@ -32,10 +33,7 @@ export class Dashboard {
   }
 
   async quitApp() {
-    const appWindow = await Window.getByLabel('main');
-    if (appWindow) {
-      await appWindow.close();
-    }
+    await this.appService.quit();
   }
 
 }
