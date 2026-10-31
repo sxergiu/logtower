@@ -32,13 +32,34 @@
         (taskChange)="store.setSelectedTask($event); onTaskSelected($event)">
 </app-log-view-filter>
 
-@if( !store.loading() ) {
+@if( store.loading() ) {
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Loading logs...</p>
+    </div>
+} @else if( store.inspecting() ) {
+
+    <app-log-view-inspector
+            [logs]="store.filteredLogs()" [log]="store.inspectedLog()" [index]="store.inspectedIndex()"
+            [isProjectView]="store.hideProjectColumn()" [isTaskView]="store.hideTaskColumn()"
+            (inspectLog)="store.inspectLog($event)"
+            (previous)="store.inspectPrevious()"
+            (next)="store.inspectNext()"
+            (back)="store.closeInspector()"
+            (editLog)="onEditLog($event)"
+            (deleteLog)="store.deleteInspectedLog($event)"
+            (selectedProjectId)="onProjectBadgeSelected($event)"
+            (selectedTaskId)="onTaskBadgeSelected($event)">
+    </app-log-view-inspector>
+
+} @else {
 
     <div class="log-table-container">
         <app-log-view-table
                 [logs]="store.filteredLogs()"  [isProjectView]="this.store.hideProjectColumn()" [isTaskView]="this.store.hideTaskColumn()"
                 (editLog)="onEditLog($event)"
                 (deleteLog)="onDeleteLog($event)"
+                (inspectLog)="store.inspectLog($event)"
                 (selectedProjectId)="onProjectBadgeSelected($event)"
                 (selectedTaskId)="onTaskBadgeSelected($event)">
         </app-log-view-table>
@@ -79,12 +100,6 @@
         }
     </div>
 
-
-} @else {
-    <div class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <p>Loading logs...</p>
-    </div>
 }
 
 

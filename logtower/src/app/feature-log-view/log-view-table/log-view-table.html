@@ -65,7 +65,7 @@
                                         </button>
                                     </td>
                                 } @else {
-                                    <td class="message">
+                                    <td class="message inspectable" (click)="inspectLog.emit(log.id)" title="Inspect log">
                                         {{ log.message }}
                                     </td>
                                     <td class="actions">
