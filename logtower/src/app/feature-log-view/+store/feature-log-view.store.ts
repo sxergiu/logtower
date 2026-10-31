@@ -22,6 +22,8 @@ export interface LogFilterState {
     selectedProject: ProjectModel | null;
     selectedTask: TaskModel | null;
     showFilters: boolean;
+    inspecting: boolean;
+    inspectedLogId: number | null;
 }
 
 const delayTime = 0;
@@ -32,7 +34,9 @@ export const featureLogViewStore = signalStore(
         logs: [],
         selectedProject: null,
         selectedTask: null,
-        showFilters: false
+        showFilters: false,
+        inspecting: false,
+        inspectedLogId: null
     }),
 
     withComputed((state) => ({
@@ -49,6 +53,20 @@ export const featureLogViewStore = signalStore(
             return all;
         })
     })),
+
+    withComputed((state) => {
+        const inspectedLog = computed<LogModel | null>(() => {
+            const list = state.filteredLogs();
+            return list.find((l) => l.id === state.inspectedLogId()) ?? list[0] ?? null;
+        });
+        return {
+            inspectedLog,
+            inspectedIndex: computed(() => {
+                const log = inspectedLog();
+                return log ? state.filteredLogs().indexOf(log) : -1;
+            })
+        };
+    }),
 
     withMethods((state,
                  logService = inject(LogService),
@@ -68,11 +86,12 @@ export const featureLogViewStore = signalStore(
                 finalize(dec)
             );
 
+        // A filter change sends the inspector back to the newest log; loadLogs pins it once the logs arrive
         const setProject = (project: ProjectModel | null) =>
-            patchState(state, { selectedProject: project, selectedTask: null });
+            patchState(state, { selectedProject: project, selectedTask: null, inspectedLogId: null });
 
         const setTask = (task: TaskModel | null) =>
-            patchState(state, { selectedTask: task });
+            patchState(state, { selectedTask: task, inspectedLogId: null });
 
         const reloadBySelection = () => {
             const p = state.selectedProject();
@@ -84,7 +103,13 @@ export const featureLogViewStore = signalStore(
 
         const loadLogs = (src$: Observable<LogModel[]>, label: string) =>
             wrap(
-                src$.pipe(tap((logs) => patchState(state, { logs }))),
+                src$.pipe(tap((logs) => {
+                    patchState(state, { logs });
+                    // Pinned by id so a log arriving later does not silently become the inspected one
+                    if (state.inspectedLogId() === null) {
+                        patchState(state, { inspectedLogId: state.filteredLogs()[0]?.id ?? null });
+                    }
+                })),
                 label
             );
 
@@ -282,6 +307,37 @@ export const featureLogViewStore = signalStore(
             setSelectedProject: (project: ProjectModel | null) => setProject(project),
             setSelectedTask: (task: TaskModel | null) => setTask(task),
             resetTask: () => setTask(null)
+        };
+    }),
+
+    withMethods((store) => {
+        const inspectLog = (id: number) => patchState(store, { inspecting: true, inspectedLogId: id });
+
+        return {
+            inspectLog,
+            closeInspector: () => patchState(store, { inspecting: false }),
+
+            inspectPrevious: () => {
+                const i = store.inspectedIndex();
+                if (i > 0) inspectLog(store.filteredLogs()[i - 1].id);
+            },
+
+            inspectNext: () => {
+                const i = store.inspectedIndex();
+                const list = store.filteredLogs();
+                if (i >= 0 && i < list.length - 1) inspectLog(list[i + 1].id);
+            },
+
+            // The neighbour is picked before the delete reloads the logs, by id, so the reload cannot shift it
+            deleteInspectedLog: (id: number) => {
+                const list = store.filteredLogs();
+                const i = list.findIndex((l) => l.id === id);
+                const neighbour = list[i + 1] ?? list[i - 1];
+                patchState(store, neighbour
+                    ? { inspectedLogId: neighbour.id }
+                    : { inspecting: false, inspectedLogId: null });
+                store.deleteLog(id);
+            }
         };
     }),
 

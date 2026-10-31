@@ -1,0 +1,146 @@
+
+.inspector {
+    padding: 24px;
+    font-family: var(--logtower-font), monospace;
+    color: black;
+}
+
+.inspector-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.inspector-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.position {
+    color: #71717a;
+    font-size: 13px;
+    min-width: 5rem;
+    text-align: center;
+}
+
+/* On the wrapper: .svg-wood:hover sets transform on the img itself and would drop the rotation */
+.chevron-left {
+    transform: rotate(90deg);
+}
+
+.chevron-right {
+    transform: rotate(-90deg);
+}
+
+.icon-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Same vertical budget as the table's scroller plus its Delete row, which is hidden here */
+.inspector-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1rem;
+    height: calc(100vh - 320px);
+}
+
+.mini-list {
+    overflow-y: auto;
+    background: linear-gradient(to bottom, #ededed, #fff);
+    border: 1px solid #ededed;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.mini-row {
+    display: flex;
+    gap: 0.6rem;
+    padding: 6px 10px;
+    font-size: 13px;
+    background-color: #fff;
+    border-bottom: 1px solid #ededed;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mini-row:hover {
+    background: #fbfbfb;
+}
+
+.mini-row.active {
+    border-left-color: var(--logtower-wood);
+    background: var(--logtower-hover);
+}
+
+.mini-time {
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.mini-message {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #3f3f46;
+}
+
+.detail-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 1.5rem 2rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #ededed;
+}
+
+.time-primary {
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+.time-secondary {
+    color: #71717a;
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.actions {
+    display: flex;
+}
+
+.detail-message {
+    flex: 1;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.6;
+}
+
+.detail-edit {
+    flex: 1;
+    max-height: none;
+    padding: 0.5rem;
+}

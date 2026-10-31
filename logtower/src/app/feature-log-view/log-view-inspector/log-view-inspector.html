@@ -1,0 +1,108 @@
+
+<div class="inspector">
+
+    <div class="inspector-bar">
+        <button (click)="back.emit()" class="icon-btn svg-wood" title="Back to table">
+            <div class="svg-icon">
+                <img ngSrc="../../../assets/back-arrow.svg" alt="Back" width="20" height="20">
+            </div>
+        </button>
+
+        @if( log() ) {
+            <div class="inspector-nav">
+                <button (click)="goPrevious()" [disabled]="index() <= 0" class="icon-btn svg-wood" title="Previous log">
+                    <div class="svg-icon chevron-left">
+                        <img ngSrc="../../../assets/chevron-down.svg" alt="Previous" width="20" height="20">
+                    </div>
+                </button>
+                <span class="position">{{ index() + 1 }} / {{ logs().length }}</span>
+                <button (click)="goNext()" [disabled]="index() < 0 || index() >= logs().length - 1" class="icon-btn svg-wood" title="Next log">
+                    <div class="svg-icon chevron-right">
+                        <img ngSrc="../../../assets/chevron-down.svg" alt="Next" width="20" height="20">
+                    </div>
+                </button>
+            </div>
+        }
+    </div>
+
+    @if( log(); as current ) {
+        <div class="inspector-body">
+
+            <div class="mini-list">
+                @for (entry of logs(); track entry.id) {
+                    <div class="mini-row" [class.active]="entry.id === current.id" (click)="select(entry.id)">
+                        <span class="mini-time">{{ formatShortTime(entry.timestamp) }}</span>
+                        <span class="mini-message">{{ entry.message }}</span>
+                    </div>
+                }
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div class="timestamp">
+                        <div class="time-primary">{{ formatTime(current.timestamp) }}</div>
+                        <div class="time-secondary">{{ formatDate(current.timestamp) }}</div>
+                    </div>
+
+                    <div class="badges">
+                        @if( !isProjectView() ) {
+                            <span class="project-badge" (click)="selectedProjectId.emit(current.project_id)">
+                                {{ current.projectName }}
+                            </span>
+                        }
+                        @if( !isTaskView() ) {
+                            <span class="task-badge" (click)="selectedTaskId.emit(current.task_id)">
+                                {{ current.taskName }}
+                            </span>
+                        }
+                    </div>
+
+                    <div class="actions">
+                        @if( editingLog === current.id ) {
+                            <button (click)="saveEditLog(current.id)" class="icon-btn svg-green" title="Save log">
+                                <div class="svg-icon">
+                                    <img ngSrc="../../../assets/save.svg" alt="Save" width="20" height="20">
+                                </div>
+                            </button>
+                            <button (click)="cancelEditLog()" class="icon-btn svg-red" title="Cancel edit">
+                                <div class="svg-icon">
+                                    <img ngSrc="../../../assets/cancel.svg" alt="Cancel" width="20" height="20">
+                                </div>
+                            </button>
+                        } @else {
+                            <button (click)="startEditLog(current)" class="icon-btn svg-wood" title="Edit log">
+                                <div class="svg-icon">
+                                    <img ngSrc="../../../assets/edit.svg" alt="Edit" width="20" height="20">
+                                </div>
+                            </button>
+                            <button (click)="deleteLog.emit(current.id)" class="icon-btn svg-red" title="Delete log">
+                                <div class="svg-icon">
+                                    <img ngSrc="../../../assets/trashcan.svg" alt="Delete" width="20" height="20">
+                                </div>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @if( editingLog === current.id ) {
+                    <textarea
+                            [attr.wrap]="'soft'"
+                            class="edit-log detail-edit"
+                            [(ngModel)]="editLogValue"
+                            placeholder="Log message.."
+                            (keydown.enter)="onEditEnter($event, current.id)"
+                            (keyup.esc)="cancelEditLog()"
+                    ></textarea>
+                } @else {
+                    <div class="detail-message">{{ current.message }}</div>
+                }
+            </div>
+
+        </div>
+    } @else {
+        <div class="empty-message">
+            No logs found :(
+        </div>
+    }
+
+</div>
