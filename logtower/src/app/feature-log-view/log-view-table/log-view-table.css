@@ -139,6 +139,10 @@ td {
     max-width: 100%;
 }
 
+.message.inspectable {
+    cursor: pointer;
+}
+
 
 @keyframes pulse {
     0%, 100% { opacity: 1; }

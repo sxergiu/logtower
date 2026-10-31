@@ -3,6 +3,7 @@ import {NgOptimizedImage} from "@angular/common";
 import {Router} from "@angular/router";
 import {LogViewFilter} from "./log-view-filter/log-view-filter";
 import {LogViewTable} from "./log-view-table/log-view-table";
+import {LogViewInspector} from "./log-view-inspector/log-view-inspector";
 import {SettingsDrawer} from "../settings-drawer/settings-drawer";
 import {featureLogViewStore} from "./+store/feature-log-view.store";
 import {ProjectModel} from "../models/project.model";
@@ -13,6 +14,7 @@ import {TaskModel} from "../models/task.model";
     imports: [
         NgOptimizedImage,
         LogViewTable,
+        LogViewInspector,
         SettingsDrawer,
         LogViewFilter,
     ],
