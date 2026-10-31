@@ -23,7 +23,7 @@ don't brainstorm, but let their brains storm. Stack up your genius all the way t
 ## Installation & Usage
 Check latest release and download installer for macOS/Windows.
 
-[WARNING] v0.0.1-alpha may suffer from overhead in the case of large number of logs.
+[WARNING] Logtower may slow down with a large number of logs.
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
