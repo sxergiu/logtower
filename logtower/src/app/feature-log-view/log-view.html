@@ -41,6 +41,7 @@
 
     <app-log-view-inspector
             [logs]="store.filteredLogs()" [log]="store.inspectedLog()" [index]="store.inspectedIndex()"
+            [isProjectView]="store.hideProjectColumn()" [isTaskView]="store.hideTaskColumn()"
             (inspectLog)="store.inspectLog($event)"
             (previous)="store.inspectPrevious()"
             (next)="store.inspectNext()"

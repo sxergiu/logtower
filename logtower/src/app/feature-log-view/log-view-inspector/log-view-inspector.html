@@ -45,12 +45,16 @@
                     </div>
 
                     <div class="badges">
-                        <span class="project-badge" (click)="selectedProjectId.emit(current.project_id)">
-                            {{ current.projectName }}
-                        </span>
-                        <span class="task-badge" (click)="selectedTaskId.emit(current.task_id)">
-                            {{ current.taskName }}
-                        </span>
+                        @if( !isProjectView() ) {
+                            <span class="project-badge" (click)="selectedProjectId.emit(current.project_id)">
+                                {{ current.projectName }}
+                            </span>
+                        }
+                        @if( !isTaskView() ) {
+                            <span class="task-badge" (click)="selectedTaskId.emit(current.task_id)">
+                                {{ current.taskName }}
+                            </span>
+                        }
                     </div>
 
                     <div class="actions">

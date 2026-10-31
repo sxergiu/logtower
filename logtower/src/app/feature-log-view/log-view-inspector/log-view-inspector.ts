@@ -21,6 +21,8 @@ export class LogViewInspector {
   logs = input<LogModel[]>([]);
   log = input<LogModel | null>(null);
   index = input<number>(-1);
+  isProjectView = input<boolean>(false);
+  isTaskView = input<boolean>(false);
 
   inspectLog = output<number>();
   previous = output<void>();
